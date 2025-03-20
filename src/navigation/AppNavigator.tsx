@@ -8,7 +8,7 @@ import FavoriteScreen from "../screens/FavoriteScreen";
 import RecipeScreen from "../screens/RecipeScreen";
 import ScanScreen from "../screens/ScanScreen";
 import colors from "../styles/colors";
-import { BottomTabParamList } from "../types/navigation"; // Tambahkan tipe navigasi
+import { BottomTabParamList } from "../types/navigation";
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 

@@ -7,7 +7,7 @@ export default StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: colors.background,
-    marginTop: 20,
+    paddingTop: 40,
   },
   button: {
     backgroundColor: colors.primary,
