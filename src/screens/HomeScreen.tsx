@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import { AntDesign } from "@expo/vector-icons";
 import colors from "../styles/colors";
+import globalStyles from "../styles/globalStyles";
+import CustomPicker from "../components/common/CustomPicker";
 
 type NutritionBarProps = {
   label: string;
@@ -32,6 +33,11 @@ const HomeScreen = () => {
   const [selectedUser, setSelectedUser] = useState("User 1");
   const [selectedDate, setSelectedDate] = useState(new Date());
 
+  const users = [
+    { label: "User 1", value: "User 1", imageUrl: "https://static.vecteezy.com/system/resources/previews/019/896/008/non_2x/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" },
+    { label: "User 2", value: "User 2", imageUrl: "https://static.vecteezy.com/system/resources/previews/019/896/012/non_2x/female-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" },
+  ];
+
   const changeDate = (days: number) => {
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() + days);
@@ -39,17 +45,12 @@ const HomeScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={globalStyles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Harian</Text>
         <View style={styles.profileContainer}>
-          <Picker selectedValue={selectedUser} style={styles.picker} onValueChange={(itemValue) => setSelectedUser(itemValue)}>
-            <Picker.Item label="User 1" value="User 1" />
-            <Picker.Item label="User 2" value="User 2" />
-          </Picker>
-          <Text style={styles.headerTitle}>Hai, {selectedUser}</Text>
-          <Image source={{ uri: "https://static.vecteezy.com/system/resources/previews/019/896/008/non_2x/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" }} style={styles.profileImage} />
+          <CustomPicker selectedValue={selectedUser} onValueChange={(itemValue) => setSelectedUser(itemValue)} items={users} />
         </View>
       </View>
 
@@ -133,7 +134,6 @@ const styles = StyleSheet.create({
   rectangle: { width: "85%", height: 50, borderTopLeftRadius: 100, borderBottomLeftRadius: 100, backgroundColor: colors.primary, flex: 1, justifyContent: "center", alignItems: "center" },
   circle: { width: 60, height: 60, borderRadius: 30, marginLeft: -20, justifyContent: "center", alignItems: "center", backgroundColor: colors.background, borderWidth: 2 },
   nutritionContainer: { marginVertical: 10, backgroundColor: colors.secondary, paddingVertical: 20, borderRadius: 15 },
-
   label: {
     fontSize: 7,
     fontWeight: "bold",
