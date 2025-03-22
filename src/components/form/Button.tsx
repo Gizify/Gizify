@@ -9,13 +9,22 @@ type ButtonProps = {
 };
 
 const Button: React.FC<ButtonProps> = ({ title, variant = 'primary', onPress }) => {
+  const buttonStyle = [
+    styles.button,
+    variant === 'primary' && styles.primary,
+    variant === 'secondary' && styles.secondary,
+    variant === 'disabled' && styles.disabled,
+  ];
+
   return (
-    <TouchableOpacity
-      style={[styles.button, styles[variant]]}
-      onPress={onPress}
-      disabled={variant === 'disabled'}
-    >
-      <Text style={[styles.text, variant === 'secondary' && styles.secondaryText, variant === 'disabled' && styles.disabledText]}>
+    <TouchableOpacity style={buttonStyle} onPress={onPress} disabled={variant === 'disabled'}>
+      <Text
+        style={[
+          styles.text,
+          variant === 'secondary' && styles.secondaryText,
+          variant === 'disabled' && styles.disabledText,
+        ]}
+      >
         {title}
       </Text>
     </TouchableOpacity>
@@ -35,10 +44,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   secondary: {
-    backgroundColor: colors.backgroundText,
+    backgroundColor: colors.secondary,
   },
   disabled: {
-    backgroundColor: colors.accent,
+    backgroundColor: colors.gray,
   },
   text: {
     fontSize: 16,
@@ -46,10 +55,10 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   secondaryText: {
-    color: colors.text,
+    color: colors.white,
   },
   disabledText: {
-    color: colors.gray,
+    color: colors.white,
   },
 });
 
