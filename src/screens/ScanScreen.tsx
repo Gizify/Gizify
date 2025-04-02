@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { CameraView, useCameraPermissions, FlashMode } from "expo-camera";
-import * as ImagePicker from "expo-image-picker";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import axios from "axios";
 import ProductInfo from "../components/layout/ProductInfo";
 import PermissionDenied from "../components/modals/PermissionDenied";
 import Loading from "../components/loaders/Loading";
 import Error from "../components/layout/Error";
+import Button from "../components/form/Button";
+import { BottomTabParamList } from "../types/navigation";
+import { Ionicons } from "@expo/vector-icons";
 
-const ScanScreen: React.FC = () => {
+type Props = NativeStackScreenProps<BottomTabParamList, "Scan">;
+
+const ScanScreen: React.FC<Props> = ({ navigation }: Props) => {
   const [permission, requestPermission] = useCameraPermissions();
+  const [isStarted, setIsStarted] = useState<boolean>(false);
   const [scanned, setScanned] = useState<boolean>(false);
   const [productData, setProductData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [cameraType, setCameraType] = useState<"front" | "back">("back");
-  const [pickedImage, setPickedImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!permission) {
@@ -44,15 +49,14 @@ const ScanScreen: React.FC = () => {
     }
   };
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setPickedImage(result.assets[0].uri);
+  const handleBack = () => {
+    if (scanned) {
+      setScanned(false);
+      setProductData(null);
+    } else if (isStarted) {
+      setIsStarted(false);
+    } else {
+      navigation.goBack();
     }
   };
 
@@ -61,10 +65,18 @@ const ScanScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {!scanned ? (
-        pickedImage ? (
-          <Image source={{ uri: pickedImage }} style={styles.imagePreview} />
-        ) : (
+      {/* Main content */}
+      <View style={styles.content}>
+        {!isStarted && (
+          <View style={styles.instructionContainer}>
+            <Image source={require("../../assets/icons/barcode.png")} style={styles.logo} />
+            <Text style={styles.instructionText}>Pastikan kode pemindai dalam kondisi jelas</Text>
+            <Button title="Mulai Scan" onPress={() => setIsStarted(true)}></Button>
+          </View>
+        )}
+
+        {/* Kondisi: Kamera aktif untuk scan */}
+        {isStarted && !scanned && (
           <CameraView
             style={styles.camera}
             barcodeScannerSettings={{
@@ -73,23 +85,23 @@ const ScanScreen: React.FC = () => {
             facing={cameraType}
             onBarcodeScanned={handleBarCodeScanned}
           />
-        )
-      ) : (
-        <View style={styles.resultContainer}>
-          <ScrollView style={styles.scrollContainer}>{loading ? <Loading /> : error ? <Error message={error} /> : productData && <ProductInfo productData={productData} />}</ScrollView>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              setScanned(false);
-              setProductData(null);
-              setError(null);
-              setPickedImage(null);
-            }}
-          >
-            <Text style={styles.buttonText}>Pindai Lagi</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+        )}
+
+        {scanned && (
+          <View style={styles.resultContainer}>
+            <View style={styles.header}>
+              <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+                <Ionicons name="arrow-back" size={24} color="black" />
+              </TouchableOpacity>
+              <Text style={styles.title}>Hasil Scan</Text>
+            </View>
+            <View style={styles.productContainer}>{loading ? <Loading /> : error ? <Error message={error} /> : productData && <ProductInfo productData={productData} />}</View>
+            <View style={styles.intakeButton}>
+              <Button title="Tambah Ke Konsumsi Harian" onPress={() => navigation.navigate("Beranda")} />
+            </View>
+          </View>
+        )}
+      </View>
     </View>
   );
 };
@@ -97,66 +109,68 @@ const ScanScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f2f2f2",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "white",
   },
-  camera: {
-    width: "100%",
-    height: "70%",
-  },
-  topControls: {
+  header: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    padding: 10,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    alignItems: "center",
+    padding: 15,
+    paddingTop: 50, // Adjust for status bar
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
   },
-  controlButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-    backgroundColor: "#007AFF",
+  backButton: {
+    marginRight: 15,
   },
-  buttonText: {
-    color: "#fff",
+  title: {
+    fontSize: 20,
     fontWeight: "bold",
   },
-  resultContainer: {
+  content: {
     flex: 1,
-    alignItems: "center",
+  },
+  instructionContainer: {
+    flex: 1,
     justifyContent: "center",
-    padding: 20,
+    alignItems: "center",
+    paddingHorizontal: 20,
   },
-  scrollContainer: {
-    flex: 1,
-    width: "100%",
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 20,
   },
-  button: {
+  instructionText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  startButton: {
     backgroundColor: "#007AFF",
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 8,
-    marginTop: 20,
   },
-  zoomContainer: {
-    position: "absolute",
-    bottom: 20,
-    width: "80%",
-    alignItems: "center",
-  },
-  slider: {
-    width: "100%",
-  },
-  zoomText: {
+  startButtonText: {
+    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 5,
   },
-  imagePreview: {
-    width: "100%",
-    height: "70%",
-    resizeMode: "contain",
+  camera: {
+    flex: 1,
+  },
+  resultContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  productContainer: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  intakeButton: {
+    alignItems: "center",
   },
 });
 

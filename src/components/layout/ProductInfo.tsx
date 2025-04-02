@@ -1,18 +1,15 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 
 interface ProductInfoProps {
   productData: any;
 }
 
 const ProductInfo: React.FC<ProductInfoProps> = ({ productData }) => (
-  <View style={styles.productInfo}>
-    <Text style={styles.productName}>{productData.product_name || "Nama produk tidak tersedia"}</Text>
-
+  <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
     {productData.image_url ? <Image source={{ uri: productData.image_url }} style={styles.productImage} /> : <Text style={styles.noImageText}>Gambar tidak tersedia</Text>}
 
-    <Text style={styles.productDetails}>Merek: {productData.brands || "Tidak diketahui"}</Text>
-    <Text style={styles.productDetails}>Kuantitas: {productData.quantity || "Tidak tersedia"}</Text>
+    <Text style={styles.productName}>{productData.product_name || "Nama produk tidak tersedia"}</Text>
 
     <View style={styles.nutritionSection}>
       <Text style={styles.sectionTitle}>Informasi Nutrisi per 100g</Text>
@@ -29,32 +26,30 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ productData }) => (
       ].map((nutrition, index) => (
         <View key={index} style={styles.nutritionRow}>
           <Text style={styles.nutritionLabel}>{nutrition.label}</Text>
-          <Text style={styles.nutritionValue}>{nutrition.value ? `${nutrition.value}${nutrition.unit}` : "N/A"}</Text>
+          <Text style={styles.nutritionValue}>{nutrition.value ? `${nutrition.value} ${nutrition.unit}` : "N/A"}</Text>
         </View>
       ))}
     </View>
 
     <Text style={styles.productDetails}>Bahan: {productData.ingredients_text || "Tidak tersedia"}</Text>
-  </View>
+  </ScrollView>
 );
 
 const styles = StyleSheet.create({
-  productInfo: {
-    backgroundColor: "#ffffff",
-    padding: 20,
-    borderRadius: 10,
+  scrollView: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  contentContainer: {
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+    padding: 16,
   },
   productName: {
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 10,
+    marginTop: 10,
   },
   productImage: {
     width: 200,
@@ -66,16 +61,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#666",
     textAlign: "center",
+    marginVertical: 20,
   },
   productDetails: {
     fontSize: 16,
     color: "#333",
-    marginVertical: 5,
+    marginVertical: 15,
+    width: "100%",
   },
   nutritionSection: {
     width: "100%",
     marginVertical: 15,
-    padding: 10,
+    padding: 15,
     backgroundColor: "#f8f8f8",
     borderRadius: 8,
   },
@@ -93,19 +90,17 @@ const styles = StyleSheet.create({
   nutritionRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 6,
+    marginBottom: 8,
+    paddingVertical: 4,
   },
   nutritionLabel: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#34495e",
-    flex: 2,
   },
   nutritionValue: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#2c3e50",
     fontWeight: "500",
-    flex: 1,
-    textAlign: "right",
   },
 });
 
