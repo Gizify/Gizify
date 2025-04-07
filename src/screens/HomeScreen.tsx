@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   barGroup: { flexDirection: "row", justifyContent: "space-around" },
   image: { height: 10, aspectRatio: 1 },
   dateSelector: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: 10 },
-  table: { marginTop: 20, borderWidth: 1, borderColor: "#ddd", padding: 10, backgroundColor: colors.backgroundText },
+  table: { marginTop: 20, borderWidth: 1, borderColor: "#ddd", padding: 10, backgroundColor: colors.background },
   tableTextContainer: { flexDirection: "row", justifyContent: "space-between" },
   totalEnergy: { fontWeight: "bold", fontSize: 16, textAlign: "center" },
   separator: { borderBottomWidth: 1, borderColor: "#ddd", marginVertical: 5 },

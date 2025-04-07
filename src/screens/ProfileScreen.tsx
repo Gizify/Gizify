@@ -1,16 +1,11 @@
 // Profile Screen
 import React from "react";
-import { View, Text, Button } from "react-native";
-import { StackScreenProps } from "@react-navigation/stack";
-import { RootStackParamList } from "../types/navigation";
+import { View, Text } from "react-native";
 
-type Props = StackScreenProps<RootStackParamList, "Profile">;
-
-export default function ProfileScreen({ navigation }: Props) {
+export default function ProfileScreen() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Profile Screen</Text>
-      <Button title="Back to Home" onPress={() => navigation.navigate("Home")} />
     </View>
   );
 }

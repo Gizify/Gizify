@@ -1,3 +1,6 @@
+import { RouteProp } from "@react-navigation/native";
+import { Recipe } from "./recipe";
+
 export type BottomTabParamList = {
   Beranda: undefined;
   Resep: undefined;
@@ -5,3 +8,10 @@ export type BottomTabParamList = {
   Favorit: undefined;
   Profile: undefined;
 };
+
+export type RecipeStackParamList = {
+  RecipeList: undefined;
+  RecipeDetail: { recipe: Recipe };
+};
+
+export type RecipeDetailScreenRouteProp = RouteProp<RecipeStackParamList, "RecipeDetail">;

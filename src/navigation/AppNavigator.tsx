@@ -5,10 +5,10 @@ import { AntDesign, MaterialIcons, Feather } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import FavoriteScreen from "../screens/FavoriteScreen";
-import RecipeScreen from "../screens/RecipeScreen";
 import ScanScreen from "../screens/ScanScreen";
 import colors from "../styles/colors";
 import { BottomTabParamList } from "../types/navigation";
+import RecipeStackNavigator from "./RecipeStackNavigator";
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -38,7 +38,7 @@ export default function AppNavigator() {
         />
         <Tab.Screen
           name="Resep"
-          component={RecipeScreen}
+          component={RecipeStackNavigator}
           options={{
             tabBarIcon: ({ color, size }: { color: string; size: number }) => <MaterialIcons name="restaurant-menu" size={size} color={color} />,
           }}

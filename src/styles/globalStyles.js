@@ -6,7 +6,7 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
     paddingTop: 40,
   },
   button: {
@@ -19,5 +19,9 @@ export default StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  floating: {
+    position: "absolute",
+    elevation: 5,
   },
 });
