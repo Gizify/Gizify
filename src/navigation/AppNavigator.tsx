@@ -19,7 +19,7 @@ export default function AppNavigator() {
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
-            backgroundColor: colors.background,
+            backgroundColor: colors.white,
             height: 60,
           },
           tabBarLabelStyle: {
