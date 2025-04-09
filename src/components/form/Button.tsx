@@ -4,7 +4,7 @@ import colors from '../../styles/colors';
 
 type ButtonProps = {
   title: string;
-  variant?: 'primary' | 'secondary' | 'disabled';
+  variant?: 'primary' | 'secondary' | 'disabled' | 'danger';
   onPress: () => void;
 };
 
@@ -14,6 +14,7 @@ const Button: React.FC<ButtonProps> = ({ title, variant = 'primary', onPress }) 
     variant === 'primary' && styles.primary,
     variant === 'secondary' && styles.secondary,
     variant === 'disabled' && styles.disabled,
+    variant === 'danger' && styles.danger,
   ];
 
   return (
@@ -48,6 +49,9 @@ const styles = StyleSheet.create({
   },
   disabled: {
     backgroundColor: colors.gray,
+  },
+  danger: {
+    backgroundColor: colors.red,
   },
   text: {
     fontSize: 16,
