@@ -8,9 +8,10 @@ import FavoriteScreen from "../screens/FavoriteScreen";
 import ScanScreen from "../screens/ScanScreen";
 import colors from "../styles/colors";
 import { BottomTabParamList } from "../types/navigation";
-import RecipeStackNavigator from "./RecipeStackNavigator";
 
-import ProfileStackNavigator from "./StackNavigator";
+import RecipeStackNavigator from "./RecipeStackNavigator";
+import ProfileStackNavigator from "./ProfileStackNavigator";
+
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
