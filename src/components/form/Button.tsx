@@ -4,12 +4,18 @@ import colors from "../../styles/colors";
 
 type ButtonProps = {
   title: string;
-  variant?: "primary" | "secondary" | "disabled";
+  variant?: 'primary' | 'secondary' | 'disabled' | 'danger';
   onPress: () => void;
 };
 
-const Button: React.FC<ButtonProps> = ({ title, variant = "primary", onPress }) => {
-  const buttonStyle = [styles.button, variant === "primary" && styles.primary, variant === "secondary" && styles.secondary, variant === "disabled" && styles.disabled];
+const Button: React.FC<ButtonProps> = ({ title, variant = 'primary', onPress }) => {
+  const buttonStyle = [
+    styles.button,
+    variant === 'primary' && styles.primary,
+    variant === 'secondary' && styles.secondary,
+    variant === 'disabled' && styles.disabled,
+    variant === 'danger' && styles.danger,
+  ];
 
   return (
     <TouchableOpacity style={buttonStyle} onPress={onPress} disabled={variant === "disabled"}>
@@ -35,6 +41,9 @@ const styles = StyleSheet.create({
   },
   disabled: {
     backgroundColor: colors.gray,
+  },
+  danger: {
+    backgroundColor: colors.red,
   },
   text: {
     fontSize: 16,

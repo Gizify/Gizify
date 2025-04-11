@@ -3,12 +3,14 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { AntDesign, MaterialIcons, Feather } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
-import ProfileScreen from "../screens/ProfileScreen";
+// import ProfileScreen from "../screens/ProfileScreen";
 import FavoriteScreen from "../screens/FavoriteScreen";
 import ScanScreen from "../screens/ScanScreen";
 import colors from "../styles/colors";
 import { BottomTabParamList } from "../types/navigation";
 import RecipeStackNavigator from "./RecipeStackNavigator";
+
+import ProfileStackNavigator from "./StackNavigator";
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -59,7 +61,7 @@ export default function AppNavigator() {
         />
         <Tab.Screen
           name="Profile"
-          component={ProfileScreen}
+          component={ProfileStackNavigator}
           options={{
             tabBarIcon: ({ color, size }: { color: string; size: number }) => <AntDesign name="user" size={size} color={color} />,
           }}
