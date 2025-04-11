@@ -37,7 +37,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
 
             <View style={styles.profileHeader}>
                 {/* Ganti ke .png jika tidak menggunakan SVG transformer */}
-                <Image source={require("../../assets/avatar/avm1.svg")} style={styles.avatar} />
+                <Image source={require("../../assets/avatar/avatar1.png")} style={styles.avatar} />
                 <Text style={styles.profileName}>Budi Wicaksono</Text>
                 <Text style={styles.profileEmail}>budiwicak@gmail.com</Text>
                 <TouchableOpacity
