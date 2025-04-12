@@ -11,7 +11,7 @@ import { BottomTabParamList } from "../types/navigation";
 
 import RecipeStackNavigator from "./RecipeStackNavigator";
 import ProfileStackNavigator from "./ProfileStackNavigator";
-
+import ExampleScreen from "../screens/Example";
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -62,7 +62,7 @@ export default function AppNavigator() {
         />
         <Tab.Screen
           name="Profile"
-          component={ProfileStackNavigator}
+          component={ExampleScreen}
           options={{
             tabBarIcon: ({ color, size }: { color: string; size: number }) => <AntDesign name="user" size={size} color={color} />,
           }}

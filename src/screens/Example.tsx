@@ -1,22 +1,42 @@
 import React, { useState } from "react";
-import { View, Button } from "react-native";
+import { View, Button, Text } from "react-native";
 import BottomSheet from "../components/modals/BottomSheet";
 
 const ExampleScreen = () => {
-  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const [showOptionModal, setShowOptionModal] = useState(false);
+  const [showDateModal, setShowDateModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const options = [
-    { id: "1", label: "Option 1" },
-    { id: "2", label: "Option 2" },
-    { id: "3", label: "Option 3" },
+    { id: "1", label: "Option A" },
+    { id: "2", label: "Option B" },
+    { id: "3", label: "Option C" },
   ];
+
+  const handleOptionSelect = (id: string) => {
+    setSelectedOption(id);
+    setShowOptionModal(false);
+  };
+
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
+    setShowDateModal(false);
+  };
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Button title="Open Bottom Sheet" onPress={() => setIsBottomSheetVisible(true)} />
+      <Button title="Show Option Modal" onPress={() => setShowOptionModal(true)} />
+      <Button title="Show Date Modal" onPress={() => setShowDateModal(true)} />
 
-      <BottomSheet visible={isBottomSheetVisible} title="Pilih Opsi" options={options} selectedOption={selectedOption} onSelect={(id) => setSelectedOption(id)} onClose={() => setIsBottomSheetVisible(false)} />
+      <Text>Selected Option: {selectedOption}</Text>
+      <Text>Selected Date: {selectedDate}</Text>
+
+      {/* Option BottomSheet */}
+      <BottomSheet visible={showOptionModal} title="Select Option" options={options} selectedOption={selectedOption} onSelect={handleOptionSelect} onClose={() => setShowOptionModal(false)} type="option" />
+
+      {/* Date BottomSheet */}
+      <BottomSheet visible={showDateModal} title="Select Date" options={[]} selectedOption={selectedDate} onSelect={handleDateSelect} onClose={() => setShowDateModal(false)} type="date" />
     </View>
   );
 };

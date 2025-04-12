@@ -1,11 +1,15 @@
+import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Calendar, DateData } from "react-native-calendars";
 import colors from "../../styles/colors";
 
 interface Option {
   id: string;
   label: string;
 }
+
+type BottomSheetType = "option" | "date";
 
 interface BottomSheetProps {
   visible: boolean;
@@ -14,9 +18,17 @@ interface BottomSheetProps {
   selectedOption: string | null;
   onSelect: (id: string) => void;
   onClose: () => void;
+  type: BottomSheetType;
 }
 
-const BottomSheet: React.FC<BottomSheetProps> = ({ visible, title, options, selectedOption, onSelect, onClose }) => {
+const BottomSheet: React.FC<BottomSheetProps> = ({ visible, title, options, selectedOption, onSelect, onClose, type }) => {
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split("T")[0]);
+
+  const handleDayPress = (day: DateData) => {
+    setSelectedDate(day.dateString);
+    onSelect(day.dateString);
+  };
+
   return (
     <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
       <View style={styles.overlay}>
@@ -31,12 +43,33 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ visible, title, options, sele
           <View style={styles.divider} />
 
           <View style={styles.optionsContainer}>
-            {options.map((option) => (
-              <TouchableOpacity key={option.id} style={styles.optionItem} onPress={() => onSelect(option.id)}>
-                <View style={[styles.radioButton, selectedOption === option.id && styles.radioButtonSelected]}>{selectedOption === option.id && <View style={styles.radioButtonInner} />}</View>
-                <Text style={styles.optionText}>{option.label}</Text>
-              </TouchableOpacity>
-            ))}
+            {type === "option" ? (
+              options.map((option) => (
+                <TouchableOpacity key={option.id} style={styles.optionItem} onPress={() => onSelect(option.id)}>
+                  <View style={[styles.radioButton, selectedOption === option.id && styles.radioButtonSelected]}>{selectedOption === option.id && <View style={styles.radioButtonInner} />}</View>
+                  <Text style={styles.optionText}>{option.label}</Text>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <View style={styles.calendarContainer}>
+                <Calendar
+                  current={selectedDate}
+                  onDayPress={handleDayPress}
+                  markedDates={{
+                    [selectedDate]: {
+                      selected: true,
+                      selectedColor: colors.primary,
+                    },
+                  }}
+                  theme={{
+                    calendarBackground: "white",
+                    selectedDayBackgroundColor: colors.primary,
+                    todayTextColor: colors.primary,
+                    arrowColor: colors.primary,
+                  }}
+                />
+              </View>
+            )}
           </View>
         </View>
       </View>
@@ -104,6 +137,9 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 6,
     backgroundColor: colors.primary,
+  },
+  calendarContainer: {
+    marginTop: 10,
   },
 });
 
