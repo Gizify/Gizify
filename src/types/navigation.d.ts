@@ -19,6 +19,14 @@ export type BottomTabParamList = {
 export type RecipeStackParamList = {
   RecipeList: undefined;
   RecipeDetail: { recipe: Recipe };
+  CreateResepAi: undefined;
+  ResultResepAi: {
+    resepRequest: {
+      ingredients: string[];
+      difficulty: string;
+      cuisine: string;
+    };
+  };
 };
 
 export type RecipeDetailScreenRouteProp = RouteProp<RecipeStackParamList, "RecipeDetail">;
