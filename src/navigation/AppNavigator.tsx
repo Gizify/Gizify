@@ -2,16 +2,22 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { AntDesign, MaterialIcons, Feather } from "@expo/vector-icons";
-import HomeScreen from "../screens/HomeScreen";
+
+// Main Navigator
 // import ProfileScreen from "../screens/ProfileScreen";
+import HomeScreen from "../screens/HomeScreen";
 import FavoriteScreen from "../screens/FavoriteScreen";
 import ScanScreen from "../screens/ScanScreen";
+
 import colors from "../styles/colors";
 import { BottomTabParamList } from "../types/navigation";
 
 import RecipeStackNavigator from "./RecipeStackNavigator";
 import ProfileStackNavigator from "./ProfileStackNavigator";
 import ExampleScreen from "../screens/Example";
+import VerifyDataScreen from "../screens/VerifyDataScreen";
+import LoginRegisterScreen from "../screens/LoginRegisterScreen";
+import StartScreen from "../screens/StartScreen";
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -62,7 +68,7 @@ export default function AppNavigator() {
         />
         <Tab.Screen
           name="Profile"
-          component={ExampleScreen}
+          component={LoginRegisterScreen}
           options={{
             tabBarIcon: ({ color, size }: { color: string; size: number }) => <AntDesign name="user" size={size} color={color} />,
           }}
