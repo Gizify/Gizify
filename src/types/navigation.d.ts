@@ -1,6 +1,13 @@
 import { RouteProp } from "@react-navigation/native";
 import { Recipe } from "./recipe";
 
+export type AuthStackParamList = {
+  LoginRegisterScreen: undefined;
+  StartScreen: undefined;
+  VerifyDataScreen: undefined;
+  HomeScreen: undefined;
+};
+
 export type BottomTabParamList = {
   Beranda: undefined;
   Resep: undefined;
