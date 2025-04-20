@@ -20,6 +20,7 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         token: action.payload.token,
+        user: action.payload.user,
         loading: false,
         error: null,
       };
@@ -36,7 +37,7 @@ const authReducer = (state = initialState, action) => {
     case "PROFILE_UPDATE_SUCCESS":
       return {
         ...state,
-        user: action.payload.user,
+        user: action.payload.mergedUser,
         loading: false,
         error: null,
       };

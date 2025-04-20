@@ -4,13 +4,14 @@ import { setItem } from "../../utils/asyncStorage";
 export const registerUser = (email, password, name) => async (dispatch) => {
   try {
     dispatch({ type: "REGISTER_REQUEST" });
-    const { token, message } = await authApi.register(email, password, name);
+    const { token, message, user } = await authApi.register(email, password, name);
 
     await setItem("authToken", token);
+    await setItem("userData", JSON.stringify(user));
 
     dispatch({
       type: "REGISTER_SUCCESS",
-      payload: { token, message },
+      payload: { token, message, user },
     });
   } catch (error) {
     console.log(error);
@@ -50,11 +51,16 @@ export const completeUserProfile = (profileData) => async (dispatch, getState) =
 
     const { user, message } = await authApi.completeProfile(profileData, token);
 
-    await setItem("userData", JSON.stringify(user));
+    const oldUserData = await getItem("userData");
+    const parsedOldUser = oldUserData ? JSON.parse(oldUserData) : {};
+
+    const mergedUser = { ...parsedOldUser, ...user };
+
+    await setItem("userData", JSON.stringify(mergedUser));
 
     dispatch({
       type: "PROFILE_UPDATE_SUCCESS",
-      payload: { user, message },
+      payload: { mergedUser, message },
     });
   } catch (error) {
     dispatch({

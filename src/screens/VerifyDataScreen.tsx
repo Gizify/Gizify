@@ -1,23 +1,16 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  Alert,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import BottomSheet from '../components/modals/BottomSheet';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image, Alert } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import BottomSheet from "../components/modals/BottomSheet";
+import { CommonActions, useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { completeUserProfile } from "../redux/actions/authAction";
 
 const VerifyDataScreen = () => {
   const navigation = useNavigation();
 
-  const [height, setHeight] = useState('');
-  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
 
   const [gender, setGender] = useState<string | null>(null);
   const [activity, setActivity] = useState<string | null>(null);
@@ -32,55 +25,73 @@ const VerifyDataScreen = () => {
   const [showPhotoModal, setShowPhotoModal] = useState(false);
 
   const genderOptions = [
-    { id: 'Laki-Laki', label: 'Laki-Laki' },
-    { id: 'Perempuan', label: 'Perempuan' },
+    { id: "Laki-Laki", label: "Laki-Laki" },
+    { id: "Perempuan", label: "Perempuan" },
   ];
 
   const activityOptions = [
-    { id: 'Ringan', label: 'Ringan' },
-    { id: 'Sedang', label: 'Sedang' },
-    { id: 'Berat', label: 'Berat' },
+    { id: "Ringan", label: "Ringan" },
+    { id: "Sedang", label: "Sedang" },
+    { id: "Berat", label: "Berat" },
   ];
 
   const goalOptions = [
-    { id: 'Menjaga Berat Badan', label: 'Menjaga Berat Badan' },
-    { id: 'Membangun massa otot', label: 'Membangun massa otot' },
+    { id: "Menjaga Berat Badan", label: "Menjaga Berat Badan" },
+    { id: "Membangun massa otot", label: "Membangun massa otot" },
   ];
 
   const photoOptions = [
-    { id: 'avatar', label: 'Pilih dari avatar yang tersedia' },
-    { id: 'gallery', label: 'Pilih dari galeri' },
-    { id: 'camera', label: 'Ambil foto' },
-    { id: 'hapus', label: 'Hapus gambar saat ini' },
+    { id: "avatar", label: "Pilih dari avatar yang tersedia" },
+    { id: "gallery", label: "Pilih dari galeri" },
+    { id: "camera", label: "Ambil foto" },
+    { id: "hapus", label: "Hapus gambar saat ini" },
   ];
 
-  const handleSubmit = () => {
-    if (!height || !weight || !gender || !activity || !goal || !birthdate || !photoOption) {
-      Alert.alert('Error', 'Mohon lengkapi semua data terlebih dahulu');
+  const handleSubmit = async () => {
+    if (!height || !weight || !gender || !activity || !goal || !birthdate) {
+      Alert.alert("Error", "Mohon lengkapi semua data terlebih dahulu");
       return;
     }
 
-    const formData = {
-      height,
-      weight,
-      gender,
-      activity,
-      goal,
-      birthdate,
-      photoOption,
-    };
+    try {
+      const token = await AsyncStorage.getItem("authToken");
 
-    console.log('Kirim ke backend:', formData);
+      if (!token) {
+        Alert.alert("Error", "Autentikasi gagal. Silakan login ulang.");
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "LoginRegisterScreen" }],
+          })
+        );
+        return;
+      }
 
-    // Contoh request ke backend:
-    // fetch('https://api.yourbackend.com/verify-data', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(formData),
-    // })
-    //   .then(res => res.json())
-    //   .then(data => console.log(data))
-    //   .catch(err => console.error(err));
+      const profileData = {
+        height: parseFloat(height),
+        weight: parseFloat(weight),
+        gender,
+        activity,
+        goal: "maintain",
+        birthdate,
+        photoOption,
+      };
+
+      const response = await completeUserProfile(profileData);
+
+      console.log("Profile berhasil dikirim:", response);
+
+      Alert.alert("Sukses", "Profil berhasil disimpan!");
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "Beranda" }],
+        })
+      );
+    } catch (error) {
+      console.error("Error submit profile:", error);
+      Alert.alert("Gagal", "Gagal menyimpan data. Silakan coba lagi.");
+    }
   };
 
   return (
@@ -93,44 +104,32 @@ const VerifyDataScreen = () => {
       </View>
 
       <TouchableOpacity style={styles.profileImage} onPress={() => setShowPhotoModal(true)}>
-        <Image source={require('../../assets/avatar/avatar1.png')} style={styles.image} />
+        <Image source={require("../../assets/avatar/avatar1.png")} style={styles.image} />
         <Text style={styles.imageText}>Tambahkan foto profile</Text>
       </TouchableOpacity>
 
       <View style={styles.row}>
-        <TextInput
-          placeholder="Tinggi Badan (cm) *"
-          style={styles.inputHalf}
-          keyboardType="numeric"
-          value={height}
-          onChangeText={setHeight}
-        />
-        <TextInput
-          placeholder="Berat Badan (kg) *"
-          style={styles.inputHalf}
-          keyboardType="numeric"
-          value={weight}
-          onChangeText={setWeight}
-        />
+        <TextInput placeholder="Tinggi Badan (cm) *" style={styles.inputHalf} keyboardType="numeric" value={height} onChangeText={setHeight} />
+        <TextInput placeholder="Berat Badan (kg) *" style={styles.inputHalf} keyboardType="numeric" value={weight} onChangeText={setWeight} />
       </View>
 
       <TouchableOpacity style={styles.select} onPress={() => setShowActivityModal(true)}>
-        <Text style={styles.selectText}>{activity || 'Aktivitas*'}</Text>
+        <Text style={styles.selectText}>{activity || "Aktivitas*"}</Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.select} onPress={() => setShowGenderModal(true)}>
-        <Text style={styles.selectText}>{gender || 'Jenis Kelamin*'}</Text>
+        <Text style={styles.selectText}>{gender || "Jenis Kelamin*"}</Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.select} onPress={() => setShowDateModal(true)}>
-        <Text style={styles.selectText}>{birthdate || 'Usia*'}</Text>
+        <Text style={styles.selectText}>{birthdate || "Usia*"}</Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.select} onPress={() => setShowGoalModal(true)}>
-        <Text style={styles.selectText}>{goal || 'Tujuan*'}</Text>
+        <Text style={styles.selectText}>{goal || "Tujuan*"}</Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
@@ -212,70 +211,70 @@ export default VerifyDataScreen;
 const styles = StyleSheet.create({
   container: {
     padding: 24,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 24,
   },
   header: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginLeft: 16,
   },
   profileImage: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 24,
   },
   image: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#F3F3F3',
+    backgroundColor: "#F3F3F3",
   },
   imageText: {
     marginTop: 8,
-    color: '#777',
+    color: "#777",
   },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   inputHalf: {
-    width: '48%',
+    width: "48%",
     borderWidth: 1,
-    borderColor: '#F3F3F3',
+    borderColor: "#F3F3F3",
     borderRadius: 12,
     padding: 12,
     marginBottom: 16,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: "#FAFAFA",
   },
   select: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderColor: '#F3F3F3',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderColor: "#F3F3F3",
     borderWidth: 1,
     padding: 16,
     borderRadius: 12,
     marginBottom: 16,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: "#FAFAFA",
   },
   selectText: {
-    color: '#777',
+    color: "#777",
     fontSize: 16,
   },
   button: {
     marginTop: 16,
-    backgroundColor: '#297872',
+    backgroundColor: "#297872",
     paddingVertical: 16,
     borderRadius: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
