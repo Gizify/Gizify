@@ -6,6 +6,7 @@ type ButtonProps = {
   title: string;
   variant?: 'primary' | 'secondary' | 'disabled' | 'danger';
   onPress: () => void;
+  icon?: React.ReactNode;
 };
 
 const Button: React.FC<ButtonProps> = ({ title, variant = 'primary', onPress }) => {
@@ -26,12 +27,12 @@ const Button: React.FC<ButtonProps> = ({ title, variant = 'primary', onPress }) 
 
 const styles = StyleSheet.create({
   button: {
-    width: "80%",
-    padding: 12,
+    width: "100%",
+    padding: 14,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 8,
+    flexDirection: "row",
   },
   primary: {
     backgroundColor: colors.primary,
