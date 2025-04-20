@@ -1,79 +1,22 @@
-import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { AntDesign, MaterialIcons, Feather } from "@expo/vector-icons";
-
-// Main Navigator
-// import ProfileScreen from "../screens/ProfileScreen";
-import HomeScreen from "../screens/HomeScreen";
-import FavoriteScreen from "../screens/FavoriteScreen";
-import ScanScreen from "../screens/ScanScreen";
-
-import colors from "../styles/colors";
-import { BottomTabParamList } from "../types/navigation";
-
-import RecipeStackNavigator from "./RecipeStackNavigator";
-import ProfileStackNavigator from "./ProfileStackNavigator";
-import ExampleScreen from "../screens/Example";
-import VerifyDataScreen from "../screens/VerifyDataScreen";
-import LoginRegisterScreen from "../screens/LoginRegisterScreen";
-import StartScreen from "../screens/StartScreen";
-
-const Tab = createBottomTabNavigator<BottomTabParamList>();
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import AuthStackNavigator from "./AuthStackNavigator";
+import MainTabNavigator from "./MainNavigator";
 
 export default function AppNavigator() {
-  return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarStyle: {
-            backgroundColor: colors.white,
-            height: 60,
-          },
-          tabBarLabelStyle: {
-            fontSize: 12,
-          },
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: "gray",
-        }}
-      >
-        <Tab.Screen
-          name="Beranda"
-          component={HomeScreen}
-          options={{
-            tabBarIcon: ({ color, size }: { color: string; size: number }) => <AntDesign name="home" size={size} color={color} />,
-          }}
-        />
-        <Tab.Screen
-          name="Resep"
-          component={RecipeStackNavigator}
-          options={{
-            tabBarIcon: ({ color, size }: { color: string; size: number }) => <MaterialIcons name="restaurant-menu" size={size} color={color} />,
-          }}
-        />
-        <Tab.Screen
-          name="Scan"
-          component={ScanScreen}
-          options={{
-            tabBarIcon: ({ color, size }: { color: string; size: number }) => <Feather name="camera" size={size} color={color} />,
-          }}
-        />
-        <Tab.Screen
-          name="Favorit"
-          component={FavoriteScreen}
-          options={{
-            tabBarIcon: ({ color, size }: { color: string; size: number }) => <AntDesign name="hearto" size={size} color={color} />,
-          }}
-        />
-        <Tab.Screen
-          name="Profile"
-          component={LoginRegisterScreen}
-          options={{
-            tabBarIcon: ({ color, size }: { color: string; size: number }) => <AntDesign name="user" size={size} color={color} />,
-          }}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      const token = await AsyncStorage.getItem("token");
+      setIsLoggedIn(!!token);
+    };
+
+    checkLogin();
+  }, []);
+
+  if (isLoggedIn === null) return null;
+
+  return <NavigationContainer>{isLoggedIn ? <MainTabNavigator /> : <AuthStackNavigator />}</NavigationContainer>;
 }
