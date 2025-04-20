@@ -1,25 +1,43 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ViewStyle } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
-interface ScreenHeaderProps {
+type Props = {
   title: string;
-}
+  showBack?: boolean;
+  style?: ViewStyle;
+};
 
-const ScreenHeader: React.FC<ScreenHeaderProps> = ({ title }) => {
+const ScreenHeader: React.FC<Props> = ({ title, showBack = false }) => {
+  const navigation = useNavigation();
+
   return (
-    <View style={styles.header}>
+    <View style={styles.container}>
+      {showBack && (
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#333" />
+        </TouchableOpacity>
+      )}
       <Text style={styles.title}>{title}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  header: {
+  container: {
+    paddingTop: 16,
+    paddingBottom: 12,
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
   },
+  backButton: {
+    marginRight: 12,
+  },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 20,
+    fontWeight: "700",
     color: "#333",
   },
 });
