@@ -50,8 +50,7 @@ const LoginRegisterScreen = () => {
         navigation.replace("HomeScreen");
       } else {
         await dispatch(registerUser(email, password, name) as any);
-        Alert.alert("Sukses", "Registrasi berhasil! Silakan login");
-        navigation.replace("VerifyDataScreen");
+        navigation.replace("StartScreen");
         setName("");
         setEmail("");
         setPassword("");
