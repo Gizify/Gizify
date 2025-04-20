@@ -7,6 +7,7 @@ type Props = {
   title: string;
   showBack?: boolean;
   style?: ViewStyle;
+  onBackPress?: () => void;
 };
 
 const ScreenHeader: React.FC<Props> = ({ title, showBack = false }) => {
