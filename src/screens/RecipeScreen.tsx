@@ -48,7 +48,7 @@ const RecipeScreen: React.FC = () => {
           <RecipeCard recipe={item} onToggleFavorite={toggleFavorite} />
         )}
       />
-      <View style={[globalStyles.floating, { alignItems: "center" }]}>
+      <View style={styles.floatingButton}>
         <Button title="Buat Dengan Ai" onPress={buatDenganAi} />
       </View>
     </View>
@@ -58,6 +58,14 @@ const RecipeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   listContainer: {
     paddingBottom: 16,
+  },
+  floatingButton: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
