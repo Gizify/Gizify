@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image,
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet from "../components/modals/BottomSheet";
 import { CommonActions, useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { completeUserProfile } from "../redux/actions/authAction";
+import { useSelector } from "react-redux";
 
 const VerifyDataScreen = () => {
   const navigation = useNavigation();
+  const token = useSelector((state: any) => state.auth.token);
 
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
@@ -54,8 +55,6 @@ const VerifyDataScreen = () => {
     }
 
     try {
-      const token = await AsyncStorage.getItem("authToken");
-
       if (!token) {
         Alert.alert("Error", "Autentikasi gagal. Silakan login ulang.");
         navigation.dispatch(
@@ -85,7 +84,7 @@ const VerifyDataScreen = () => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: "Beranda" }],
+          routes: [{ name: "MainTabs" }],
         })
       );
     } catch (error) {

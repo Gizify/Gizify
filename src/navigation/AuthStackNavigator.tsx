@@ -1,3 +1,4 @@
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginRegisterScreen from "../screens/LoginRegisterScreen";
 import HomeScreen from "../screens/HomeScreen";
@@ -13,9 +14,9 @@ export type AuthStackParamList = {
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
-const AuthStackNavigator = () => {
+const AuthStackNavigator = ({ initialScreen = "LoginRegisterScreen" }: { initialScreen?: keyof AuthStackParamList }) => {
   return (
-    <Stack.Navigator initialRouteName="LoginRegisterScreen" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName={initialScreen} screenOptions={{ headerShown: false }}>
       <Stack.Screen name="LoginRegisterScreen" component={LoginRegisterScreen} />
       <Stack.Screen name="StartScreen" component={StartScreen} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
