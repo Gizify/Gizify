@@ -12,10 +12,10 @@ export default function AppNavigator() {
   const token = useSelector((state: any) => state.auth.token);
   const user = useSelector((state: any) => state.auth.user);
 
-  const isUserComplete = user?.daily_nutrition_target && user?.height && user?.weight && user?.gender && user?.goal && user?.activity_level && user?.birthdate;
+  const isUserComplete = !!(user?.daily_nutrition_target && user?.height && user?.weight && user?.gender && user?.goal && user?.activity_level && user?.birthdate);
 
   useEffect(() => {
-    if (!navigationRef.isReady()) return;
+    if (!navigationRef.isReady() || !user) return;
 
     if (!token) {
       navigationRef.dispatch(
@@ -39,9 +39,9 @@ export default function AppNavigator() {
         })
       );
     }
-  }, [token, isUserComplete, navigationRef]);
+  }, [token, isUserComplete, navigationRef, user]);
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
         <RootStack.Screen name="AuthStack" component={AuthStackNavigator} />
         <RootStack.Screen name="StartFlow" component={AuthStackNavigator} initialParams={{ initialScreen: "StartScreen" }} />

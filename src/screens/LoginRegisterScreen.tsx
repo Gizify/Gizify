@@ -47,7 +47,6 @@ const LoginRegisterScreen = () => {
     try {
       if (isLogin) {
         await dispatch(loginUser(email, password) as any);
-        navigation.replace("HomeScreen");
       } else {
         await dispatch(registerUser(email, password, name) as any);
         navigation.replace("StartScreen");

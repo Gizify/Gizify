@@ -1,6 +1,6 @@
 const initialState = {
   token: null,
-  user: null,
+  user: { daily_nutrition_target: null, height: null, weight: null, gender: null, goal: null, activity_level: null, birthdate: null },
   loading: false,
   error: null,
 };

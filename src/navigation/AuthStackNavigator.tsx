@@ -1,5 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { RouteProp } from "@react-navigation/native";
 import LoginRegisterScreen from "../screens/LoginRegisterScreen";
 import HomeScreen from "../screens/HomeScreen";
 import VerifyDataScreen from "../screens/VerifyDataScreen";
@@ -14,7 +15,9 @@ export type AuthStackParamList = {
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
-const AuthStackNavigator = ({ initialScreen = "LoginRegisterScreen" }: { initialScreen?: keyof AuthStackParamList }) => {
+const AuthStackNavigator = ({ route }: { route: RouteProp<any, any> }) => {
+  const initialScreen = route?.params?.initialScreen || "LoginRegisterScreen";
+
   return (
     <Stack.Navigator initialRouteName={initialScreen} screenOptions={{ headerShown: false }}>
       <Stack.Screen name="LoginRegisterScreen" component={LoginRegisterScreen} />
