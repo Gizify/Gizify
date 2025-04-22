@@ -12,7 +12,7 @@ export const login = async (email, password) => {
 };
 
 export const completeProfile = async (profileData, token) => {
-  const response = await axios.post(`${API_URL}/auth/complete-profile`, profileData, {
+  const response = await axios.post(`${API_URL}/auth/complete-data`, profileData, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

@@ -4,6 +4,7 @@ import { AntDesign } from "@expo/vector-icons";
 import colors from "../styles/colors";
 import globalStyles from "../styles/globalStyles";
 import CustomPicker from "../components/common/CustomPicker";
+import { useSelector } from "react-redux";
 
 type NutritionBarProps = {
   label: string;
@@ -13,6 +14,9 @@ type NutritionBarProps = {
 };
 
 const NutritionBar: React.FC<NutritionBarProps> = ({ label, value, color, limit }) => {
+  const user = useSelector((state: any) => state.auth.user);
+
+  console.log(user);
   const percentage = (value / limit) * 100;
   return (
     <View>

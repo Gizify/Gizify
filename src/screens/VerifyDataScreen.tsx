@@ -4,11 +4,12 @@ import { Ionicons } from "@expo/vector-icons";
 import BottomSheet from "../components/modals/BottomSheet";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { completeUserProfile } from "../redux/actions/authAction";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const VerifyDataScreen = () => {
   const navigation = useNavigation();
-  const token = useSelector((state: any) => state.auth.token);
+  const dispatch = useDispatch();
+  const { token, loading, error } = useSelector((state: any) => state.auth);
 
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
@@ -76,17 +77,20 @@ const VerifyDataScreen = () => {
         photoOption,
       };
 
-      const response = await completeUserProfile(profileData);
+      try {
+        await dispatch(completeUserProfile(profileData) as any);
 
-      console.log("Profile berhasil dikirim:", response);
-
-      Alert.alert("Sukses", "Profil berhasil disimpan!");
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "MainTabs" }],
-        })
-      );
+        Alert.alert("Sukses", "Profil berhasil disimpan!");
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "MainTabs" }],
+          })
+        );
+      } catch (error) {
+        console.error("Error submit profile:", error);
+        Alert.alert("Gagal menyimpan data. Silakan coba lagi.");
+      }
     } catch (error) {
       console.error("Error submit profile:", error);
       Alert.alert("Gagal", "Gagal menyimpan data. Silakan coba lagi.");
