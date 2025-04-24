@@ -2,27 +2,47 @@ import React from "react";
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 
 interface ProductInfoProps {
-  productData: any;
+  productData: {
+    name: string;
+    brand: string;
+    nutrition: {
+      calories: number;
+      carbs: number;
+      protein: number;
+      fat: number;
+      sugar: number;
+      sodium: number;
+      fiber: number;
+    };
+    ingredients: string[];
+    packageSize: string;
+    servingSize: string;
+    image: string;
+  };
 }
 
 const ProductInfo: React.FC<ProductInfoProps> = ({ productData }) => (
   <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
-    {productData.image_url ? <Image source={{ uri: productData.image_url }} style={styles.productImage} /> : <Text style={styles.noImageText}>Gambar tidak tersedia</Text>}
+    {/* Gambar produk */}
+    {productData.image ? <Image source={{ uri: productData.image }} style={styles.productImage} /> : <Text style={styles.noImageText}>Gambar tidak tersedia</Text>}
 
-    <Text style={styles.productName}>{productData.product_name || "Nama produk tidak tersedia"}</Text>
+    {/* Nama produk */}
+    <Text style={styles.productName}>{productData.name || "Nama produk tidak tersedia"}</Text>
+    <Text style={styles.productBrand}>{productData.brand || "Merek tidak tersedia"}</Text>
 
+    {/* Informasi nutrisi */}
     <View style={styles.nutritionSection}>
       <Text style={styles.sectionTitle}>Informasi Nutrisi per 100g</Text>
       <View style={styles.separator} />
 
       {[
-        { label: "Energi", value: productData.nutriments?.["energy-kcal_100g"], unit: "kcal" },
-        { label: "Lemak", value: productData.nutriments?.["fat_100g"], unit: "g" },
-        { label: "Lemak Jenuh", value: productData.nutriments?.["saturated-fat_100g"], unit: "g" },
-        { label: "Karbohidrat", value: productData.nutriments?.["carbohydrates_100g"], unit: "g" },
-        { label: "Gula", value: productData.nutriments?.["sugars_100g"], unit: "g" },
-        { label: "Protein", value: productData.nutriments?.["proteins_100g"], unit: "g" },
-        { label: "Garam", value: productData.nutriments?.["salt_100g"], unit: "g" },
+        { label: "Kalori", value: productData.nutrition.calories, unit: "kcal" },
+        { label: "Karbohidrat", value: productData.nutrition.carbs, unit: "g" },
+        { label: "Protein", value: productData.nutrition.protein, unit: "g" },
+        { label: "Lemak", value: productData.nutrition.fat, unit: "g" },
+        { label: "Gula", value: productData.nutrition.sugar, unit: "g" },
+        { label: "Sodium", value: productData.nutrition.sodium, unit: "g" },
+        { label: "Serat", value: productData.nutrition.fiber, unit: "g" },
       ].map((nutrition, index) => (
         <View key={index} style={styles.nutritionRow}>
           <Text style={styles.nutritionLabel}>{nutrition.label}</Text>
@@ -31,7 +51,12 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ productData }) => (
       ))}
     </View>
 
-    <Text style={styles.productDetails}>Bahan: {productData.ingredients_text || "Tidak tersedia"}</Text>
+    {/* Bahan produk */}
+    <Text style={styles.productDetails}>Bahan: {Array.isArray(productData.ingredients) && productData.ingredients.length > 0 ? productData.ingredients.join(", ") : "Tidak tersedia"}</Text>
+
+    {/* Ukuran kemasan dan porsi */}
+    <Text style={styles.productDetails}>Ukuran Kemasan: {productData.packageSize}g</Text>
+    <Text style={styles.productDetails}>Ukuran Porsi: {productData.servingSize}g</Text>
   </ScrollView>
 );
 
@@ -43,6 +68,10 @@ const styles = StyleSheet.create({
   contentContainer: {
     alignItems: "center",
     padding: 16,
+  },
+  productBrand: {
+    fontSize: 16,
+    color: "#555",
   },
   productName: {
     fontSize: 22,
