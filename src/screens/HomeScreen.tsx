@@ -41,22 +41,30 @@ const HomeScreen = () => {
     { label: "User 2", value: "User 2", imageUrl: "https://static.vecteezy.com/system/resources/previews/019/896/012/non_2x/female-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" },
   ];
 
+  const formatDate = (date: any) => {
+    // Handle both string and Date objects
+    const d = new Date(date);
+
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
   const findNutritionByDate = (date: Date) => {
-    const targetDate = date.toISOString().split("T")[0];
+    const targetDate = formatDate(date);
 
     const nutritionData = user.nutrition_stats.find((item: any) => {
-      const itemDate = item.date.split("T")[0];
+      const itemDate = formatDate(item.date);
       return itemDate === targetDate;
     });
 
     return nutritionData || null;
   };
 
-  const formatDate = (date: any) => new Date(date).toISOString().split("T")[0];
-  const filteredLogs = user.meal_logs?.find((log: any) => formatDate(log.date) === formatDate(selectedDate));
-
   const nutritionData = findNutritionByDate(selectedDate);
-
+  const filteredLogs = user.meal_logs?.find((log: any) => formatDate(log.date) === formatDate(selectedDate));
   const changeDate = (days: number) => {
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() + days);

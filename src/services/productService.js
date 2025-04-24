@@ -6,7 +6,7 @@ export const fetchProductByBarcode = async (barcode) => {
     const response = await axios.get(`${API_URL}/products/scan/${barcode}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching product:", error.message);
+    console.error("Error fetching product:", error);
     throw error;
   }
 };

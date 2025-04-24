@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import axios from "axios";
@@ -12,6 +12,7 @@ import { BottomTabParamList } from "../types/navigation";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProduct } from "../redux/actions/productAction";
+import { addConsumptionFromBarcode } from "../redux/actions/authAction";
 
 type Props = NativeStackScreenProps<BottomTabParamList, "Scan">;
 
@@ -21,6 +22,11 @@ const ScanScreen: React.FC<Props> = ({ navigation }: Props) => {
   const [isStarted, setIsStarted] = useState<boolean>(false);
   const [scanned, setScanned] = useState<boolean>(false);
   const [cameraType, setCameraType] = useState<"front" | "back">("back");
+  const token = useSelector((state: any) => state.auth.token);
+
+  console.log(error);
+
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const handleBarCodeScanned = async ({ data }: { data: string }) => {
     setScanned(true);
@@ -69,7 +75,17 @@ const ScanScreen: React.FC<Props> = ({ navigation }: Props) => {
             </View>
             <View style={styles.productContainer}>{loading ? <Loading /> : error ? <Error message={error} /> : product ? <ProductInfo productData={product} /> : null}</View>
             <View style={styles.intakeButton}>
-              <Button title="Tambah Ke Konsumsi Harian" onPress={() => navigation.navigate("Beranda")} />
+              <Button
+                title="Tambah Ke Konsumsi Harian"
+                onPress={async () => {
+                  try {
+                    await dispatch(addConsumptionFromBarcode(product.barcode, 1, userTimeZone, token) as any);
+                    navigation.navigate("Beranda");
+                  } catch (err) {
+                    Alert.alert("Gagal", "Gagal menambahkan konsumsi harian.");
+                  }
+                }}
+              />
             </View>
           </View>
         )}
