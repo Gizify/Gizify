@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import axios from "axios";
@@ -10,49 +10,32 @@ import Error from "../components/layout/Error";
 import Button from "../components/form/Button";
 import { BottomTabParamList } from "../types/navigation";
 import { Ionicons } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProduct } from "../redux/actions/productAction";
+import { addConsumptionFromBarcode } from "../redux/actions/authAction";
 
 type Props = NativeStackScreenProps<BottomTabParamList, "Scan">;
 
 const ScanScreen: React.FC<Props> = ({ navigation }: Props) => {
-  const [permission, requestPermission] = useCameraPermissions();
+  const dispatch = useDispatch();
+  const { loading, product, error } = useSelector((state: any) => state.product);
   const [isStarted, setIsStarted] = useState<boolean>(false);
   const [scanned, setScanned] = useState<boolean>(false);
-  const [productData, setProductData] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
   const [cameraType, setCameraType] = useState<"front" | "back">("back");
+  const token = useSelector((state: any) => state.auth.token);
 
-  useEffect(() => {
-    if (!permission) {
-      requestPermission();
-    }
-  }, [permission]);
+  console.log(error);
+
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const handleBarCodeScanned = async ({ data }: { data: string }) => {
     setScanned(true);
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await axios.get(`https://world.openfoodfacts.org/api/v0/product/${data}.json`);
-      if (response.data.status === 1) {
-        setProductData(response.data.product);
-      } else {
-        setError("Produk tidak ditemukan dalam database.");
-        setProductData(null);
-      }
-    } catch (err) {
-      setError("Terjadi kesalahan saat mengambil data produk.");
-      setProductData(null);
-    } finally {
-      setLoading(false);
-    }
+    dispatch(fetchProduct(data) as any);
   };
 
   const handleBack = () => {
     if (scanned) {
       setScanned(false);
-      setProductData(null);
     } else if (isStarted) {
       setIsStarted(false);
     } else {
@@ -60,22 +43,17 @@ const ScanScreen: React.FC<Props> = ({ navigation }: Props) => {
     }
   };
 
-  if (!permission) return <Text>Meminta izin kamera...</Text>;
-  if (!permission.granted) return <PermissionDenied requestPermission={requestPermission} />;
-
   return (
     <View style={styles.container}>
-      {/* Main content */}
       <View style={styles.content}>
         {!isStarted && (
           <View style={styles.instructionContainer}>
             <Image source={require("../../assets/icons/barcode.png")} style={styles.logo} />
             <Text style={styles.instructionText}>Pastikan kode pemindai dalam kondisi jelas</Text>
-            <Button title="Mulai Scan" onPress={() => setIsStarted(true)}></Button>
+            <Button title="Mulai Scan" onPress={() => setIsStarted(true)} />
           </View>
         )}
 
-        {/* Kondisi: Kamera aktif untuk scan */}
         {isStarted && !scanned && (
           <CameraView
             style={styles.camera}
@@ -95,9 +73,19 @@ const ScanScreen: React.FC<Props> = ({ navigation }: Props) => {
               </TouchableOpacity>
               <Text style={styles.title}>Hasil Scan</Text>
             </View>
-            <View style={styles.productContainer}>{loading ? <Loading /> : error ? <Error message={error} /> : productData && <ProductInfo productData={productData} />}</View>
+            <View style={styles.productContainer}>{loading ? <Loading /> : error ? <Error message={error} /> : product ? <ProductInfo productData={product} /> : null}</View>
             <View style={styles.intakeButton}>
-              <Button title="Tambah Ke Konsumsi Harian" onPress={() => navigation.navigate("Beranda")} />
+              <Button
+                title="Tambah Ke Konsumsi Harian"
+                onPress={async () => {
+                  try {
+                    await dispatch(addConsumptionFromBarcode(product.barcode, 1, userTimeZone, token) as any);
+                    navigation.navigate("Beranda");
+                  } catch (err) {
+                    Alert.alert("Gagal", "Gagal menambahkan konsumsi harian.");
+                  }
+                }}
+              />
             </View>
           </View>
         )}
