@@ -1,5 +1,5 @@
 export type Recipe = {
-  id: string;
+  _id: string;
   title: string;
   image: string;
   isFavorite: boolean;

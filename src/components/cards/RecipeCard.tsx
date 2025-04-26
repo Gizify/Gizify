@@ -20,12 +20,12 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onToggleFavorite }) => 
   const navigation = useNavigation<RecipeCardNavigationProp>();
   return (
     <TouchableOpacity onPress={() => navigation.navigate("RecipeDetail", { recipe })} style={styles.recipeCard}>
-      <Image source={{ uri: recipe.image }} style={styles.recipeImage} />
+      <Image source={recipe.image ? { uri: recipe.image } : require("../../../assets/image/default_recipe.jpg")} style={styles.recipeImage} />
       <View style={styles.recipeInfo}>
         <Text style={styles.recipeTitle} numberOfLines={1}>
           {recipe.title}
         </Text>
-        <TouchableOpacity style={styles.favoriteButton} onPress={() => onToggleFavorite(recipe.id)}>
+        <TouchableOpacity style={styles.favoriteButton} onPress={() => onToggleFavorite(recipe._id)}>
           <MaterialIcons name={recipe.isFavorite ? "favorite" : "favorite-border"} size={20} color={recipe.isFavorite ? "red" : "#333"} />
         </TouchableOpacity>
       </View>

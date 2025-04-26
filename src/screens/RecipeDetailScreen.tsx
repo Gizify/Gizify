@@ -13,9 +13,11 @@ interface RecipeDetailScreenProps {
 }
 
 const RecipeDetailScreen: React.FC<RecipeDetailScreenProps> = ({ route }) => {
-  const { recipe } = route.params;
+  const { recipe } = route.params as any;
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState<"recipe" | "nutrition">("recipe");
+
+  const imageSource = recipe.image ? { uri: recipe.image } : require("../../assets/image/default_recipe.jpg");
 
   return (
     <View style={globalStyles.container}>
@@ -27,7 +29,7 @@ const RecipeDetailScreen: React.FC<RecipeDetailScreenProps> = ({ route }) => {
         <View style={{ width: 24 }} />
       </View>
 
-      <Image source={{ uri: recipe.image }} style={styles.recipeImage} />
+      <Image source={imageSource} style={styles.recipeImage} />
 
       <View style={styles.tabContainer}>
         <TouchableOpacity style={[styles.tabButton, activeTab === "recipe" && styles.activeTab]} onPress={() => setActiveTab("recipe")}>
@@ -47,7 +49,9 @@ const RecipeDetailScreen: React.FC<RecipeDetailScreenProps> = ({ route }) => {
               renderItem={({ item }) => (
                 <View style={styles.listItem}>
                   <Text style={styles.bullet}>•</Text>
-                  <Text style={styles.listText}>{item}</Text>
+                  <Text style={styles.listText}>
+                    {item.quantity} {item.unit} {item.name}
+                  </Text>
                 </View>
               )}
               keyExtractor={(item, index) => index.toString()}
@@ -69,33 +73,44 @@ const RecipeDetailScreen: React.FC<RecipeDetailScreenProps> = ({ route }) => {
           </>
         ) : (
           <View style={styles.nutritionContainer}>
-            <View style={styles.nutritionRow}>
-              <Text style={styles.nutritionLabel}>Kalori</Text>
-              <Text style={styles.nutritionValue}>{recipe.nutrition.calories} kkal</Text>
-            </View>
-            <View style={styles.nutritionRow}>
-              <Text style={styles.nutritionLabel}>Protein</Text>
-              <Text style={styles.nutritionValue}>{recipe.nutrition.protein} g</Text>
-            </View>
-            <View style={styles.nutritionRow}>
-              <Text style={styles.nutritionLabel}>Karbohidrat</Text>
-              <Text style={styles.nutritionValue}>{recipe.nutrition.carbs} g</Text>
-            </View>
-            <View style={styles.nutritionRow}>
-              <Text style={styles.nutritionLabel}>Lemak</Text>
-              <Text style={styles.nutritionValue}>{recipe.nutrition.fat} g</Text>
-            </View>
-            <View style={styles.nutritionRow}>
-              <Text style={styles.nutritionLabel}>Serat</Text>
-              <Text style={styles.nutritionValue}>{recipe.nutrition.fiber} g</Text>
-            </View>
+            {recipe.nutrition_info && (
+              <>
+                <View style={styles.nutritionRow}>
+                  <Text style={styles.nutritionLabel}>Kalori</Text>
+                  <Text style={styles.nutritionValue}>{recipe.nutrition_info.calories} kkal</Text>
+                </View>
+                <View style={styles.nutritionRow}>
+                  <Text style={styles.nutritionLabel}>Protein</Text>
+                  <Text style={styles.nutritionValue}>{recipe.nutrition_info.protein} g</Text>
+                </View>
+                <View style={styles.nutritionRow}>
+                  <Text style={styles.nutritionLabel}>Karbohidrat</Text>
+                  <Text style={styles.nutritionValue}>{recipe.nutrition_info.carbs} g</Text>
+                </View>
+                <View style={styles.nutritionRow}>
+                  <Text style={styles.nutritionLabel}>Lemak</Text>
+                  <Text style={styles.nutritionValue}>{recipe.nutrition_info.fat} g</Text>
+                </View>
+                <View style={styles.nutritionRow}>
+                  <Text style={styles.nutritionLabel}>Gula</Text>
+                  <Text style={styles.nutritionValue}>{recipe.nutrition_info.sugar} g</Text>
+                </View>
+                <View style={styles.nutritionRow}>
+                  <Text style={styles.nutritionLabel}>Natrium</Text>
+                  <Text style={styles.nutritionValue}>{recipe.nutrition_info.sodium} mg</Text>
+                </View>
+                <View style={styles.nutritionRow}>
+                  <Text style={styles.nutritionLabel}>Serat</Text>
+                  <Text style={styles.nutritionValue}>{recipe.nutrition_info.fiber} g</Text>
+                </View>
+              </>
+            )}
           </View>
         )}
       </ScrollView>
     </View>
   );
 };
-
 const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
