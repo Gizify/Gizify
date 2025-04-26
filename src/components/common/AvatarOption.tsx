@@ -1,8 +1,9 @@
-import React from 'react';
-import { Image, Pressable, StyleSheet } from 'react-native';
+import React from "react";
+import { Image, Pressable, StyleSheet } from "react-native";
+import { AvatarType } from "../../utils/avatars";
 
 interface AvatarOptionProps {
-    image: any;
+    image: AvatarType;
     selected: boolean;
     onPress: () => void;
     testID?: string;
@@ -22,18 +23,26 @@ const AvatarOption: React.FC<AvatarOptionProps> = ({ image, selected, onPress, t
 
 const styles = StyleSheet.create({
     container: {
-        borderRadius: 12,
-        borderWidth: 2,
-        borderColor: 'transparent',
-        padding: 4,
-        margin: 6,
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: "white",
+        justifyContent: "center",
+        alignItems: "center",
+        margin: 8,
+        elevation: 4,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
     },
     selected: {
-        borderColor: '#007BFF',
+        borderWidth: 2,
+        borderColor: "#007AFF",
     },
     image: {
-        width: 64,
-        height: 64,
+        width: 60,
+        height: 60,
     },
 });
 
