@@ -3,14 +3,13 @@ import * as authApi from "../../services/authService";
 export const registerUser = (email, password, name) => async (dispatch) => {
   try {
     dispatch({ type: "REGISTER_REQUEST" });
-    const { token, message, user } = await authApi.register(email, password, name);
+    const { token, message, user, expiredAt } = await authApi.register(email, password, name);
 
     dispatch({
       type: "REGISTER_SUCCESS",
-      payload: { token, message, user },
+      payload: { token, message, user, expiredAt },
     });
   } catch (error) {
-    console.log(error);
     dispatch({
       type: "REGISTER_FAILURE",
       payload: error.response?.message || "Registration failed",
@@ -22,11 +21,11 @@ export const registerUser = (email, password, name) => async (dispatch) => {
 export const loginUser = (email, password) => async (dispatch) => {
   try {
     dispatch({ type: "LOGIN_REQUEST" });
-    const { token, user, message } = await authApi.login(email, password);
+    const { token, user, message, expiredAt } = await authApi.login(email, password);
 
     dispatch({
       type: "LOGIN_SUCCESS",
-      payload: { token, user, message },
+      payload: { token, user, message, expiredAt },
     });
   } catch (error) {
     dispatch({

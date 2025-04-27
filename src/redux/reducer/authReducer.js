@@ -13,6 +13,7 @@ const initialState = {
     nutrition_stats: [],
     meal_logs: [],
   },
+  expiredAt: null,
   loading: false,
   error: null,
 };
@@ -31,10 +32,12 @@ const authReducer = (state = initialState, action) => {
 
     case "REGISTER_SUCCESS":
     case "LOGIN_SUCCESS":
+      const expiredAt = Date.now() + 6 * 24 * 60 * 60 * 1000;
       return {
         ...state,
         token: action.payload.token,
         user: action.payload.user,
+        expiredAt: expiredAt,
         loading: false,
         error: null,
       };
@@ -62,13 +65,11 @@ const authReducer = (state = initialState, action) => {
       let updatedMealLogs = [...state.user.meal_logs];
 
       if (existingMealLogIndex !== -1) {
-        // Jika sudah ada log hari ini, tambahkan ke array meals
         updatedMealLogs[existingMealLogIndex] = {
           ...updatedMealLogs[existingMealLogIndex],
           meals: [...updatedMealLogs[existingMealLogIndex].meals, ...todayMeals],
         };
       } else {
-        // Jika belum ada, tambahkan log baru
         updatedMealLogs.push({
           date: todayStats.date,
           meals: [...todayMeals],
