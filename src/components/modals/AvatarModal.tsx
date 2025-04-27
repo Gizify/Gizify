@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     Modal,
     View,
@@ -6,15 +6,20 @@ import {
     StyleSheet,
     FlatList,
     TouchableOpacity,
+    Pressable,
 } from "react-native";
 import AvatarOption from "../common/AvatarOption";
+import { AvatarType } from "../../utils/avatars";
+import { Ionicons } from "@expo/vector-icons";
 
 type AvatarModalProps = {
     visible: boolean;
-    selectedAvatar: any;
-    onSelect: (avatar: any) => void;
+    selectedAvatar: AvatarType | null;
+    onSelect: (avatar: AvatarType) => void;
     onClose: () => void;
-    avatarList: any[];
+    onConfirm: () => void;
+    avatarList: AvatarType[];
+    currentAvatar: AvatarType | null;
 };
 
 const AvatarModal: React.FC<AvatarModalProps> = ({
@@ -22,31 +27,64 @@ const AvatarModal: React.FC<AvatarModalProps> = ({
     selectedAvatar,
     onSelect,
     onClose,
+    onConfirm,
     avatarList,
+    currentAvatar,
 }) => {
+    const [canConfirm, setCanConfirm] = useState(false);
+
+    useEffect(() => {
+        setCanConfirm(selectedAvatar !== null && selectedAvatar !== currentAvatar);
+    }, [selectedAvatar, currentAvatar]);
+
     return (
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.overlay}>
                 <View style={styles.modalContainer}>
-                    <Text style={styles.title}>Pilih Avatar</Text>
 
+                    {/* Header */}
+                    <View style={styles.header}>
+                        <Text style={styles.title}>Pilih Avatar</Text>
+                        <Pressable onPress={onClose} style={styles.closeButton}>
+                            <Text style={styles.closeText}>X Kembali</Text>
+                        </Pressable>
+                    </View>
+
+                    {/* Avatar List */}
                     <FlatList
                         data={avatarList}
-                        numColumns={4}
+                        numColumns={3}
                         keyExtractor={(_, index) => index.toString()}
                         contentContainerStyle={styles.avatarGrid}
                         renderItem={({ item }) => (
-                            <AvatarOption
-                                image={item}
-                                selected={selectedAvatar === item} // Change isSelected to selected
-                                onPress={() => onSelect(item)} // Use onPress instead of onSelect
-                            />
+                            <TouchableOpacity
+                                style={styles.avatarWrapper}
+                                onPress={() => onSelect(item)}
+                                activeOpacity={0.8}
+                            >
+                                <AvatarOption
+                                    image={item}
+                                    selected={selectedAvatar === item}
+                                    onPress={() => onSelect(item)}
+                                />
+                                {selectedAvatar === item && (
+                                    <View style={styles.checkmarkOverlay}>
+                                        <Ionicons name="checkmark-circle" size={36} color="#2C7A7B" />
+                                    </View>
+                                )}
+                            </TouchableOpacity>
                         )}
                     />
 
-                    <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                        <Text style={styles.closeText}>Tutup</Text>
+                    {/* Button Pilih */}
+                    <TouchableOpacity
+                        style={[styles.selectButton, !canConfirm && styles.selectButtonDisabled]}
+                        onPress={onConfirm}
+                        disabled={!canConfirm}
+                    >
+                        <Text style={styles.selectButtonText}>Pilih</Text>
                     </TouchableOpacity>
+
                 </View>
             </View>
         </Modal>
@@ -56,36 +94,64 @@ const AvatarModal: React.FC<AvatarModalProps> = ({
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
+        justifyContent: "flex-end",
         backgroundColor: "#00000088",
-        justifyContent: "center",
-        alignItems: "center",
     },
     modalContainer: {
         backgroundColor: "white",
-        borderRadius: 16,
-        padding: 16,
-        width: "90%",
-        maxHeight: "80%",
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        paddingTop: 16,
+        paddingBottom: 32,
+        paddingHorizontal: 24,
+        maxHeight: "90%",
+    },
+    header: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 16,
     },
     title: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: "bold",
-        marginBottom: 16,
-        textAlign: "center",
-    },
-    avatarGrid: {
-        justifyContent: "center",
-        alignItems: "center",
+        color: "#333",
     },
     closeButton: {
-        marginTop: 16,
-        backgroundColor: "#007AFF",
-        padding: 10,
-        borderRadius: 8,
-        alignSelf: "center",
+        padding: 8,
     },
     closeText: {
+        fontSize: 16,
+        color: "#666",
+    },
+    avatarGrid: {
+        alignItems: "center",
+        paddingBottom: 24,
+    },
+    avatarWrapper: {
+        position: "relative",
+        margin: 8,
+    },
+    checkmarkOverlay: {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: [{ translateX: -18 }, { translateY: -18 }],
+        zIndex: 1,
+    },
+    selectButton: {
+        backgroundColor: "#2C7A7B",
+        paddingVertical: 16,
+        borderRadius: 12,
+        alignItems: "center",
+        marginTop: 8,
+    },
+    selectButtonDisabled: {
+        backgroundColor: "#B2B2B2",
+    },
+    selectButtonText: {
         color: "white",
+        fontSize: 18,
         fontWeight: "bold",
     },
 });

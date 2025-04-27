@@ -1,4 +1,6 @@
-export const avatarList = [
+import { ImageSourcePropType } from "react-native";
+
+export const avatarList: ImageSourcePropType[] = [
     require("../../assets/avatar/avatar1.png"),
     require("../../assets/avatar/avatar2.png"),
     require("../../assets/avatar/avatar3.png"),
@@ -7,4 +9,4 @@ export const avatarList = [
     require("../../assets/avatar/avatar6.png"),
 ];
 
-export type AvatarType = typeof avatarList[number];
+export type AvatarType = ImageSourcePropType;
