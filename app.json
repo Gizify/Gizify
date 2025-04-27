@@ -8,7 +8,7 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/logo/Logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -25,12 +25,19 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo/Logo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO", "android.permission.INTERNET"],
+      "package": "com.farach.Gizify"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d90972e9-2e4b-486d-ad50-f02747e57198"
+      }
     }
   }
 }

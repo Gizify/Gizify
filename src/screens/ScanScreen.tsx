@@ -23,8 +23,20 @@ const ScanScreen: React.FC<Props> = ({ navigation }: Props) => {
   const [scanned, setScanned] = useState<boolean>(false);
   const [cameraType, setCameraType] = useState<"front" | "back">("back");
   const token = useSelector((state: any) => state.auth.token);
+  const [permission, requestPermission] = useCameraPermissions();
 
-  console.log(error);
+  const handleStartScan = async () => {
+    if (permission?.granted) {
+      setIsStarted(true);
+    } else {
+      const permissionResult = await requestPermission();
+      if (permissionResult.granted) {
+        setIsStarted(true);
+      } else {
+        Alert.alert("Izin Kamera Diperlukan", "Aplikasi membutuhkan izin kamera untuk melakukan scan barcode.");
+      }
+    }
+  };
 
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -50,7 +62,7 @@ const ScanScreen: React.FC<Props> = ({ navigation }: Props) => {
           <View style={styles.instructionContainer}>
             <Image source={require("../../assets/icons/barcode.png")} style={styles.logo} />
             <Text style={styles.instructionText}>Pastikan kode pemindai dalam kondisi jelas</Text>
-            <Button title="Mulai Scan" onPress={() => setIsStarted(true)} />
+            <Button title="Mulai Scan" onPress={handleStartScan} />
           </View>
         )}
 

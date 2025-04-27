@@ -14,7 +14,7 @@ const FavoriteScreen: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>(INITIAL_RECIPES);
 
   const toggleFavorite = (id: string) => {
-    setRecipes(recipes.map((recipe) => (recipe.id === id ? { ...recipe, isFavorite: !recipe.isFavorite } : recipe)));
+    setRecipes(recipes.map((recipe) => (recipe._id === id ? { ...recipe, isFavorite: !recipe.isFavorite } : recipe)));
   };
 
   const filteredRecipes = recipes.filter((recipe) => recipe.isFavorite && recipe.title.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -29,7 +29,7 @@ const FavoriteScreen: React.FC = () => {
           <Text style={styles.viewRecipeText}>Lihat Resep</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.favoriteButton} onPress={() => toggleFavorite(item.id)}>
+      <TouchableOpacity style={styles.favoriteButton} onPress={() => toggleFavorite(item._id)}>
         <Ionicons name={item.isFavorite ? "heart" : "heart-outline"} size={24} color={item.isFavorite ? "red" : "gray"} />
       </TouchableOpacity>
     </View>
@@ -48,7 +48,7 @@ const FavoriteScreen: React.FC = () => {
           <Text style={{ color: active === "ai" ? colors.white : "black" }}>Buatan AI</Text>
         </TouchableOpacity>
       </View>
-      <FlatList data={filteredRecipes} renderItem={renderRecipeItem} keyExtractor={(item) => item.id} contentContainerStyle={styles.listContainer} showsVerticalScrollIndicator={false} />
+      <FlatList data={filteredRecipes} renderItem={renderRecipeItem} keyExtractor={(item) => item._id} contentContainerStyle={styles.listContainer} showsVerticalScrollIndicator={false} />
     </View>
   );
 };

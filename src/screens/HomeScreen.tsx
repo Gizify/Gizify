@@ -3,7 +3,6 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import colors from "../styles/colors";
 import globalStyles from "../styles/globalStyles";
-import CustomPicker from "../components/common/CustomPicker";
 import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
 
