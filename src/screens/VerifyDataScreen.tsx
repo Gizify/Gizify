@@ -5,6 +5,9 @@ import BottomSheet from "../components/modals/BottomSheet";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { completeUserProfile } from "../redux/actions/authAction";
 import { useDispatch, useSelector } from "react-redux";
+import { ImageSourcePropType } from 'react-native';
+import { avatarList } from "../utils/avatars"; // << tambah ini
+import AvatarModal from "../components/modals/AvatarModal";
 
 const VerifyDataScreen = () => {
   const navigation = useNavigation();
@@ -13,18 +16,21 @@ const VerifyDataScreen = () => {
 
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
-
   const [gender, setGender] = useState<string | null>(null);
   const [activity, setActivity] = useState<string | null>(null);
   const [goal, setGoal] = useState<string | null>(null);
   const [birthdate, setBirthdate] = useState<string | null>(null);
-  const [photoOption, setPhotoOption] = useState<string | null>(null);
+  const [photoOption, setPhotoOption] = useState<ImageSourcePropType | null>(null);
 
   const [showGenderModal, setShowGenderModal] = useState(false);
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [showDateModal, setShowDateModal] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
+
+  const [modalVisible, setModalVisible] = useState(false); // << tambah ini
+  const [selectedAvatar, setSelectedAvatar] = useState<ImageSourcePropType | null>(null); // << tambah ini
+  const [currentAvatar, setCurrentAvatar] = useState<ImageSourcePropType | null>(null); // Track current avatar
 
   const genderOptions = [
     { id: "Laki-Laki", label: "Laki-Laki" },
@@ -49,6 +55,29 @@ const VerifyDataScreen = () => {
     { id: "hapus", label: "Hapus gambar saat ini" },
   ];
 
+  const handleSelectAvatar = (avatar: ImageSourcePropType) => {
+    setSelectedAvatar(avatar);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
+  const handleConfirmAvatar = () => {
+    if (selectedAvatar) {
+      setCurrentAvatar(selectedAvatar); // Update current avatar
+      setPhotoOption(selectedAvatar);  // Set as photo option
+    }
+    setModalVisible(false);
+  };
+
+  const handleSelectPhotoOption = (value: string) => {
+    if (value === "avatar") {
+      setModalVisible(true);
+    }
+    setShowPhotoModal(false);
+  };
+
   const handleSubmit = async () => {
     if (!height || !weight || !gender || !activity || !goal || !birthdate) {
       Alert.alert("Error", "Mohon lengkapi semua data terlebih dahulu");
@@ -72,30 +101,28 @@ const VerifyDataScreen = () => {
         weight: parseFloat(weight),
         gender,
         activity,
-        goal: "maintain",
+        goal,
         birthdate,
         photoOption,
       };
 
-      try {
-        await dispatch(completeUserProfile(profileData) as any);
+      await dispatch(completeUserProfile(profileData) as any);
 
-        Alert.alert("Sukses", "Profil berhasil disimpan!");
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: "MainTabs" }],
-          })
-        );
-      } catch (error) {
-        console.error("Error submit profile:", error);
-        Alert.alert("Gagal menyimpan data. Silakan coba lagi.");
-      }
+      Alert.alert("Sukses", "Profil berhasil disimpan!");
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "MainTabs" }],
+        })
+      );
     } catch (error) {
       console.error("Error submit profile:", error);
       Alert.alert("Gagal", "Gagal menyimpan data. Silakan coba lagi.");
     }
   };
+
+  // Check if the button should be enabled
+  const isButtonDisabled = !selectedAvatar || selectedAvatar === currentAvatar;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -106,10 +133,17 @@ const VerifyDataScreen = () => {
         <Text style={styles.header}>Isi Data Diri</Text>
       </View>
 
-      <TouchableOpacity style={styles.profileImage} onPress={() => setShowPhotoModal(true)}>
-        <Image source={require("../../assets/avatar/avatar1.png")} style={styles.image} />
-        <Text style={styles.imageText}>Tambahkan foto profile</Text>
-      </TouchableOpacity>
+      {/* Foto Profile */}
+      <View style={styles.profileImage}>
+        {photoOption ? (
+          <Image source={photoOption} style={styles.image} />
+        ) : (
+          <Image source={require("../../assets/avatar/avatar1.png")} style={styles.image} />
+        )}
+        <TouchableOpacity onPress={() => setShowPhotoModal(true)}>
+          <Text style={styles.imageText}>Tambahkan foto profile</Text>
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.row}>
         <TextInput placeholder="Tinggi Badan (cm) *" style={styles.inputHalf} keyboardType="numeric" value={height} onChangeText={setHeight} />
@@ -136,9 +170,24 @@ const VerifyDataScreen = () => {
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+      <TouchableOpacity
+        style={[styles.button, { opacity: isButtonDisabled ? 0.5 : 1 }]}
+        onPress={handleSubmit}
+        disabled={isButtonDisabled}
+      >
         <Text style={styles.buttonText}>Lanjut</Text>
       </TouchableOpacity>
+
+      {/* Avatar Modal */}
+      <AvatarModal
+        visible={modalVisible}
+        selectedAvatar={selectedAvatar}
+        onSelect={handleSelectAvatar}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmAvatar}
+        avatarList={avatarList}
+        currentAvatar={selectedAvatar}
+      />
 
       {/* BottomSheet Modals */}
       <BottomSheet
@@ -197,11 +246,8 @@ const VerifyDataScreen = () => {
         visible={showPhotoModal}
         title="Foto profile"
         options={photoOptions}
-        selectedOption={photoOption}
-        onSelect={(value) => {
-          setPhotoOption(value);
-          setShowPhotoModal(false);
-        }}
+        selectedOption={null}
+        onSelect={handleSelectPhotoOption}
         onClose={() => setShowPhotoModal(false)}
         type="option"
       />

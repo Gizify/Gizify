@@ -46,9 +46,18 @@ const AvatarModal: React.FC<AvatarModalProps> = ({
                     <View style={styles.header}>
                         <Text style={styles.title}>Pilih Avatar</Text>
                         <Pressable onPress={onClose} style={styles.closeButton}>
-                            <Text style={styles.closeText}>X Kembali</Text>
+                            <Ionicons
+                                name="close"
+                                size={20} // Reduced icon size
+                                color="#333"
+                                style={styles.icon}
+                            />
+                            <Text style={[styles.closeText, styles.iconText]}>Kembali</Text>
                         </Pressable>
                     </View>
+
+                    {/* Separator Line */}
+                    <View style={styles.separator} />
 
                     {/* Avatar List */}
                     <FlatList
@@ -69,7 +78,11 @@ const AvatarModal: React.FC<AvatarModalProps> = ({
                                 />
                                 {selectedAvatar === item && (
                                     <View style={styles.checkmarkOverlay}>
-                                        <Ionicons name="checkmark-circle" size={36} color="#2C7A7B" />
+                                        <Ionicons
+                                            name="checkmark-circle"
+                                            size={36}
+                                            color="#2C7A7B"
+                                        />
                                     </View>
                                 )}
                             </TouchableOpacity>
@@ -118,11 +131,29 @@ const styles = StyleSheet.create({
         color: "#333",
     },
     closeButton: {
-        padding: 8,
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 4,
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 8,
+        justifyContent: "center",
+    },
+    icon: {
+        marginRight: 4,
     },
     closeText: {
         fontSize: 16,
         color: "#666",
+    },
+    iconText: {
+        fontSize: 16,
+        color: "#666",
+    },
+    separator: {
+        height: 1,
+        backgroundColor: "#ddd",
+        marginVertical: 5,
     },
     avatarGrid: {
         alignItems: "center",

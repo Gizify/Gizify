@@ -21,7 +21,7 @@ export default function AppNavigator() {
       navigationRef.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: "AuthStack" }],
+          routes: [{ name: "MainTabs" }],
         })
       );
     } else if (!isUserComplete) {
