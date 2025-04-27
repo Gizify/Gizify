@@ -1,44 +1,58 @@
 import React, { useState } from "react";
-import { View, Button, Text } from "react-native";
-import BottomSheet from "../components/modals/BottomSheet";
+import { View, StyleSheet } from "react-native";
+import AvatarModal from "../components/modals/AvatarModal";
+import Button from "../components/form/Button";
+import { avatarList, AvatarType } from "../utils/avatars";
 
-const ExampleScreen = () => {
-  const [showOptionModal, setShowOptionModal] = useState(false);
-  const [showDateModal, setShowDateModal] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+const ExampleScreen: React.FC = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState<AvatarType | null>(null);
+  const [currentAvatar, setCurrentAvatar] = useState<AvatarType | null>(null);
 
-  const options = [
-    { id: "1", label: "Option A" },
-    { id: "2", label: "Option B" },
-    { id: "3", label: "Option C" },
-  ];
-
-  const handleOptionSelect = (id: string) => {
-    setSelectedOption(id);
-    setShowOptionModal(false);
+  const handleOpenModal = () => {
+    setModalVisible(true);
   };
 
-  const handleDateSelect = (date: string) => {
-    setSelectedDate(date);
-    setShowDateModal(false);
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setSelectedAvatar(currentAvatar); // Reset selectedAvatar ke yang sedang aktif
+  };
+
+  const handleSelectAvatar = (avatar: AvatarType) => {
+    setSelectedAvatar(avatar);
+  };
+
+  const handleConfirm = () => {
+    if (selectedAvatar) {
+      console.log("Avatar dipilih:", selectedAvatar);
+      setCurrentAvatar(selectedAvatar);
+    }
+    setModalVisible(false);
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Button title="Show Option Modal" onPress={() => setShowOptionModal(true)} />
-      <Button title="Show Date Modal" onPress={() => setShowDateModal(true)} />
+    <View style={styles.container}>
+      <Button title="Pilih Avatar" onPress={handleOpenModal} />
 
-      <Text>Selected Option: {selectedOption}</Text>
-      <Text>Selected Date: {selectedDate}</Text>
-
-      {/* Option BottomSheet */}
-      <BottomSheet visible={showOptionModal} title="Select Option" options={options} selectedOption={selectedOption} onSelect={handleOptionSelect} onClose={() => setShowOptionModal(false)} type="option" />
-
-      {/* Date BottomSheet */}
-      <BottomSheet visible={showDateModal} title="Select Date" options={[]} selectedOption={selectedDate} onSelect={handleDateSelect} onClose={() => setShowDateModal(false)} type="date" />
+      <AvatarModal
+        visible={modalVisible}
+        selectedAvatar={selectedAvatar}
+        onSelect={handleSelectAvatar}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirm}
+        avatarList={avatarList}
+        currentAvatar={currentAvatar}
+      />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 export default ExampleScreen;

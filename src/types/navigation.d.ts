@@ -1,6 +1,7 @@
 import { RouteProp } from "@react-navigation/native";
 import { Recipe } from "./recipe";
 
+// Auth Stack
 export type AuthStackParamList = {
   LoginRegisterScreen: undefined;
   StartScreen: undefined;
@@ -8,6 +9,7 @@ export type AuthStackParamList = {
   HomeScreen: undefined;
 };
 
+// Bottom Tabs
 export type BottomTabParamList = {
   Beranda: undefined;
   Resep: undefined;
@@ -16,6 +18,7 @@ export type BottomTabParamList = {
   Profile: undefined;
 };
 
+// Recipe Stack
 export type RecipeStackParamList = {
   RecipeList: undefined;
   RecipeDetail: { recipe: Recipe };
@@ -28,5 +31,13 @@ export type RecipeStackParamList = {
     };
   };
 };
+
+// Profile Stack
+export type ProfileStackParamList = {
+  ProfileScreen: undefined;
+  DetailProfileScreen: undefined;
+  EditProfileScreen: undefined;
+};
+
 
 export type RecipeDetailScreenRouteProp = RouteProp<RecipeStackParamList, "RecipeDetail">;
