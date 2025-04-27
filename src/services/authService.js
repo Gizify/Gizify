@@ -20,6 +20,19 @@ export const completeProfile = async (profileData, token) => {
   return response.data;
 };
 
+export const addConsumption = async ({ source, source_id, portion_size = 1, userTimeZone = "Asia/Jakarta", token }) => {
+  const response = await axios.post(
+    `${API_URL}/user/consumption`,
+    { source, source_id, portion_size, userTimeZone },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};
+
 export const addConsumptionFromBarcode = async ({ barcode, portion_size = 1, userTimeZone = "Asia/Jakarta", token }) => {
   const response = await axios.post(
     `${API_URL}/user/add-consumption`,
