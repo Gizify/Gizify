@@ -13,8 +13,8 @@ const FavoriteScreen: React.FC = () => {
   const [active, setActive] = useState("resep");
   const [recipes, setRecipes] = useState<Recipe[]>(INITIAL_RECIPES);
 
-  const toggleFavorite = (id: string) => {
-    setRecipes(recipes.map((recipe) => (recipe._id === id ? { ...recipe, isFavorite: !recipe.isFavorite } : recipe)));
+  const toggleFavorite = (_id: string) => {
+    setRecipes(recipes.map((recipe) => (recipe._id === _id ? { ...recipe, isFavorite: !recipe.isFavorite } : recipe)));
   };
 
   const filteredRecipes = recipes.filter((recipe) => recipe.isFavorite && recipe.title.toLowerCase().includes(searchQuery.toLowerCase()));
