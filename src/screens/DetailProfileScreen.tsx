@@ -2,17 +2,11 @@ import React from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 
 const DetailProfileScreen = () => {
   const navigation = useNavigation();
-
-  const user = {
-    name: "Budi wicaksono",
-    email: "budiwicak@gmail.com",
-    goal: "Menjaga berat badan",
-    weight: "80kg",
-    height: "170cm",
-  };
+  const user = useSelector((state: any) => state.auth.user);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 30 }}>
@@ -38,8 +32,10 @@ const DetailProfileScreen = () => {
         <ProfileField label="Nama" value={user.name} />
         <ProfileField label="Email" value={user.email} />
         <ProfileField label="Tujuan" value={user.goal} />
-        <ProfileField label="Berat badan" value={user.weight} />
-        <ProfileField label="Tinggi badan" value={user.height} />
+        <ProfileField label="Berat badan" value={`${user.weight} kg`} />
+        <ProfileField label="Tinggi badan" value={`${user.height} cm`} />
+        <ProfileField label="Level Aktivitas" value={user.activity_level} />
+        <ProfileField label="Tanggal Lahir" value={user.birthdate} />
       </View>
     </ScrollView>
   );

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "rea
 import Button from "../components/form/Button";
 import PopupModal from "../components/modals/PopupModal";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../redux/actions/authAction";
 
 // Definisikan tipe untuk Stack Navigator
@@ -25,6 +25,7 @@ interface ProfileScreenProps {
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
   const [isLogoutVisible, setLogoutVisible] = useState(false);
   const dispatch = useDispatch();
+  const user = useSelector((state: any) => state.auth.user);
   const handleLogout = () => {
     setLogoutVisible(true);
   };
@@ -41,8 +42,8 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
       <View style={styles.profileHeader}>
         {/* Ganti ke .png jika tidak menggunakan SVG transformer */}
         <Image source={require("../../assets/avatar/avatar1.png")} style={styles.avatar} />
-        <Text style={styles.profileName}>Budi Wicaksono</Text>
-        <Text style={styles.profileEmail}>budiwicak@gmail.com</Text>
+        <Text style={styles.profileName}>{user.name}</Text>
+        <Text style={styles.profileEmail}>{user.email}</Text>
         <TouchableOpacity style={styles.editProfileButton} onPress={() => navigation.navigate("EditProfileScreen")}>
           <Text style={styles.editProfileText}>Edit Profile</Text>
         </TouchableOpacity>
