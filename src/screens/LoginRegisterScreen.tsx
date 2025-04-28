@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Image, View, Text, TextInput, TouchableOpacity, StyleSheet, Pressable, Alert, ActivityIndicator } from "react-native";
+import { Image, View, Text, TextInput, TouchableOpacity, StyleSheet, Pressable, Alert, ActivityIndicator, Linking } from "react-native";
 import Animated, { FadeInDown, FadeOutUp, Layout, Easing } from "react-native-reanimated";
 import Checkbox from "expo-checkbox";
 import { useNavigation } from "@react-navigation/native";
@@ -23,16 +23,19 @@ const LoginRegisterScreen = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = async () => {
-    if (!agree) {
-      return Alert.alert("Error", "Anda harus menyetujui syarat dan ketentuan");
-    }
+  const handleLinkPress = () => {
+    Linking.openURL("https://kebijakan-privasi-gizify.vercel.app/");
+  };
 
+  const handleSubmit = async () => {
     if (!email || !password) {
       return Alert.alert("Error", "Email dan password harus diisi");
     }
 
     if (!isLogin) {
+      if (!agree) {
+        return Alert.alert("Error", "Anda harus menyetujui syarat dan ketentuan");
+      }
       if (!name) {
         return Alert.alert("Error", "Nama lengkap harus diisi");
       }
@@ -82,12 +85,17 @@ const LoginRegisterScreen = () => {
         <TextInput placeholder="Masukkan Password" secureTextEntry style={styles.input} value={password} onChangeText={setPassword} editable={!loading} />
         {!isLogin && <TextInput placeholder="Konfirmasi Password" secureTextEntry style={styles.input} value={confirmPassword} onChangeText={setConfirmPassword} editable={!loading} />}
 
-        <View style={styles.checkboxContainer}>
-          <Checkbox value={agree} onValueChange={setAgree} color="#00aaff" disabled={loading} />
-          <Text style={styles.agreeText}>
-            Saya telah membaca dan menyetujui <Text style={styles.link}>syarat dan ketentuan</Text> dan <Text style={styles.link}>kebijakan privasi</Text>
-          </Text>
-        </View>
+        {!isLogin && (
+          <View style={styles.checkboxContainer}>
+            <Checkbox value={agree} onValueChange={setAgree} color="#00aaff" disabled={loading} />
+            <Text style={styles.agreeText}>
+              Saya telah membaca dan menyetujui
+              <TouchableOpacity onPress={handleLinkPress}>
+                <Text style={styles.link}>syarat dan kebijakan privasi</Text>
+              </TouchableOpacity>
+            </Text>
+          </View>
+        )}
 
         {/* Submit Button */}
         <Pressable style={[styles.submitBtn, loading && styles.disabledBtn]} onPress={handleSubmit} disabled={loading}>

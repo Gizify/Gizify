@@ -12,7 +12,7 @@ import { BottomTabParamList } from "../types/navigation";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProduct } from "../redux/actions/productAction";
-import { addConsumptionFromBarcode } from "../redux/actions/authAction";
+import { addConsumption, addConsumptionFromBarcode } from "../redux/actions/authAction";
 
 type Props = NativeStackScreenProps<BottomTabParamList, "Scan">;
 
@@ -91,7 +91,7 @@ const ScanScreen: React.FC<Props> = ({ navigation }: Props) => {
                 title="Tambah Ke Konsumsi Harian"
                 onPress={async () => {
                   try {
-                    await dispatch(addConsumptionFromBarcode(product.barcode, 1, userTimeZone, token) as any);
+                    await dispatch(addConsumption("barcode", product.barcode, 1, userTimeZone, token) as any);
                     navigation.navigate("Beranda");
                   } catch (err) {
                     Alert.alert("Gagal", "Gagal menambahkan konsumsi harian.");

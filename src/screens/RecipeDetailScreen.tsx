@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, FlatList, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, FlatList, Dimensions, Alert } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import globalStyles from "../styles/globalStyles";
 import { RecipeStackParamList } from "../types/navigation";
 import { StackNavigationProp } from "@react-navigation/stack";
 import colors from "../styles/colors";
+import Button from "../components/form/Button";
+import { useDispatch, useSelector } from "react-redux";
+import { addConsumption } from "../redux/actions/authAction";
 
 interface RecipeDetailScreenProps {
   route: RouteProp<RecipeStackParamList, "RecipeDetail">;
@@ -16,8 +19,12 @@ const RecipeDetailScreen: React.FC<RecipeDetailScreenProps> = ({ route }) => {
   const { recipe } = route.params as any;
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState<"recipe" | "nutrition">("recipe");
+  const dispatch = useDispatch();
 
   const imageSource = recipe.image ? { uri: recipe.image } : require("../../assets/image/default_recipe.jpg");
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const token = useSelector((state: any) => state.auth.token);
 
   return (
     <View style={globalStyles.container}>
@@ -108,6 +115,20 @@ const RecipeDetailScreen: React.FC<RecipeDetailScreenProps> = ({ route }) => {
           </View>
         )}
       </ScrollView>
+      <Button
+        title="Tambah Ke Konsumsi Harian"
+        onPress={async () => {
+          try {
+            await dispatch(addConsumption("recipe", recipe._id, 1, userTimeZone, token) as any);
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Beranda" }] as any,
+            });
+          } catch (err) {
+            Alert.alert("Gagal", "Gagal menambahkan konsumsi harian.");
+          }
+        }}
+      />
     </View>
   );
 };

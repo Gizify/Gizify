@@ -13,6 +13,7 @@ type RootStackParamList = {
   DetailProfileScreen: undefined;
   AddMemberScreen: undefined;
   MemberListScreen: undefined;
+  DeleteAccountScreen: undefined;
 };
 
 type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, "Profile">;
@@ -61,6 +62,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
 
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("MemberListScreen")}>
           <Text style={styles.sectionItemText}>Daftar Anggota</Text>
+        </TouchableOpacity>
+        <View style={styles.sectionDivider} />
+
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("DeleteAccountScreen")}>
+          <Text style={styles.sectionItemText}>Hapus Akun</Text>
         </TouchableOpacity>
       </View>
 
