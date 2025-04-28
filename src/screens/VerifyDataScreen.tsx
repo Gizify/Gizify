@@ -6,7 +6,7 @@ import { CommonActions, useNavigation } from "@react-navigation/native";
 import { completeUserProfile } from "../redux/actions/authAction";
 import { useDispatch, useSelector } from "react-redux";
 import { ImageSourcePropType } from 'react-native';
-import { avatarList } from "../utils/avatars"; // << tambah ini
+import { avatarList } from "../utils/avatars";
 import AvatarModal from "../components/modals/AvatarModal";
 
 const VerifyDataScreen = () => {
@@ -28,9 +28,9 @@ const VerifyDataScreen = () => {
   const [showDateModal, setShowDateModal] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
 
-  const [modalVisible, setModalVisible] = useState(false); // << tambah ini
-  const [selectedAvatar, setSelectedAvatar] = useState<ImageSourcePropType | null>(null); // << tambah ini
-  const [currentAvatar, setCurrentAvatar] = useState<ImageSourcePropType | null>(null); // Track current avatar
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedAvatar, setSelectedAvatar] = useState<ImageSourcePropType | null>(null);
+  const [currentAvatar, setCurrentAvatar] = useState<ImageSourcePropType | null>(null);
 
   const genderOptions = [
     { id: "Laki-Laki", label: "Laki-Laki" },
@@ -65,8 +65,8 @@ const VerifyDataScreen = () => {
 
   const handleConfirmAvatar = () => {
     if (selectedAvatar) {
-      setCurrentAvatar(selectedAvatar); // Update current avatar
-      setPhotoOption(selectedAvatar);  // Set as photo option
+      setCurrentAvatar(selectedAvatar);
+      setPhotoOption(selectedAvatar);
     }
     setModalVisible(false);
   };
@@ -138,7 +138,7 @@ const VerifyDataScreen = () => {
         {photoOption ? (
           <Image source={photoOption} style={styles.image} />
         ) : (
-          <Image source={require("../../assets/avatar/avatar1.png")} style={styles.image} />
+          <Image source={require("../../assets/avatar/default-avatar.png")} style={styles.image} />
         )}
         <TouchableOpacity onPress={() => setShowPhotoModal(true)}>
           <Text style={styles.imageText}>Tambahkan foto profile</Text>
