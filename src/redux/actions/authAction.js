@@ -125,3 +125,24 @@ export const addConsumptionFromBarcode =
       throw error;
     }
   };
+
+// Action untuk menghapus akun
+export const deleteAccount = (token) => async (dispatch) => {
+  try {
+    dispatch({ type: "DELETE_ACCOUNT_REQUEST" });
+
+    const response = await authApi.deleteUser(token);
+
+    dispatch({
+      type: "DELETE_ACCOUNT_SUCCESS",
+      payload: response.data.message,
+    });
+
+    dispatch({ type: "LOGOUT" });
+  } catch (error) {
+    dispatch({
+      type: "DELETE_ACCOUNT_FAILURE",
+      payload: error.response ? error.response.data : error.message,
+    });
+  }
+};

@@ -2,11 +2,16 @@ import React, { useState } from "react";
 import { View, Text, TextInput, Button, Alert, StyleSheet, Linking, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteAccount } from "../redux/actions/authAction";
 
 const DeleteAccountScreen = () => {
   const [confirmationText, setConfirmationText] = useState("");
   const [isConfirmEnabled, setIsConfirmEnabled] = useState(false);
   const navigation = useNavigation();
+  const token = useSelector((state: any) => state.auth.token);
+
+  const dispatch = useDispatch();
 
   // Cek apakah teks yang dimasukkan sesuai dengan kalimat konfirmasi
   const handleTextChange = (text: any) => {
@@ -31,8 +36,16 @@ const DeleteAccountScreen = () => {
       },
       {
         text: "Hapus Akun",
-        onPress: () => {
-          Alert.alert("Akun Anda telah dihapus.");
+        onPress: async () => {
+          try {
+            await dispatch(deleteAccount(token) as any);
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "AuthStack" }] as any,
+            });
+          } catch (err) {
+            Alert.alert("Gagal", "Gagal menambahkan konsumsi harian.");
+          }
         },
       },
     ]);

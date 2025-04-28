@@ -86,7 +86,17 @@ const authReducer = (state = initialState, action) => {
         },
       };
     }
+    case "DELETE_ACCOUNT_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        user: null,
+        token: null,
+        expiredAt: null,
+        error: null,
+      };
 
+    case "DELETE_ACCOUNT_FAILURE":
     case "REGISTER_FAILURE":
     case "LOGIN_FAILURE":
     case "PROFILE_UPDATE_FAILURE":

@@ -45,3 +45,11 @@ export const addConsumptionFromBarcode = async ({ barcode, portion_size = 1, use
   );
   return response.data;
 };
+
+export const deleteUser = async (token) => {
+  const response = await axios.delete(`${API_URL}/user/delete`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

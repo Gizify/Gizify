@@ -102,7 +102,7 @@ const LoginRegisterScreen = () => {
           {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitText}>{isLogin ? "Masuk" : "Daftar"}</Text>}
         </Pressable>
 
-        {error && <Text style={styles.errorText}>{error}</Text>}
+        {error && <Text style={styles.errorText}>{typeof error === "string" ? error : error?.message || "Terjadi kesalahan"}</Text>}
       </Animated.View>
     </View>
   );
