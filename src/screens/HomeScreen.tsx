@@ -41,7 +41,6 @@ const HomeScreen = () => {
   ];
 
   const formatDate = (date: any) => {
-    // Handle both string and Date objects
     const d = new Date(date);
 
     const year = d.getFullYear();

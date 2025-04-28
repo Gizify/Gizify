@@ -91,13 +91,13 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F1F0E8",
+    backgroundColor: "white",
   },
 
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    marginTop: 50,
+    marginTop: 20,
     marginLeft: 20,
   },
 
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   },
 
   section: {
-    backgroundColor: "#F1F0E8",
+    backgroundColor: "white",
     marginVertical: 10,
     padding: 15,
     borderRadius: 8,

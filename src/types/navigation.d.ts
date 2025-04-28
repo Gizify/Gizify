@@ -23,13 +23,7 @@ export type RecipeStackParamList = {
   RecipeList: undefined;
   RecipeDetail: { recipe: Recipe };
   CreateResepAi: undefined;
-  ResultResepAi: {
-    resepRequest: {
-      ingredients: string[];
-      difficulty: string;
-      cuisine: string;
-    };
-  };
+  ResultResepAi: any;
 };
 
 // Profile Stack
@@ -38,6 +32,5 @@ export type ProfileStackParamList = {
   DetailProfileScreen: undefined;
   EditProfileScreen: undefined;
 };
-
 
 export type RecipeDetailScreenRouteProp = RouteProp<RecipeStackParamList, "RecipeDetail">;

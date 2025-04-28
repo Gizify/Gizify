@@ -32,7 +32,6 @@ const DeleteAccountScreen = () => {
       {
         text: "Hapus Akun",
         onPress: () => {
-          // Logic penghapusan akun di sini
           Alert.alert("Akun Anda telah dihapus.");
         },
       },

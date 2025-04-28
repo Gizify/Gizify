@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, Text } from "react-native";
+import { View, StyleSheet, FlatList, Text, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -37,18 +37,24 @@ const RecipeScreen: React.FC = () => {
   // Gunakan recipes || [] untuk menghindari error jika recipes undefined
   const filteredRecipes = (recipes || []).filter((recipe: any) => recipe.title?.toLowerCase().includes(searchQuery.toLowerCase()));
 
+  const handleRetry = () => {
+    dispatch(fetchRecipes() as any);
+  };
+
   if (loading) {
     return (
-      <View>
-        <ScreenHeader title="Memuat..." />
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#5271FF" />
+        <Text style={styles.loadingText}>Sedang memuat resep...</Text>
       </View>
     );
   }
 
   if (error) {
     return (
-      <View>
-        <ScreenHeader title={`Error: ${error}`} />
+      <View style={styles.center}>
+        <Text style={styles.errorText}>Terjadi kesalahan: {error}</Text>
+        <Button title="Coba Lagi" onPress={handleRetry} />
       </View>
     );
   }
@@ -81,6 +87,24 @@ const RecipeScreen: React.FC = () => {
   );
 };
 const styles = StyleSheet.create({
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#F9F9F9",
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: "#666",
+  },
+  errorText: {
+    marginBottom: 16,
+    fontSize: 16,
+    color: "#FF4D4F",
+    textAlign: "center",
+  },
   listContainer: {
     paddingBottom: 16,
   },

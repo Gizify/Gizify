@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Platform, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Platform, KeyboardAvoidingView, Alert } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../components/form/Button";
@@ -9,14 +9,42 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RecipeStackParamList } from "../types/navigation";
 import Chip from "../components/form/Chip";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch, useSelector } from "react-redux";
+import { generateRecipe } from "../redux/actions/recipeAction";
 
 const CreateResepAiScreen: React.FC = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<RecipeStackParamList>>();
+  const navigation = useNavigation<any>();
 
   const [ingredientInput, setIngredientInput] = useState("");
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [difficulty, setDifficulty] = useState("Mudah");
   const [cuisine, setCuisine] = useState("Indonesia");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const user = useSelector((state: any) => state.auth.user);
+  const token = useSelector((state: any) => state.auth.token);
+
+  const formatDate = (date: any) => {
+    const d = new Date(date);
+
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const findNutritionByDate = (date: Date) => {
+    const targetDate = formatDate(date);
+
+    const nutritionData = user.nutrition_stats.find((item: any) => {
+      const itemDate = formatDate(item.date);
+      return itemDate === targetDate;
+    });
+
+    return nutritionData || null;
+  };
+
+  const nutritionData = findNutritionByDate(selectedDate);
 
   const addIngredient = () => {
     const trimmed = ingredientInput.trim();
@@ -30,10 +58,22 @@ const CreateResepAiScreen: React.FC = () => {
     setIngredients((prev) => prev.filter((i) => i !== item));
   };
 
-  const handleSubmit = () => {
-    navigation.navigate("ResultResepAi", {
-      resepRequest: { ingredients, difficulty, cuisine },
-    });
+  const dispatch = useDispatch();
+
+  const handleSubmit = async () => {
+    const recipeData = {
+      ingredients: ingredients,
+      difficulty: difficulty,
+      cuisine: cuisine,
+      daily_nutrition_target: user.daily_nutrition_target,
+      nutrition_stats: nutritionData,
+    };
+    try {
+      await dispatch(generateRecipe(recipeData, token) as any);
+      navigation.navigate("ResultResepAi");
+    } catch (err) {
+      Alert.alert("Gagal", "Gagal membuat resep");
+    }
   };
 
   return (
@@ -106,7 +146,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingBottom: 50,
-    paddingTop: 16,
   },
   header: {
     marginBottom: 16,
