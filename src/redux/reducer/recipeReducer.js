@@ -22,14 +22,14 @@ export const recipeReducer = (state = initialState, action) => {
         recipes: action.payload,
       };
     case "GENERATE_RECIPE_REQUEST":
-      return { ...state, loading: true, error: null };
+      return { ...state, aiLoading: true, error: null };
 
     case "GENERATE_RECIPE_SUCCESS":
       return {
         ...state,
-        loading: false,
+        aiLoading: false,
         aiRecipe: action.payload,
-        error: null,
+        aiError: null,
       };
 
     case "GENERATE_RECIPE_FAILURE":
@@ -41,8 +41,8 @@ export const recipeReducer = (state = initialState, action) => {
     case "FETCH_RECIPES_FAILURE":
       return {
         ...state,
-        loading: false,
-        error: action.payload,
+        aiLoading: false,
+        aiError: action.payload,
       };
     default:
       return state;

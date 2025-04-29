@@ -8,6 +8,7 @@ import { RecipeStackParamList } from "../types/navigation";
 import Button from "../components/form/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { addConsumption } from "../redux/actions/authAction";
+import ReportButton from "../components/layout/ReportButton";
 
 const ResultResepAiScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -100,6 +101,7 @@ const ResultResepAiScreen: React.FC = () => {
 
         {/* Fixed Button at Bottom */}
         <View style={styles.buttonContainer}>
+          <ReportButton reportedItem={aiRecipe.recipeId}></ReportButton>
           <Button title="Tambah ke konsumsi harian" onPress={handleAddToConsumption} icon={<Ionicons name="add" size={20} color="white" />} />
         </View>
       </View>
@@ -209,6 +211,7 @@ const styles = StyleSheet.create({
     bottom: 20,
     left: 16,
     right: 16,
+    gap: 2,
   },
 });
 

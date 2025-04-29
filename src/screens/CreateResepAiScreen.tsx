@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Platform, KeyboardAvoidingView, Alert } from "react-native";
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Platform, KeyboardAvoidingView, Alert, ActivityIndicator } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../components/form/Button";
@@ -11,6 +11,7 @@ import Chip from "../components/form/Chip";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { generateRecipe } from "../redux/actions/recipeAction";
+import colors from "../styles/colors";
 
 const CreateResepAiScreen: React.FC = () => {
   const navigation = useNavigation<any>();
@@ -22,6 +23,7 @@ const CreateResepAiScreen: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const user = useSelector((state: any) => state.auth.user);
   const token = useSelector((state: any) => state.auth.token);
+  const { aiLoading } = useSelector((state: any) => state.recipes);
 
   const formatDate = (date: any) => {
     const d = new Date(date);
@@ -129,8 +131,14 @@ const CreateResepAiScreen: React.FC = () => {
             />
           </View>
 
-          <View style={styles.buttonWrapper}>
-            <Button title="Buat Resep" onPress={handleSubmit} />
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            {aiLoading ? (
+              // Menampilkan animasi loading jika aiLoading true
+              <ActivityIndicator size="large" color={colors.primary} />
+            ) : (
+              // Menampilkan tombol "Buat Resep" jika aiLoading false
+              <Button title="Buat Resep" onPress={handleSubmit} />
+            )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
