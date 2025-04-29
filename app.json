@@ -4,7 +4,7 @@
     "slug": "Gizify",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "/assets/splash-icon.png",
+    "icon": "./assets/logo/Ikon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -25,14 +25,14 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo/Logo.png",
+        "foregroundImage": "./assets/logo/Ikon.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO", "android.permission.INTERNET"],
       "package": "com.farach.Gizify"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/logo/Ikon.png"
     },
     "extra": {
       "eas": {
