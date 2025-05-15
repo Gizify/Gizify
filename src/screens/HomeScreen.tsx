@@ -97,8 +97,28 @@ const HomeScreen = () => {
           <NutritionBar label="Lemak" value={nutritionData?.total_fat.toFixed() ?? 0} color="#FFD700" limit={user.daily_nutrition_target?.protein} />
           <NutritionBar label="Protein" value={nutritionData?.total_protein.toFixed() ?? 0} color="#66CCFF" limit={user.daily_nutrition_target?.protein} />
         </View>
+        <View style={styles.barGroup}>
+          <NutritionBar label="Serat" value={nutritionData?.total_fiber.toFixed() ?? 0} color="#FF6666" limit={user.daily_nutrition_target?.fiber} />
+          <NutritionBar label="Gula" value={nutritionData?.total_sugar.toFixed() ?? 0} color="#FFD700" limit={user.daily_nutrition_target?.sugar} />
+          <NutritionBar label="Garam" value={nutritionData?.total_sodium.toFixed() ?? 0} color="#66CCFF" limit={user.daily_nutrition_target?.sodium} />
+        </View>
       </View>
       <View style={styles.nutritionContainer}>
+        <View style={styles.barGroup}>
+          <NutritionBar label="Karbohidrat" value={nutritionData?.total_carbs.toFixed() ?? 0} color="#FF6666" limit={user.daily_nutrition_target?.carbs} />
+          <NutritionBar label="Lemak" value={nutritionData?.total_fat.toFixed() ?? 0} color="#FFD700" limit={user.daily_nutrition_target?.protein} />
+          <NutritionBar label="Protein" value={nutritionData?.total_protein.toFixed() ?? 0} color="#66CCFF" limit={user.daily_nutrition_target?.protein} />
+        </View>
+        <View style={styles.barGroup}>
+          <NutritionBar label="Serat" value={nutritionData?.total_fiber.toFixed() ?? 0} color="#FF6666" limit={user.daily_nutrition_target?.fiber} />
+          <NutritionBar label="Gula" value={nutritionData?.total_sugar.toFixed() ?? 0} color="#FFD700" limit={user.daily_nutrition_target?.sugar} />
+          <NutritionBar label="Garam" value={nutritionData?.total_sodium.toFixed() ?? 0} color="#66CCFF" limit={user.daily_nutrition_target?.sodium} />
+        </View>
+        <View style={styles.barGroup}>
+          <NutritionBar label="Karbohidrat" value={nutritionData?.total_carbs.toFixed() ?? 0} color="#FF6666" limit={user.daily_nutrition_target?.carbs} />
+          <NutritionBar label="Lemak" value={nutritionData?.total_fat.toFixed() ?? 0} color="#FFD700" limit={user.daily_nutrition_target?.protein} />
+          <NutritionBar label="Protein" value={nutritionData?.total_protein.toFixed() ?? 0} color="#66CCFF" limit={user.daily_nutrition_target?.protein} />
+        </View>
         <View style={styles.barGroup}>
           <NutritionBar label="Serat" value={nutritionData?.total_fiber.toFixed() ?? 0} color="#FF6666" limit={user.daily_nutrition_target?.fiber} />
           <NutritionBar label="Gula" value={nutritionData?.total_sugar.toFixed() ?? 0} color="#FFD700" limit={user.daily_nutrition_target?.sugar} />
@@ -187,7 +207,7 @@ const styles = StyleSheet.create({
   roundedContainer: { flexDirection: "row", alignItems: "center", marginVertical: 20 },
   rectangle: { width: "85%", height: 50, borderTopLeftRadius: 100, borderBottomLeftRadius: 100, backgroundColor: colors.primary, flex: 1, justifyContent: "center", alignItems: "center" },
   circle: { width: 60, height: 60, borderRadius: 30, marginLeft: -20, justifyContent: "center", alignItems: "center", backgroundColor: colors.background, borderWidth: 2 },
-  nutritionContainer: { marginVertical: 10, backgroundColor: colors.secondary, paddingVertical: 20, borderRadius: 15 },
+  nutritionContainer: { marginVertical: 10, backgroundColor: colors.secondary, paddingVertical: 20, borderRadius: 15, display: "flex", flexDirection: "column" },
   label: {
     fontSize: 7,
     fontWeight: "bold",
