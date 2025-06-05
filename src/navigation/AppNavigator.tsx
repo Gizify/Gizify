@@ -12,7 +12,7 @@ export default function AppNavigator() {
   const token = useSelector((state: any) => state.auth.token);
   const user = useSelector((state: any) => state.auth.user);
 
-  const isUserComplete = !!(user?.daily_nutrition_target && user?.height && user?.weight && user?.gender && user?.goal && user?.activity_level && user?.birthdate);
+  const isUserComplete = !!(user?.daily_nutrition_target && user?.height && user?.weight && user?.activity_level);
 
   useEffect(() => {
     if (!navigationRef.isReady() || !user) return;

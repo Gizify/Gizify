@@ -86,7 +86,7 @@ export const addConsumption =
         },
       });
     } catch (error) {
-      console.error("Error adding consumption from barcode:", error);
+      console.error(error);
       dispatch({
         type: "ADD_CONSUMPTION_FAILURE",
         payload: error.response?.data?.message || "Gagal menambahkan konsumsi",
