@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import colors from "../styles/colors";
@@ -31,43 +31,59 @@ const NutritionBar: React.FC<NutritionBarProps> = ({ label, value, color, limit 
 };
 
 const HomeScreen = () => {
-  const [selectedUser, setSelectedUser] = useState("User 1");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const user = useSelector((state: any) => state.auth.user);
 
-  const users = [
-    { label: user.name, value: user.name, imageUrl: "https://static.vecteezy.com/system/resources/previews/019/896/008/non_2x/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" },
-    { label: "User 2", value: "User 2", imageUrl: "https://static.vecteezy.com/system/resources/previews/019/896/012/non_2x/female-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" },
-  ];
+  // Helper function untuk handle toFixed dengan aman
+  const safeToFixed = (value: number | undefined | null, digits = 0) => {
+    return (value ?? 0).toFixed(digits);
+  };
 
   const formatDate = (date: any) => {
-    const d = new Date(date);
+    if (!date) return "";
 
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
+    try {
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return "";
 
-    return `${year}-${month}-${day}`;
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "";
+    }
   };
 
   const findNutritionByDate = (date: Date) => {
+    if (!date) return null;
+
     const targetDate = formatDate(date);
+    if (!targetDate) return null;
 
-    const nutritionData = user.nutrition_stats.find((item: any) => {
-      const itemDate = formatDate(item.date);
-      return itemDate === targetDate;
-    });
-
-    return nutritionData || null;
+    return user.nutrition_stats.find((item: any) => formatDate(item.date) === targetDate) || null;
   };
 
   const nutritionData = findNutritionByDate(selectedDate);
-  const filteredLogs = user.meal_logs?.find((log: any) => formatDate(log.date) === formatDate(selectedDate));
+
+  const filteredLogs = user?.meal_logs?.find((log: any) => formatDate(log.date) === formatDate(selectedDate));
+
   const changeDate = (days: number) => {
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() + days);
-    setSelectedDate(newDate);
+
+    // Validasi tanggal
+    if (!isNaN(newDate.getTime())) {
+      setSelectedDate(newDate);
+    }
   };
+
+  // Render nutrition bar dengan aman
+  const renderNutritionBar = (label: string, valueKey: string, color: string, limitKey: string) => (
+    <NutritionBar label={label} value={safeToFixed(nutritionData?.[valueKey]) as any} color={color} limit={user?.daily_nutrition_target?.[limitKey]} />
+  );
 
   return (
     <View style={globalStyles.container}>
@@ -75,54 +91,56 @@ const HomeScreen = () => {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Harian</Text>
         <View style={styles.profileContainer}>
-          <Text style={styles.sectionTitle}>{user.name}</Text>
-          <Image style={styles.selectedItemImage} source={{ uri: "https://static.vecteezy.com/system/resources/previews/019/896/008/non_2x/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" }}></Image>
+          <Text style={styles.sectionTitle}>{user?.name || "User"}</Text>
+          <Image
+            style={styles.selectedItemImage}
+            source={{ uri: "https://static.vecteezy.com/system/resources/previews/019/896/008/non_2x/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" }}
+            onError={() => console.log("Error loading image")}
+          />
         </View>
       </View>
 
       {/* Rounded Rectangle */}
       <View style={styles.roundedContainer}>
         <View style={styles.rectangle}>
-          <Text style={{ color: colors.background }}>{nutritionData?.total_calories.toFixed() ?? 0}</Text>
+          <Text style={{ color: colors.background }}>{safeToFixed(nutritionData?.calories)}</Text>
         </View>
         <View style={styles.circle}>
-          <Text style={{ color: colors.text }}>{user.daily_nutrition_target?.calories}</Text>
+          <Text style={{ color: colors.text }}>{safeToFixed(user?.daily_nutrition_target?.calories)}</Text>
         </View>
       </View>
 
       {/* Nutrition Bars */}
       <View style={styles.nutritionContainer}>
         <View style={styles.barGroup}>
-          <NutritionBar label="Karbohidrat" value={nutritionData?.total_carbs.toFixed() ?? 0} color="#FF6666" limit={user.daily_nutrition_target?.carbs} />
-          <NutritionBar label="Lemak" value={nutritionData?.total_fat.toFixed() ?? 0} color="#FFD700" limit={user.daily_nutrition_target?.protein} />
-          <NutritionBar label="Protein" value={nutritionData?.total_protein.toFixed() ?? 0} color="#66CCFF" limit={user.daily_nutrition_target?.protein} />
+          {renderNutritionBar("Karbohidrat", "carbs", "#FF6666", "carbs")}
+          {renderNutritionBar("Lemak", "fat", "#FFD700", "protein")}
+          {renderNutritionBar("Protein", "protein", "#66CCFF", "protein")}
         </View>
         <View style={styles.barGroup}>
-          <NutritionBar label="Serat" value={nutritionData?.total_fiber.toFixed() ?? 0} color="#FF6666" limit={user.daily_nutrition_target?.fiber} />
-          <NutritionBar label="Gula" value={nutritionData?.total_sugar.toFixed() ?? 0} color="#FFD700" limit={user.daily_nutrition_target?.sugar} />
-          <NutritionBar label="Garam" value={nutritionData?.total_sodium.toFixed() ?? 0} color="#66CCFF" limit={user.daily_nutrition_target?.sodium} />
+          {renderNutritionBar("Serat", "fiber", "#FF6666", "fiber")}
+          {renderNutritionBar("Gula", "sugar", "#FFD700", "sugar")}
+          {renderNutritionBar("Garam", "sodium", "#66CCFF", "sodium")}
         </View>
       </View>
+
       <View style={styles.nutritionContainer}>
         <View style={styles.barGroup}>
-          <NutritionBar label="Karbohidrat" value={nutritionData?.total_carbs.toFixed() ?? 0} color="#FF6666" limit={user.daily_nutrition_target?.carbs} />
-          <NutritionBar label="Lemak" value={nutritionData?.total_fat.toFixed() ?? 0} color="#FFD700" limit={user.daily_nutrition_target?.protein} />
-          <NutritionBar label="Protein" value={nutritionData?.total_protein.toFixed() ?? 0} color="#66CCFF" limit={user.daily_nutrition_target?.protein} />
+          {renderNutritionBar("Vitamin D", "vitamin_d", "#FFA500", "vitamin_d")}
+          {renderNutritionBar("Air (ml)", "water", "#00BFFF", "water")}
+          {renderNutritionBar("Zat Besi", "iron", "#B22222", "iron")}
         </View>
+
         <View style={styles.barGroup}>
-          <NutritionBar label="Serat" value={nutritionData?.total_fiber.toFixed() ?? 0} color="#FF6666" limit={user.daily_nutrition_target?.fiber} />
-          <NutritionBar label="Gula" value={nutritionData?.total_sugar.toFixed() ?? 0} color="#FFD700" limit={user.daily_nutrition_target?.sugar} />
-          <NutritionBar label="Garam" value={nutritionData?.total_sodium.toFixed() ?? 0} color="#66CCFF" limit={user.daily_nutrition_target?.sodium} />
+          {renderNutritionBar("Asam Folat", "folic_acid", "#9ACD32", "folic_acid")}
+          {renderNutritionBar("Kalsium", "calsium", "#4682B4", "kalsium")}
+          {renderNutritionBar("Yodium", "iodium", "#8A2BE2", "iodium")}
         </View>
+
         <View style={styles.barGroup}>
-          <NutritionBar label="Karbohidrat" value={nutritionData?.total_carbs.toFixed() ?? 0} color="#FF6666" limit={user.daily_nutrition_target?.carbs} />
-          <NutritionBar label="Lemak" value={nutritionData?.total_fat.toFixed() ?? 0} color="#FFD700" limit={user.daily_nutrition_target?.protein} />
-          <NutritionBar label="Protein" value={nutritionData?.total_protein.toFixed() ?? 0} color="#66CCFF" limit={user.daily_nutrition_target?.protein} />
-        </View>
-        <View style={styles.barGroup}>
-          <NutritionBar label="Serat" value={nutritionData?.total_fiber.toFixed() ?? 0} color="#FF6666" limit={user.daily_nutrition_target?.fiber} />
-          <NutritionBar label="Gula" value={nutritionData?.total_sugar.toFixed() ?? 0} color="#FFD700" limit={user.daily_nutrition_target?.sugar} />
-          <NutritionBar label="Garam" value={nutritionData?.total_sodium.toFixed() ?? 0} color="#66CCFF" limit={user.daily_nutrition_target?.sodium} />
+          {renderNutritionBar("Vitamin B6", "vitamin_b16", "#00CED1", "vitamin_b16")}
+          {renderNutritionBar("Vitamin B12", "vitamin_b12", "#9370DB", "vitamin_b12")}
+          {renderNutritionBar("Vitamin C", "vitamin_c", "#FF8C00", "vitamin_c")}
         </View>
       </View>
 
@@ -134,7 +152,6 @@ const HomeScreen = () => {
           </TouchableOpacity>
           <Text>{selectedDate.toLocaleDateString("id-ID", { weekday: "long" })}</Text>
         </View>
-        {/* <Image source={require("../../assets/Logo.png")} style={styles.image} /> */}
         <View style={styles.dateSelector}>
           <Text>
             {selectedDate.toLocaleDateString("id-ID", {
@@ -151,7 +168,7 @@ const HomeScreen = () => {
 
       {/* Table */}
       <ScrollView>
-        {filteredLogs?.meals.map((meal: any, index: any) => (
+        {filteredLogs?.meals?.map((meal: any, index: any) => (
           <View key={index} style={styles.table}>
             <View style={styles.tableTextContainer}>
               <AntDesign name="up" size={24} color="black" />
@@ -161,27 +178,23 @@ const HomeScreen = () => {
             <View style={styles.separator} />
 
             <ScrollView horizontal>
-              <View style={[styles.tableContent]}>
+              <View style={styles.tableContent}>
                 {/* Header */}
                 <View style={styles.tableRow}>
-                  <Text style={styles.tableHeader}>Kalori</Text>
-                  <Text style={styles.tableHeader}>Karbo</Text>
-                  <Text style={styles.tableHeader}>Protein</Text>
-                  <Text style={styles.tableHeader}>Lemak</Text>
-                  <Text style={styles.tableHeader}>Serat</Text>
-                  <Text style={styles.tableHeader}>Gula</Text>
-                  <Text style={styles.tableHeader}>Garam</Text>
+                  {["Kalori", "Karbo", "Protein", "Lemak", "Serat", "Gula", "Garam", "Asam Folat", "Kalsium", "Vitamin D", "Vit B12", "Vit C", "Zinc", "Iodium", "Air", "Zat Besi"].map((header) => (
+                    <Text key={header} style={styles.tableHeader}>
+                      {header}
+                    </Text>
+                  ))}
                 </View>
 
                 {/* Data meal */}
                 <View style={styles.tableRow}>
-                  <Text style={styles.tableCell}>{meal.nutrition_info.calories.toFixed()}</Text>
-                  <Text style={styles.tableCell}>{meal.nutrition_info.carbs.toFixed()}</Text>
-                  <Text style={styles.tableCell}>{meal.nutrition_info.protein.toFixed()}</Text>
-                  <Text style={styles.tableCell}>{meal.nutrition_info.fat.toFixed()}</Text>
-                  <Text style={styles.tableCell}>{meal.nutrition_info.fiber.toFixed()}</Text>
-                  <Text style={styles.tableCell}>{meal.nutrition_info.sugar.toFixed()}</Text>
-                  <Text style={styles.tableCell}>{meal.nutrition_info.sodium.toFixed()}</Text>
+                  {["calories", "carbs", "protein", "fat", "fiber", "sugar", "sodium", "folic_acid", "kalsium", "vitamin_d", "vitamin_b12", "vitamin_c", "zinc", "iodium", "water", "iron"].map((key) => (
+                    <Text key={key} style={styles.tableCell}>
+                      {safeToFixed(meal.nutrition_info?.[key])}
+                    </Text>
+                  ))}
                 </View>
               </View>
             </ScrollView>

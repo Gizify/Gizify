@@ -3,15 +3,35 @@ import dayjs from "dayjs";
 const initialState = {
   token: null,
   user: {
-    daily_nutrition_target: null,
+    name: null,
+    email: null,
+    birthDate: null,
+    gestational_age: null,
     height: null,
     weight: null,
-    gender: null,
-    goal: null,
     activity_level: null,
-    birthdate: null,
+    daily_nutrition_target: {
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fat: 0,
+      fiber: 0,
+      sugar: 0,
+      sodium: 0,
+      folic_acid: 0,
+      kalsium: 0,
+      vitamin_d: 0,
+      vitamin_b12: 0,
+      vitamin_c: 0,
+      zinc: 0,
+      iodium: 0,
+      water: 0,
+      iron: 0,
+    },
     nutrition_stats: [],
     meal_logs: [],
+    favorites: [],
+    photoOption: null,
   },
   expiredAt: null,
   loading: false,
@@ -52,27 +72,32 @@ const authReducer = (state = initialState, action) => {
 
     case "ADD_CONSUMPTION_SUCCESS": {
       const { todayStats, todayMeals } = action.payload;
-      const todayDate = dayjs(todayStats.date).startOf("day").toISOString();
 
-      // Update nutrition_stats
-      const updatedNutritionStats = state.user.nutrition_stats.filter((stat) => dayjs(stat.date).startOf("day").toISOString() !== todayDate);
+      // Always use current date if date is null/invalid
+      const todayDate = dayjs().startOf("day").format("YYYY-MM-DD");
+      const statsDate = dayjs(todayStats?.date).isValid() ? dayjs(todayStats.date).startOf("day").format("YYYY-MM-DD") : todayDate;
 
-      updatedNutritionStats.push(todayStats);
+      // Update nutrition stats
+      const updatedNutritionStats = state.user.nutrition_stats.filter((stat) => dayjs(stat.date).format("YYYY-MM-DD") !== todayDate);
 
-      // Update meal_logs
-      const existingMealLogIndex = state.user.meal_logs.findIndex((log) => dayjs(log.date).startOf("day").toISOString() === todayDate);
+      updatedNutritionStats.push({
+        ...todayStats,
+        date: statsDate, // Ensure date is properly set
+      });
 
+      // Update meal logs
       let updatedMealLogs = [...state.user.meal_logs];
+      const existingLogIndex = updatedMealLogs.findIndex((log) => dayjs(log.date).format("YYYY-MM-DD") === todayDate);
 
-      if (existingMealLogIndex !== -1) {
-        updatedMealLogs[existingMealLogIndex] = {
-          ...updatedMealLogs[existingMealLogIndex],
-          meals: [...updatedMealLogs[existingMealLogIndex].meals, ...todayMeals],
+      if (existingLogIndex !== -1) {
+        updatedMealLogs[existingLogIndex] = {
+          date: todayDate,
+          meals: [...updatedMealLogs[existingLogIndex].meals, ...todayMeals],
         };
       } else {
         updatedMealLogs.push({
-          date: todayStats.date,
-          meals: [...todayMeals],
+          date: todayDate,
+          meals: todayMeals,
         });
       }
 
