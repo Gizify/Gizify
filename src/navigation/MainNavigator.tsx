@@ -61,7 +61,7 @@ export default function MainTabNavigator() {
       />
       <Tab.Screen
         name="Profile"
-        component={VerifyDataScreen}
+        component={ProfileStackNavigator}
         options={{
           tabBarIcon: ({ color, size }: { color: string; size: number }) => <AntDesign name="user" size={size} color={color} />,
         }}
