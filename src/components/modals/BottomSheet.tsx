@@ -19,9 +19,21 @@ interface BottomSheetProps {
   onSelect: (id: string) => void;
   onClose: () => void;
   type: BottomSheetType;
+  showContinueButton?: boolean;
+  onContinue?: () => void;
 }
 
-const BottomSheet: React.FC<BottomSheetProps> = ({ visible, title, options, selectedOption, onSelect, onClose, type }) => {
+const BottomSheet: React.FC<BottomSheetProps> = ({
+  visible,
+  title,
+  options,
+  selectedOption,
+  onSelect,
+  onClose,
+  type,
+  showContinueButton = false,
+  onContinue = () => { },
+}) => {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split("T")[0]);
 
   const handleDayPress = (day: DateData) => {
@@ -42,33 +54,57 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ visible, title, options, sele
 
           <View style={styles.divider} />
 
-          <View style={styles.optionsContainer}>
-            {type === "option" ? (
-              options.map((option) => (
-                <TouchableOpacity key={option.id} style={styles.optionItem} onPress={() => onSelect(option.id)}>
-                  <View style={[styles.radioButton, selectedOption === option.id && styles.radioButtonSelected]}>{selectedOption === option.id && <View style={styles.radioButtonInner} />}</View>
-                  <Text style={styles.optionText}>{option.label}</Text>
-                </TouchableOpacity>
-              ))
-            ) : (
-              <View style={styles.calendarContainer}>
-                <Calendar
-                  current={selectedDate}
-                  onDayPress={handleDayPress}
-                  markedDates={{
-                    [selectedDate]: {
-                      selected: true,
-                      selectedColor: colors.primary,
-                    },
-                  }}
-                  theme={{
-                    calendarBackground: "white",
-                    selectedDayBackgroundColor: colors.primary,
-                    todayTextColor: colors.primary,
-                    arrowColor: colors.primary,
-                  }}
-                />
-              </View>
+          <View style={styles.contentContainer}>
+            <View style={styles.optionsContainer}>
+              {type === "option" ? (
+                options.map((option) => (
+                  <TouchableOpacity
+                    key={option.id}
+                    style={styles.optionItem}
+                    onPress={() => onSelect(option.id)}
+                  >
+                    <View
+                      style={[
+                        styles.radioButton,
+                        selectedOption === option.id && styles.radioButtonSelected,
+                      ]}
+                    >
+                      {selectedOption === option.id && (
+                        <View style={styles.radioButtonInner} />
+                      )}
+                    </View>
+                    <Text style={styles.optionText}>{option.label}</Text>
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <View style={styles.calendarContainer}>
+                  <Calendar
+                    current={selectedDate}
+                    onDayPress={handleDayPress}
+                    markedDates={{
+                      [selectedDate]: {
+                        selected: true,
+                        selectedColor: colors.primary,
+                      },
+                    }}
+                    theme={{
+                      calendarBackground: "white",
+                      selectedDayBackgroundColor: colors.primary,
+                      todayTextColor: colors.primary,
+                      arrowColor: colors.primary,
+                    }}
+                  />
+                </View>
+              )}
+            </View>
+
+            {showContinueButton && (
+              <TouchableOpacity
+                style={styles.continueButton}
+                onPress={onContinue}
+              >
+                <Text style={styles.continueButtonText}>Lanjut</Text>
+              </TouchableOpacity>
             )}
           </View>
         </View>
@@ -91,6 +127,9 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
     maxHeight: "70%",
   },
+  contentContainer: {
+    paddingBottom: 16,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -109,6 +148,7 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     marginTop: 8,
+    marginBottom: 16,
   },
   optionItem: {
     flexDirection: "row",
@@ -140,6 +180,18 @@ const styles = StyleSheet.create({
   },
   calendarContainer: {
     marginTop: 10,
+  },
+  continueButton: {
+    backgroundColor: colors.primary,
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 8,
+  },
+  continueButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
