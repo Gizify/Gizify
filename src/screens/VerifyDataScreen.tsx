@@ -32,6 +32,13 @@ const VerifyDataScreen = () => {
   const [selectedAvatar, setSelectedAvatar] = useState<ImageSourcePropType | null>(null);
   const [currentAvatar, setCurrentAvatar] = useState<ImageSourcePropType | null>(null);
 
+  // Temporary states for each BottomSheet
+  const [tempGender, setTempGender] = useState<string | null>(null);
+  const [tempActivity, setTempActivity] = useState<string | null>(null);
+  const [tempGoal, setTempGoal] = useState<string | null>(null);
+  const [tempBirthdate, setTempBirthdate] = useState<string | null>(null);
+  const [tempPhotoOption, setTempPhotoOption] = useState<string | null>(null);
+
   const genderOptions = [
     { id: "Laki-Laki", label: "Laki-Laki" },
     { id: "Perempuan", label: "Perempuan" },
@@ -74,8 +81,12 @@ const VerifyDataScreen = () => {
   const handleSelectPhotoOption = (value: string) => {
     if (value === "avatar") {
       setModalVisible(true);
+    } else if (value === "hapus") {
+      setPhotoOption(null);
+      setCurrentAvatar(null);
+      setSelectedAvatar(null);
     }
-    setShowPhotoModal(false);
+    // For gallery and camera, you'd need to implement those features
   };
 
   const handleSubmit = async () => {
@@ -150,6 +161,11 @@ const VerifyDataScreen = () => {
         <TextInput placeholder="Berat Badan (kg) *" style={styles.inputHalf} keyboardType="numeric" value={weight} onChangeText={setWeight} />
       </View>
 
+      <TouchableOpacity style={styles.select} onPress={() => setShowDateModal(true)}>
+        <Text style={styles.selectText}>{birthdate || "Usia*"}</Text>
+        <Ionicons name="chevron-forward" size={20} color="#777" />
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.select} onPress={() => setShowActivityModal(true)}>
         <Text style={styles.selectText}>{activity || "Aktivitas*"}</Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
@@ -157,11 +173,6 @@ const VerifyDataScreen = () => {
 
       <TouchableOpacity style={styles.select} onPress={() => setShowGenderModal(true)}>
         <Text style={styles.selectText}>{gender || "Jenis Kelamin*"}</Text>
-        <Ionicons name="chevron-forward" size={20} color="#777" />
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.select} onPress={() => setShowDateModal(true)}>
-        <Text style={styles.selectText}>{birthdate || "Usia*"}</Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
@@ -194,62 +205,85 @@ const VerifyDataScreen = () => {
         visible={showGenderModal}
         title="Jenis kelamin"
         options={genderOptions}
-        selectedOption={gender}
-        onSelect={(value) => {
-          setGender(value);
-          setShowGenderModal(false);
-        }}
+        selectedOption={tempGender || gender}
+        onSelect={setTempGender}
         onClose={() => setShowGenderModal(false)}
         type="option"
+        showContinueButton={true}
+        onContinue={() => {
+          if (tempGender) {
+            setGender(tempGender);
+          }
+          setShowGenderModal(false);
+        }}
       />
 
       <BottomSheet
         visible={showActivityModal}
         title="Aktivitas"
         options={activityOptions}
-        selectedOption={activity}
-        onSelect={(value) => {
-          setActivity(value);
-          setShowActivityModal(false);
-        }}
+        selectedOption={tempActivity || activity}
+        onSelect={setTempActivity}
         onClose={() => setShowActivityModal(false)}
         type="option"
+        showContinueButton={true}
+        onContinue={() => {
+          if (tempActivity) {
+            setActivity(tempActivity);
+          }
+          setShowActivityModal(false);
+        }}
       />
 
       <BottomSheet
         visible={showGoalModal}
         title="Tujuan"
         options={goalOptions}
-        selectedOption={goal}
-        onSelect={(value) => {
-          setGoal(value);
-          setShowGoalModal(false);
-        }}
+        selectedOption={tempGoal || goal}
+        onSelect={setTempGoal}
         onClose={() => setShowGoalModal(false)}
         type="option"
+        showContinueButton={true}
+        onContinue={() => {
+          if (tempGoal) {
+            setGoal(tempGoal);
+          }
+          setShowGoalModal(false);
+        }}
       />
 
       <BottomSheet
         visible={showDateModal}
         title="Usia"
         options={[]}
-        selectedOption={birthdate}
-        onSelect={(value) => {
-          setBirthdate(value);
-          setShowDateModal(false);
-        }}
+        selectedOption={tempBirthdate || birthdate}
+        onSelect={setTempBirthdate}
         onClose={() => setShowDateModal(false)}
         type="date"
+        showContinueButton={true}
+        onContinue={() => {
+          if (tempBirthdate) {
+            setBirthdate(tempBirthdate);
+          }
+          setShowDateModal(false);
+        }}
       />
 
       <BottomSheet
         visible={showPhotoModal}
         title="Foto profile"
         options={photoOptions}
-        selectedOption={null}
-        onSelect={handleSelectPhotoOption}
+        selectedOption={tempPhotoOption}
+        onSelect={setTempPhotoOption}
         onClose={() => setShowPhotoModal(false)}
         type="option"
+        showContinueButton={true}
+        onContinue={() => {
+          if (tempPhotoOption) {
+            handleSelectPhotoOption(tempPhotoOption);
+          }
+          setShowPhotoModal(false);
+        }}
       />
     </ScrollView>
   );
