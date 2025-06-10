@@ -29,8 +29,10 @@ export type RecipeStackParamList = {
 // Profile Stack
 export type ProfileStackParamList = {
   ProfileScreen: undefined;
-  DetailProfileScreen: undefined;
   EditProfileScreen: undefined;
+  DetailProfileScreen: undefined;
+  AccountSettingsScreen: undefined;
+  PrivacySettingsScreen: undefined;
 };
 
 export type RecipeDetailScreenRouteProp = RouteProp<RecipeStackParamList, "RecipeDetail">;
