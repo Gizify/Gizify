@@ -16,15 +16,15 @@ const VerifyDataScreen = () => {
 
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
-  const [gender, setGender] = useState<string | null>(null);
+  const [pregnancyMonth, setPregnancyMonth] = useState("");
   const [activity, setActivity] = useState<string | null>(null);
-  const [goal, setGoal] = useState<string | null>(null);
+  const [healthHistory, setHealthHistory] = useState<string | null>(null);
   const [birthdate, setBirthdate] = useState<string | null>(null);
   const [photoOption, setPhotoOption] = useState<ImageSourcePropType | null>(null);
 
-  const [showGenderModal, setShowGenderModal] = useState(false);
+  const [pregnancyDay, setPregnancyDay] = useState("");
   const [showActivityModal, setShowActivityModal] = useState(false);
-  const [showGoalModal, setShowGoalModal] = useState(false);
+  const [showHealthHistoryModal, setShowHealthHistoryModal] = useState(false);
   const [showDateModal, setShowDateModal] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
 
@@ -33,9 +33,9 @@ const VerifyDataScreen = () => {
   const [currentAvatar, setCurrentAvatar] = useState<ImageSourcePropType | null>(null);
 
   // Temporary states for each BottomSheet
-  const [tempGender, setTempGender] = useState<string | null>(null);
+  const [showPregnancyModal, setShowPregnancyModal] = useState(false);
   const [tempActivity, setTempActivity] = useState<string | null>(null);
-  const [tempGoal, setTempGoal] = useState<string | null>(null);
+  const [tempHealthHistory, setTempHealthHistory] = useState<string | null>(null);
   const [tempBirthdate, setTempBirthdate] = useState<string | null>(null);
   const [tempPhotoOption, setTempPhotoOption] = useState<string | null>(null);
 
@@ -50,9 +50,12 @@ const VerifyDataScreen = () => {
     { id: "Berat", label: "Berat" },
   ];
 
-  const goalOptions = [
-    { id: "Menjaga Berat Badan", label: "Menjaga Berat Badan" },
-    { id: "Membangun massa otot", label: "Membangun massa otot" },
+  const healthHistoryOptions = [
+    { id: "Anemia", label: "Anemia" },
+    { id: "Diabetes", label: "Diabetes" },
+    { id: "Hipertensi", label: "Hipertensi" },
+    { id: "TBC", label: "TBC" },
+    { id: "Tidak ada", label: "Tidak ada" },
   ];
 
   const photoOptions = [
@@ -90,10 +93,11 @@ const VerifyDataScreen = () => {
   };
 
   const handleSubmit = async () => {
-    if (!height || !weight || !gender || !activity || !goal || !birthdate) {
+    if (!height || !weight || !pregnancyMonth || !pregnancyDay || !activity || !healthHistory || !birthdate) {
       Alert.alert("Error", "Mohon lengkapi semua data terlebih dahulu");
       return;
     }
+
 
     try {
       if (!token) {
@@ -110,12 +114,14 @@ const VerifyDataScreen = () => {
       const profileData = {
         height: parseFloat(height),
         weight: parseFloat(weight),
-        gender,
+        pregnancyMonth: parseInt(pregnancyMonth),
+        pregnancyDay: parseInt(pregnancyDay),
         activity,
-        goal,
+        healthHistory,
         birthdate,
         photoOption,
       };
+
 
       await dispatch(completeUserProfile(profileData) as any);
 
@@ -156,6 +162,7 @@ const VerifyDataScreen = () => {
         </TouchableOpacity>
       </View>
 
+      {/* For Input Data */}
       <View style={styles.row}>
         <TextInput placeholder="Tinggi Badan (cm) *" style={styles.inputHalf} keyboardType="numeric" value={height} onChangeText={setHeight} />
         <TextInput placeholder="Berat Badan (kg) *" style={styles.inputHalf} keyboardType="numeric" value={weight} onChangeText={setWeight} />
@@ -171,13 +178,17 @@ const VerifyDataScreen = () => {
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.select} onPress={() => setShowGenderModal(true)}>
-        <Text style={styles.selectText}>{gender || "Jenis Kelamin*"}</Text>
+      <TouchableOpacity style={styles.select} onPress={() => setShowPregnancyModal(true)}>
+        <Text style={styles.selectText}>
+          {pregnancyMonth && pregnancyDay
+            ? `${pregnancyMonth} Bulan ${pregnancyDay} Hari`
+            : "Usia Kehamilan*"}
+        </Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.select} onPress={() => setShowGoalModal(true)}>
-        <Text style={styles.selectText}>{goal || "Tujuan*"}</Text>
+      <TouchableOpacity style={styles.select} onPress={() => setShowHealthHistoryModal(true)}>
+        <Text style={styles.selectText}>{healthHistory || "Riwayat Kesehatan*"}</Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
@@ -202,53 +213,19 @@ const VerifyDataScreen = () => {
 
       {/* BottomSheet Modals */}
       <BottomSheet
-        visible={showGenderModal}
-        title="Jenis kelamin"
-        options={genderOptions}
-        selectedOption={tempGender || gender}
-        onSelect={setTempGender}
-        onClose={() => setShowGenderModal(false)}
+        visible={showPhotoModal}
+        title="Foto profile"
+        options={photoOptions}
+        selectedOption={tempPhotoOption}
+        onSelect={setTempPhotoOption}
+        onClose={() => setShowPhotoModal(false)}
         type="option"
         showContinueButton={true}
         onContinue={() => {
-          if (tempGender) {
-            setGender(tempGender);
+          if (tempPhotoOption) {
+            handleSelectPhotoOption(tempPhotoOption);
           }
-          setShowGenderModal(false);
-        }}
-      />
-
-      <BottomSheet
-        visible={showActivityModal}
-        title="Aktivitas"
-        options={activityOptions}
-        selectedOption={tempActivity || activity}
-        onSelect={setTempActivity}
-        onClose={() => setShowActivityModal(false)}
-        type="option"
-        showContinueButton={true}
-        onContinue={() => {
-          if (tempActivity) {
-            setActivity(tempActivity);
-          }
-          setShowActivityModal(false);
-        }}
-      />
-
-      <BottomSheet
-        visible={showGoalModal}
-        title="Tujuan"
-        options={goalOptions}
-        selectedOption={tempGoal || goal}
-        onSelect={setTempGoal}
-        onClose={() => setShowGoalModal(false)}
-        type="option"
-        showContinueButton={true}
-        onContinue={() => {
-          if (tempGoal) {
-            setGoal(tempGoal);
-          }
-          setShowGoalModal(false);
+          setShowPhotoModal(false);
         }}
       />
 
@@ -270,21 +247,75 @@ const VerifyDataScreen = () => {
       />
 
       <BottomSheet
-        visible={showPhotoModal}
-        title="Foto profile"
-        options={photoOptions}
-        selectedOption={tempPhotoOption}
-        onSelect={setTempPhotoOption}
-        onClose={() => setShowPhotoModal(false)}
+        visible={showActivityModal}
+        title="Aktivitas"
+        options={activityOptions}
+        selectedOption={tempActivity || activity}
+        onSelect={setTempActivity}
+        onClose={() => setShowActivityModal(false)}
         type="option"
         showContinueButton={true}
         onContinue={() => {
-          if (tempPhotoOption) {
-            handleSelectPhotoOption(tempPhotoOption);
+          if (tempActivity) {
+            setActivity(tempActivity);
           }
-          setShowPhotoModal(false);
+          setShowActivityModal(false);
         }}
       />
+
+      <BottomSheet
+        visible={showPregnancyModal}
+        title="Usia Kehamilan"
+        type="custom"
+        options={[]}
+        selectedOption={null}
+        onSelect={() => { }}
+        onClose={() => setShowPregnancyModal(false)}
+        showContinueButton={true}
+        onContinue={() => {
+          setShowPregnancyModal(false);
+        }}
+      >
+        <View style={{ paddingHorizontal: 24 }}>
+          <Text style={{ marginBottom: 8 }}>Masukkan Bulan</Text>
+          <TextInput
+            placeholder="Misalnya: 1 - 9"
+            keyboardType="numeric"
+            style={styles.inputHalf}
+            value={pregnancyMonth}
+            onChangeText={setPregnancyMonth}
+          />
+          <Text style={{ marginVertical: 8 }}>Masukkan Hari</Text>
+          <TextInput
+            placeholder="Misalnya: 1 - 30"
+            keyboardType="numeric"
+            style={styles.inputHalf}
+            value={pregnancyDay}
+            onChangeText={setPregnancyDay}
+          />
+        </View>
+      </BottomSheet>
+
+      <BottomSheet
+        visible={showHealthHistoryModal}
+        title="Riwayat Kesehatan"
+        options={healthHistoryOptions}
+        selectedOption={tempHealthHistory || healthHistory}
+        onSelect={setTempHealthHistory}
+        onClose={() => setShowHealthHistoryModal(false)}
+        type="option"
+        showContinueButton={true}
+        onContinue={() => {
+          if (tempHealthHistory) {
+            setHealthHistory(tempHealthHistory);
+          }
+          setShowHealthHistoryModal(false);
+        }}
+      />
+
+
+
+
     </ScrollView>
   );
 };

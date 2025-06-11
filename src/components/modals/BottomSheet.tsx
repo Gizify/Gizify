@@ -9,7 +9,7 @@ interface Option {
   label: string;
 }
 
-type BottomSheetType = "option" | "date";
+type BottomSheetType = "option" | "date" | "custom";
 
 interface BottomSheetProps {
   visible: boolean;
@@ -21,6 +21,7 @@ interface BottomSheetProps {
   type: BottomSheetType;
   showContinueButton?: boolean;
   onContinue?: () => void;
+  children?: React.ReactNode;
 }
 
 const BottomSheet: React.FC<BottomSheetProps> = ({
@@ -33,6 +34,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   type,
   showContinueButton = false,
   onContinue = () => { },
+  children = null
 }) => {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split("T")[0]);
 
@@ -56,7 +58,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
           <View style={styles.contentContainer}>
             <View style={styles.optionsContainer}>
-              {type === "option" ? (
+              {type === "option" && (
                 options.map((option) => (
                   <TouchableOpacity
                     key={option.id}
@@ -76,7 +78,9 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
                     <Text style={styles.optionText}>{option.label}</Text>
                   </TouchableOpacity>
                 ))
-              ) : (
+              )}
+
+              {type === "date" && (
                 <View style={styles.calendarContainer}>
                   <Calendar
                     current={selectedDate}
@@ -96,7 +100,10 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
                   />
                 </View>
               )}
+
+              {type === "custom" && children}
             </View>
+
 
             {showContinueButton && (
               <TouchableOpacity
