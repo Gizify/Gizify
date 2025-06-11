@@ -1,77 +1,57 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  Alert,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet from "../components/modals/BottomSheet";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { completeUserProfile } from "../redux/actions/authAction";
 import { useDispatch, useSelector } from "react-redux";
-import { ImageSourcePropType } from 'react-native';
+import { AvatarType } from "../utils/avatars";
 import { avatarList } from "../utils/avatars";
 import AvatarModal from "../components/modals/AvatarModal";
 
 const VerifyDataScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { token, loading, error } = useSelector((state: any) => state.auth);
+  const { token } = useSelector((state: any) => state.auth);
 
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
   const [pregnancyMonth, setPregnancyMonth] = useState("");
+  const [pregnancyDay, setPregnancyDay] = useState("");
   const [activity, setActivity] = useState<string | null>(null);
   const [healthHistory, setHealthHistory] = useState<string | null>(null);
   const [birthdate, setBirthdate] = useState<string | null>(null);
-  const [photoOption, setPhotoOption] = useState<ImageSourcePropType | null>(null);
+  const [photoOption, setPhotoOption] = useState<AvatarType | null>(null);
 
-  const [pregnancyDay, setPregnancyDay] = useState("");
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [showHealthHistoryModal, setShowHealthHistoryModal] = useState(false);
   const [showDateModal, setShowDateModal] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const [showPregnancyModal, setShowPregnancyModal] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedAvatar, setSelectedAvatar] = useState<ImageSourcePropType | null>(null);
-  const [currentAvatar, setCurrentAvatar] = useState<ImageSourcePropType | null>(null);
+  const [selectedAvatar, setSelectedAvatar] = useState<AvatarType | null>(null);
+  const [currentAvatar, setCurrentAvatar] = useState<AvatarType | null>(null);
 
-  // Temporary states for each BottomSheet
-  const [showPregnancyModal, setShowPregnancyModal] = useState(false);
   const [tempActivity, setTempActivity] = useState<string | null>(null);
   const [tempHealthHistory, setTempHealthHistory] = useState<string | null>(null);
   const [tempBirthdate, setTempBirthdate] = useState<string | null>(null);
   const [tempPhotoOption, setTempPhotoOption] = useState<string | null>(null);
 
-  const genderOptions = [
-    { id: "Laki-Laki", label: "Laki-Laki" },
-    { id: "Perempuan", label: "Perempuan" },
-  ];
-
-  const activityOptions = [
-    { id: "Ringan", label: "Ringan" },
-    { id: "Sedang", label: "Sedang" },
-    { id: "Berat", label: "Berat" },
-  ];
-
-  const healthHistoryOptions = [
-    { id: "Anemia", label: "Anemia" },
-    { id: "Diabetes", label: "Diabetes" },
-    { id: "Hipertensi", label: "Hipertensi" },
-    { id: "TBC", label: "TBC" },
-    { id: "Tidak ada", label: "Tidak ada" },
-  ];
-
-  const photoOptions = [
-    { id: "avatar", label: "Pilih dari avatar yang tersedia" },
-    { id: "gallery", label: "Pilih dari galeri" },
-    { id: "camera", label: "Ambil foto" },
-    { id: "hapus", label: "Hapus gambar saat ini" },
-  ];
-
-  const handleSelectAvatar = (avatar: ImageSourcePropType) => {
+  const handleSelectAvatar = (avatar: AvatarType) => {
     setSelectedAvatar(avatar);
   };
 
-  const handleCloseModal = () => {
-    setModalVisible(false);
-  };
+  const handleCloseModal = () => setModalVisible(false);
 
   const handleConfirmAvatar = () => {
     if (selectedAvatar) {
@@ -89,15 +69,21 @@ const VerifyDataScreen = () => {
       setCurrentAvatar(null);
       setSelectedAvatar(null);
     }
-    // For gallery and camera, you'd need to implement those features
   };
 
   const handleSubmit = async () => {
-    if (!height || !weight || !pregnancyMonth || !pregnancyDay || !activity || !healthHistory || !birthdate) {
+    if (
+      !height ||
+      !weight ||
+      !pregnancyMonth ||
+      !pregnancyDay ||
+      !activity ||
+      !healthHistory ||
+      !birthdate
+    ) {
       Alert.alert("Error", "Mohon lengkapi semua data terlebih dahulu");
       return;
     }
-
 
     try {
       if (!token) {
@@ -119,9 +105,8 @@ const VerifyDataScreen = () => {
         activity,
         healthHistory,
         birthdate,
-        photoOption,
+        photoOption: photoOption?.id || null,
       };
-
 
       await dispatch(completeUserProfile(profileData) as any);
 
@@ -138,8 +123,15 @@ const VerifyDataScreen = () => {
     }
   };
 
-  // Check if the button should be enabled
-  const isButtonDisabled = !selectedAvatar || selectedAvatar === currentAvatar;
+  const isButtonDisabled =
+    !height ||
+    !weight ||
+    !pregnancyMonth ||
+    !pregnancyDay ||
+    !activity ||
+    !healthHistory ||
+    !birthdate ||
+    !photoOption;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -150,22 +142,34 @@ const VerifyDataScreen = () => {
         <Text style={styles.header}>Isi Data Diri</Text>
       </View>
 
-      {/* Foto Profile */}
       <View style={styles.profileImage}>
-        {photoOption ? (
-          <Image source={photoOption} style={styles.image} />
-        ) : (
-          <Image source={require("../../assets/avatar/default-avatar.png")} style={styles.image} />
-        )}
+        <Image
+          source={
+            photoOption?.source ||
+            require("../../assets/avatar/default-avatar.png")
+          }
+          style={styles.image}
+        />
         <TouchableOpacity onPress={() => setShowPhotoModal(true)}>
           <Text style={styles.imageText}>Tambahkan foto profile</Text>
         </TouchableOpacity>
       </View>
 
-      {/* For Input Data */}
       <View style={styles.row}>
-        <TextInput placeholder="Tinggi Badan (cm) *" style={styles.inputHalf} keyboardType="numeric" value={height} onChangeText={setHeight} />
-        <TextInput placeholder="Berat Badan (kg) *" style={styles.inputHalf} keyboardType="numeric" value={weight} onChangeText={setWeight} />
+        <TextInput
+          placeholder="Tinggi Badan (cm) *"
+          style={styles.inputHalf}
+          keyboardType="numeric"
+          value={height}
+          onChangeText={setHeight}
+        />
+        <TextInput
+          placeholder="Berat Badan (kg) *"
+          style={styles.inputHalf}
+          keyboardType="numeric"
+          value={weight}
+          onChangeText={setWeight}
+        />
       </View>
 
       <TouchableOpacity style={styles.select} onPress={() => setShowDateModal(true)}>
@@ -187,7 +191,10 @@ const VerifyDataScreen = () => {
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.select} onPress={() => setShowHealthHistoryModal(true)}>
+      <TouchableOpacity
+        style={styles.select}
+        onPress={() => setShowHealthHistoryModal(true)}
+      >
         <Text style={styles.selectText}>{healthHistory || "Riwayat Kesehatan*"}</Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
@@ -208,23 +215,26 @@ const VerifyDataScreen = () => {
         onClose={handleCloseModal}
         onConfirm={handleConfirmAvatar}
         avatarList={avatarList}
-        currentAvatar={selectedAvatar}
+        currentAvatar={currentAvatar}
       />
 
-      {/* BottomSheet Modals */}
+      {/* Bottom Sheets */}
       <BottomSheet
         visible={showPhotoModal}
         title="Foto profile"
-        options={photoOptions}
+        options={[
+          { id: "avatar", label: "Pilih dari avatar yang tersedia" },
+          { id: "gallery", label: "Pilih dari galeri" },
+          { id: "camera", label: "Ambil foto" },
+          { id: "hapus", label: "Hapus gambar saat ini" },
+        ]}
         selectedOption={tempPhotoOption}
         onSelect={setTempPhotoOption}
         onClose={() => setShowPhotoModal(false)}
         type="option"
         showContinueButton={true}
         onContinue={() => {
-          if (tempPhotoOption) {
-            handleSelectPhotoOption(tempPhotoOption);
-          }
+          if (tempPhotoOption) handleSelectPhotoOption(tempPhotoOption);
           setShowPhotoModal(false);
         }}
       />
@@ -239,9 +249,7 @@ const VerifyDataScreen = () => {
         type="date"
         showContinueButton={true}
         onContinue={() => {
-          if (tempBirthdate) {
-            setBirthdate(tempBirthdate);
-          }
+          if (tempBirthdate) setBirthdate(tempBirthdate);
           setShowDateModal(false);
         }}
       />
@@ -249,16 +257,18 @@ const VerifyDataScreen = () => {
       <BottomSheet
         visible={showActivityModal}
         title="Aktivitas"
-        options={activityOptions}
+        options={[
+          { id: "Ringan", label: "Ringan" },
+          { id: "Sedang", label: "Sedang" },
+          { id: "Berat", label: "Berat" },
+        ]}
         selectedOption={tempActivity || activity}
         onSelect={setTempActivity}
         onClose={() => setShowActivityModal(false)}
         type="option"
         showContinueButton={true}
         onContinue={() => {
-          if (tempActivity) {
-            setActivity(tempActivity);
-          }
+          if (tempActivity) setActivity(tempActivity);
           setShowActivityModal(false);
         }}
       />
@@ -272,9 +282,7 @@ const VerifyDataScreen = () => {
         onSelect={() => { }}
         onClose={() => setShowPregnancyModal(false)}
         showContinueButton={true}
-        onContinue={() => {
-          setShowPregnancyModal(false);
-        }}
+        onContinue={() => setShowPregnancyModal(false)}
       >
         <View style={{ paddingHorizontal: 24 }}>
           <Text style={{ marginBottom: 8 }}>Masukkan Bulan</Text>
@@ -299,23 +307,23 @@ const VerifyDataScreen = () => {
       <BottomSheet
         visible={showHealthHistoryModal}
         title="Riwayat Kesehatan"
-        options={healthHistoryOptions}
+        options={[
+          { id: "Anemia", label: "Anemia" },
+          { id: "Diabetes", label: "Diabetes" },
+          { id: "Hipertensi", label: "Hipertensi" },
+          { id: "TBC", label: "TBC" },
+          { id: "Tidak ada", label: "Tidak ada" },
+        ]}
         selectedOption={tempHealthHistory || healthHistory}
         onSelect={setTempHealthHistory}
         onClose={() => setShowHealthHistoryModal(false)}
         type="option"
         showContinueButton={true}
         onContinue={() => {
-          if (tempHealthHistory) {
-            setHealthHistory(tempHealthHistory);
-          }
+          if (tempHealthHistory) setHealthHistory(tempHealthHistory);
           setShowHealthHistoryModal(false);
         }}
       />
-
-
-
-
     </ScrollView>
   );
 };
