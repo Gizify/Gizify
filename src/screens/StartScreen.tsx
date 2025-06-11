@@ -15,7 +15,7 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { AuthStackParamList } from '../navigation/AuthStackNavigator'; // Pastikan ini sesuai path kamu
+import { AuthStackParamList } from '../navigation/AuthStackNavigator';
 
 const { height } = Dimensions.get('window');
 

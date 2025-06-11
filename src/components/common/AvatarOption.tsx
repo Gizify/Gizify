@@ -1,9 +1,8 @@
 import React from "react";
-import { Image, Pressable, StyleSheet } from "react-native";
-import { AvatarType } from "../../utils/avatars";
+import { Image, Pressable, StyleSheet, ImageSourcePropType } from "react-native";
 
 interface AvatarOptionProps {
-    image: AvatarType;
+    image: ImageSourcePropType;
     selected: boolean;
     onPress: () => void;
     testID?: string;

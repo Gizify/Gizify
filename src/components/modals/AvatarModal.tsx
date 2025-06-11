@@ -34,24 +34,21 @@ const AvatarModal: React.FC<AvatarModalProps> = ({
     const [canConfirm, setCanConfirm] = useState(false);
 
     useEffect(() => {
-        setCanConfirm(selectedAvatar !== null && selectedAvatar !== currentAvatar);
+        setCanConfirm(
+            selectedAvatar !== null &&
+            selectedAvatar.id !== currentAvatar?.id
+        );
     }, [selectedAvatar, currentAvatar]);
 
     return (
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.overlay}>
                 <View style={styles.modalContainer}>
-
                     {/* Header */}
                     <View style={styles.header}>
                         <Text style={styles.title}>Pilih Avatar</Text>
                         <Pressable onPress={onClose} style={styles.closeButton}>
-                            <Ionicons
-                                name="close"
-                                size={20}
-                                color="#333"
-                                style={styles.icon}
-                            />
+                            <Ionicons name="close" size={20} color="#333" style={styles.icon} />
                             <Text style={[styles.closeText, styles.iconText]}>Kembali</Text>
                         </Pressable>
                     </View>
@@ -63,7 +60,7 @@ const AvatarModal: React.FC<AvatarModalProps> = ({
                     <FlatList
                         data={avatarList}
                         numColumns={3}
-                        keyExtractor={(_, index) => index.toString()}
+                        keyExtractor={(item) => item.id}
                         contentContainerStyle={styles.avatarGrid}
                         renderItem={({ item }) => (
                             <TouchableOpacity
@@ -72,11 +69,11 @@ const AvatarModal: React.FC<AvatarModalProps> = ({
                                 activeOpacity={0.8}
                             >
                                 <AvatarOption
-                                    image={item}
-                                    selected={selectedAvatar === item}
+                                    image={item.source}
+                                    selected={selectedAvatar?.id === item.id}
                                     onPress={() => onSelect(item)}
                                 />
-                                {selectedAvatar === item && (
+                                {selectedAvatar?.id === item.id && (
                                     <View style={styles.checkmarkOverlay}>
                                         <Ionicons
                                             name="checkmark-circle"
@@ -91,13 +88,15 @@ const AvatarModal: React.FC<AvatarModalProps> = ({
 
                     {/* Button Pilih */}
                     <TouchableOpacity
-                        style={[styles.selectButton, !canConfirm && styles.selectButtonDisabled]}
+                        style={[
+                            styles.selectButton,
+                            !canConfirm && styles.selectButtonDisabled,
+                        ]}
                         onPress={onConfirm}
                         disabled={!canConfirm}
                     >
                         <Text style={styles.selectButtonText}>Pilih</Text>
                     </TouchableOpacity>
-
                 </View>
             </View>
         </Modal>
