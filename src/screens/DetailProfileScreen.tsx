@@ -1,117 +1,135 @@
 import React from "react";
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
+import { avatarList } from "../utils/avatars";
+import { AvatarType } from "../utils/avatars";
 
 const DetailProfileScreen = () => {
   const navigation = useNavigation();
-  const user = useSelector((state: any) => state.auth.user);
+  const userProfile = useSelector((state: any) => state.auth.userProfile);
+
+  const avatar: AvatarType | undefined = avatarList.find(
+    (item) => item.id === userProfile?.photoOption
+  );
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 30 }}>
+    <ScrollView contentContainerStyle={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Detail Profile</Text>
+        <Text style={styles.header}>Detail Profile</Text>
       </View>
 
       {/* Avatar */}
       <View style={styles.avatarContainer}>
         <Image
-          source={require("../../assets/avatar/avatar1.png")} // Ganti SVG ke PNG/JPG jika perlu
+          source={
+            avatar?.source
+              ? avatar.source
+              : require("../../assets/avatar/default-avatar.png")
+          }
           style={styles.avatar}
-          resizeMode="contain"
         />
       </View>
 
-      {/* Fields */}
-      <View style={styles.fields}>
-        <ProfileField label="Nama" value={user.name} />
-        <ProfileField label="Email" value={user.email} />
-        <ProfileField label="Tujuan" value={user.goal} />
-        <ProfileField label="Berat badan" value={`${user.weight} kg`} />
-        <ProfileField label="Tinggi badan" value={`${user.height} cm`} />
-        <ProfileField label="Level Aktivitas" value={user.activity_level} />
-        <ProfileField label="Tanggal Lahir" value={user.birthdate} />
-      </View>
+      {/* Info Items */}
+      <InfoItem label="Nama" value={userProfile?.name} />
+      <InfoItem label="Email" value={userProfile?.email} />
+      <InfoItem
+        label="Usia"
+        value={userProfile?.birthdate ? `${userProfile.birthdate} tahun` : "-"}
+      />
+      <InfoItem
+        label="Berat badan"
+        value={userProfile?.weight ? `${userProfile.weight} kg` : "-"}
+      />
+      <InfoItem
+        label="Tinggi badan"
+        value={userProfile?.height ? `${userProfile.height} cm` : "-"}
+      />
+      <InfoItem
+        label="Usia Kehamilan"
+        value={
+          userProfile?.pregnancyMonth !== undefined &&
+            userProfile?.pregnancyDay !== undefined
+            ? `${userProfile.pregnancyMonth} Bulan ${userProfile.pregnancyDay} Hari`
+            : "-"
+        }
+      />
+      <InfoItem
+        label="Riwayat Kesehatan"
+        value={userProfile?.healthHistory}
+      />
     </ScrollView>
   );
 };
 
-// Komponen Reusable Field
-const ProfileField = ({ label, value }: { label: string; value: string }) => (
-  <View style={styles.fieldContainer}>
-    <View style={styles.fieldRow}>
-      <Text style={styles.label}>{label}</Text>
-      <Text style={styles.separator}>:</Text>
-      <TextInput style={styles.input} value={value} editable={false} />
-    </View>
+export default DetailProfileScreen;
+
+// Reusable Info Row Component
+const InfoItem = ({ label, value }: { label: string; value?: string }) => (
+  <View style={styles.infoItem}>
+    <Text style={styles.label} numberOfLines={1}>
+      {label}
+    </Text>
+    <Text style={styles.value} numberOfLines={1}>
+      {value || "-"}
+    </Text>
   </View>
 );
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "#fff",
-    paddingHorizontal: 20,
+    padding: 24,
+    paddingBottom: 80,
   },
-  header: {
+  headerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 36,
-    gap: 10,
-    paddingVertical: 22,
+    marginBottom: 24,
   },
-  headerTitle: {
+  header: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#555",
+    marginLeft: 16,
   },
   avatarContainer: {
     alignItems: "center",
-    marginVertical: 24,
+    marginBottom: 32,
   },
   avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "#F3F3F3",
   },
-  fields: {
-    gap: 16,
-  },
-  fieldContainer: {
+  infoItem: {
     flexDirection: "row",
-  },
-  fieldRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F3F3",
   },
   label: {
-    width: 110,
     fontWeight: "bold",
-    fontSize: 16,
-    color: "#444",
-  },
-  separator: {
-    marginRight: 4,
-    color: "#444",
-    fontSize: 16,
-  },
-  input: {
+    color: "#555",
     flex: 1,
-    borderWidth: 1,
-    borderColor: "#f0f0f0",
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    backgroundColor: "#fdfdfd",
-    fontSize: 16,
-    color: "#888",
+  },
+  value: {
+    color: "#333",
+    flex: 1,
+    textAlign: "right",
   },
 });
-
-export default DetailProfileScreen;
