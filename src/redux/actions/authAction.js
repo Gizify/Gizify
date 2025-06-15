@@ -63,68 +63,91 @@ export const logoutUser = () => async (dispatch) => {
   dispatch({ type: "LOGOUT" });
 };
 
+// Edit Profile Action
+export const updateUserProfile = (updatedData) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: "PROFILE_UPDATE_REQUEST" });
+
+    const { token } = getState().auth;
+
+    const { user, message } = await authApi.updateProfile(updatedData, token);
+
+    dispatch({
+      type: "PROFILE_UPDATE_SUCCESS",
+      payload: { user, message },
+    });
+  } catch (error) {
+    dispatch({
+      type: "PROFILE_UPDATE_FAILURE",
+      payload: error.response?.data?.message || "Failed to update profile",
+    });
+    throw error;
+  }
+};
+
+
 export const addConsumption =
   (source, source_id, portion_size = 1, userTimeZone = "Asia/Jakarta", token) =>
-  async (dispatch) => {
-    try {
-      dispatch({ type: "ADD_CONSUMPTION_REQUEST" });
+    async (dispatch) => {
+      try {
+        dispatch({ type: "ADD_CONSUMPTION_REQUEST" });
 
-      const response = await authApi.addConsumption({
-        source,
-        source_id,
-        portion_size,
-        userTimeZone,
-        token,
-      });
+        const response = await authApi.addConsumption({
+          source,
+          source_id,
+          portion_size,
+          userTimeZone,
+          token,
+        });
 
-      dispatch({
-        type: "ADD_CONSUMPTION_SUCCESS",
-        payload: {
-          todayStats: response.today_stats,
-          todayMeals: response.today_meals,
-          timezone: response.timezone,
-        },
-      });
-    } catch (error) {
-      console.error(error);
-      dispatch({
-        type: "ADD_CONSUMPTION_FAILURE",
-        payload: error.response?.data?.message || "Gagal menambahkan konsumsi",
-      });
-      throw error;
-    }
-  };
+        dispatch({
+          type: "ADD_CONSUMPTION_SUCCESS",
+          payload: {
+            todayStats: response.today_stats,
+            todayMeals: response.today_meals,
+            timezone: response.timezone,
+          },
+        });
+      } catch (error) {
+        console.error(error);
+        dispatch({
+          type: "ADD_CONSUMPTION_FAILURE",
+          payload: error.response?.data?.message || "Gagal menambahkan konsumsi",
+        });
+        throw error;
+      }
+    };
 
 export const addConsumptionFromBarcode =
   (barcode, portion_size = 1, userTimeZone = "Asia/Jakarta", token) =>
-  async (dispatch) => {
-    try {
-      dispatch({ type: "ADD_CONSUMPTION_REQUEST" });
+    async (dispatch) => {
+      try {
+        dispatch({ type: "ADD_CONSUMPTION_REQUEST" });
 
-      const response = await authApi.addConsumptionFromBarcode({
-        barcode,
-        portion_size,
-        userTimeZone,
-        token,
-      });
+        const response = await authApi.addConsumptionFromBarcode({
+          barcode,
+          portion_size,
+          userTimeZone,
+          token,
+        });
 
-      dispatch({
-        type: "ADD_CONSUMPTION_SUCCESS",
-        payload: {
-          todayStats: response.today_stats,
-          todayMeals: response.today_meals,
-          timezone: response.timezone,
-        },
-      });
-    } catch (error) {
-      console.error("Error adding consumption from barcode:", error);
-      dispatch({
-        type: "ADD_CONSUMPTION_FAILURE",
-        payload: error.response?.data?.message || "Gagal menambahkan konsumsi",
-      });
-      throw error;
-    }
-  };
+        dispatch({
+          type: "ADD_CONSUMPTION_SUCCESS",
+          payload: {
+            todayStats: response.today_stats,
+            todayMeals: response.today_meals,
+            timezone: response.timezone,
+          },
+        });
+      } catch (error) {
+        console.error("Error adding consumption from barcode:", error);
+        dispatch({
+          type: "ADD_CONSUMPTION_FAILURE",
+          payload: error.response?.data?.message || "Gagal menambahkan konsumsi",
+        });
+        throw error;
+      }
+    };
 
 // Action untuk menghapus akun
 export const deleteAccount = (token) => async (dispatch) => {
