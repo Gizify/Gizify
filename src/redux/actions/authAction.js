@@ -1,8 +1,10 @@
 import * as authApi from "../../services/authService";
 
+// Register user
 export const registerUser = (email, password, name) => async (dispatch) => {
   try {
     dispatch({ type: "REGISTER_REQUEST" });
+
     const { token, message, user, expiredAt } = await authApi.register(email, password, name);
 
     dispatch({
@@ -12,15 +14,17 @@ export const registerUser = (email, password, name) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: "REGISTER_FAILURE",
-      payload: error.response?.message || "Registration failed",
+      payload: error.response?.data?.message || "Registration failed"
     });
     throw error;
   }
 };
 
+// Login user
 export const loginUser = (email, password) => async (dispatch) => {
   try {
     dispatch({ type: "LOGIN_REQUEST" });
+
     const { token, user, message, expiredAt } = await authApi.login(email, password);
 
     dispatch({
@@ -36,15 +40,19 @@ export const loginUser = (email, password) => async (dispatch) => {
   }
 };
 
+// Lengkapi profil user setelah registrasi
 export const completeUserProfile = (profileData) => async (dispatch, getState) => {
   try {
     dispatch({ type: "PROFILE_UPDATE_REQUEST" });
 
     const { token, user: oldUserData } = getState().auth;
-
     const { user, message } = await authApi.completeProfile(profileData, token);
 
-    const mergedUser = { ...oldUserData, ...user };
+    const mergedUser = {
+      ...oldUserData,
+      ...user,
+      photoOption: user.photoOption ?? oldUserData.photoOption,
+    };
 
     dispatch({
       type: "PROFILE_UPDATE_SUCCESS",
@@ -59,22 +67,28 @@ export const completeUserProfile = (profileData) => async (dispatch, getState) =
   }
 };
 
+// Logout user
 export const logoutUser = () => async (dispatch) => {
   dispatch({ type: "LOGOUT" });
 };
 
-// Edit Profile Action
+// Update profil user
 export const updateUserProfile = (updatedData) => async (dispatch, getState) => {
   try {
     dispatch({ type: "PROFILE_UPDATE_REQUEST" });
 
-    const { token } = getState().auth;
-
+    const { token, user: oldUserData } = getState().auth;
     const { user, message } = await authApi.updateProfile(updatedData, token);
+
+    const mergedUser = {
+      ...oldUserData,
+      ...user,
+      photoOption: user.photoOption ?? oldUserData.photoOption,
+    };
 
     dispatch({
       type: "PROFILE_UPDATE_SUCCESS",
-      payload: { user, message },
+      payload: { mergedUser, message },
     });
   } catch (error) {
     dispatch({
@@ -85,7 +99,7 @@ export const updateUserProfile = (updatedData) => async (dispatch, getState) => 
   }
 };
 
-
+// Tambah konsumsi makanan manual
 export const addConsumption =
   (source, source_id, portion_size = 1, userTimeZone = "Asia/Jakarta", token) =>
     async (dispatch) => {
@@ -118,6 +132,7 @@ export const addConsumption =
       }
     };
 
+// Tambah konsumsi berdasarkan barcode
 export const addConsumptionFromBarcode =
   (barcode, portion_size = 1, userTimeZone = "Asia/Jakarta", token) =>
     async (dispatch) => {
@@ -149,7 +164,7 @@ export const addConsumptionFromBarcode =
       }
     };
 
-// Action untuk menghapus akun
+// Hapus akun user
 export const deleteAccount = (token) => async (dispatch) => {
   try {
     dispatch({ type: "DELETE_ACCOUNT_REQUEST" });
