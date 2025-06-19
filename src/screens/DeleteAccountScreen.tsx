@@ -61,7 +61,7 @@ const DeleteAccountScreen = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Detail Profile</Text>
+        <Text style={styles.headerTitle}>Kelola Akun</Text>
       </View>
       <View style={styles.containerIn}>
         <Text style={styles.headerText}>Hapus Akun Anda</Text>
