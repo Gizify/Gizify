@@ -1,11 +1,11 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ProfileScreen from "../screens/ProfileScreen";
-import DetailProfileScreen from "../screens/DetailProfileScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
-import DeleteAccountScreen from "../screens/DeleteAccountScreen";
+import DetailProfileScreen from "../screens/DetailProfileScreen";
 // import AccountSettingsScreen from "../screens/AccountSettingsScreen";
 // import PrivacySettingsScreen from "../screens/PrivacySettingsScreen";
+import ManageAccountScreen from "../screens/ManageAccountScreen";
 
 export type ProfileStackParamList = {
   ProfileMain: undefined;
@@ -13,7 +13,7 @@ export type ProfileStackParamList = {
   DetailProfileScreen: undefined;
   AccountSettingsScreen: undefined;
   PrivacySettingsScreen: undefined;
-  DeleteAccountScreen: undefined;
+  ManageAccountScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<ProfileStackParamList>();
@@ -24,9 +24,9 @@ export default function ProfileStackNavigator() {
       <Stack.Screen name="ProfileMain" component={ProfileScreen} />
       <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
       <Stack.Screen name="DetailProfileScreen" component={DetailProfileScreen} />
-      {/* <Stack.Screen name="AccountSettingsScreen" component={AccountSettingsScreen} />
-      <Stack.Screen name="PrivacySettingsScreen" component={PrivacySettingsScreen} /> */}
-      <Stack.Screen name="DeleteAccountScreen" component={DeleteAccountScreen} />
+      {/* <Stack.Screen name="AccountSettingsScreen" component={AccountSettingsScreen} /> */}
+      {/* <Stack.Screen name="PrivacySettingsScreen" component={PrivacySettingsScreen} /> */}
+      <Stack.Screen name="ManageAccountScreen" component={ManageAccountScreen} />
     </Stack.Navigator>
   );
 }
