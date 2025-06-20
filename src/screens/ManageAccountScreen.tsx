@@ -3,17 +3,17 @@ import {
     View,
     Text,
     StyleSheet,
-    ScrollView,
     TouchableOpacity,
     Animated,
+    ScrollView,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 type ProfileStackParamList = {
     ManageAccountScreen: undefined;
-    DownloadDataScreen: undefined;
-    DeactivateAccountScreen: undefined;
     DeleteAccountScreen: undefined;
 };
 
@@ -27,84 +27,62 @@ interface Props {
 
 const ManageAccountScreen: React.FC<Props> = ({ navigation }) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;
+    const scaleAnim = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
         Animated.timing(fadeAnim, {
             toValue: 1,
-            duration: 800,
+            duration: 600,
             useNativeDriver: true,
         }).start();
     }, []);
 
-    const renderButton = (
-        label: string,
-        onPress: () => void,
-        options: { color?: string; glowColor?: string } = {}
-    ) => {
-        const scale = useRef(new Animated.Value(1)).current;
-        const animatedStyle = { transform: [{ scale }] };
+    const handlePressIn = () => {
+        Animated.spring(scaleAnim, {
+            toValue: 0.97,
+            useNativeDriver: true,
+        }).start();
+    };
 
-        const buttonColor = options.color || "#1f1f3a";
-        const glowColor = options.glowColor || "#00FFE0";
-
-        return (
-            <Animated.View
-                style={[
-                    styles.glowButton,
-                    {
-                        shadowColor: glowColor,
-                        backgroundColor: `${glowColor}22`,
-                    },
-                ]}
-            >
-                <TouchableOpacity
-                    onPressIn={() => {
-                        Animated.spring(scale, {
-                            toValue: 0.96,
-                            useNativeDriver: true,
-                        }).start();
-                    }}
-                    onPressOut={() => {
-                        Animated.spring(scale, {
-                            toValue: 1,
-                            useNativeDriver: true,
-                        }).start();
-                    }}
-                    onPress={onPress}
-                    activeOpacity={0.85}
-                >
-                    <Animated.View
-                        style={[
-                            styles.button,
-                            animatedStyle,
-                            { backgroundColor: buttonColor },
-                        ]}
-                    >
-                        <Text
-                            style={[
-                                styles.buttonText,
-                                { color: glowColor },
-                            ]}
-                        >
-                            {label}
-                        </Text>
-                    </Animated.View>
-                </TouchableOpacity>
-            </Animated.View>
-        );
+    const handlePressOut = () => {
+        Animated.spring(scaleAnim, {
+            toValue: 1,
+            useNativeDriver: true,
+        }).start();
     };
 
     return (
         <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <LinearGradient
+                colors={["#ffffff", "#bfd6ff"]}
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+                style={StyleSheet.absoluteFill}
+            />
+            <View style={styles.header}>
+                <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    style={styles.backButton}
+                >
+                    <Ionicons name="arrow-back" size={24} color="#1c1c1e" />
+                    <Text style={styles.backText}>Kembali</Text>
+                </TouchableOpacity>
+            </View>
+
+            <ScrollView contentContainerStyle={styles.scroll}>
                 <Text style={styles.title}>Kelola Akun</Text>
 
-                {renderButton("Unduh Data", () => navigation.navigate("DownloadDataScreen"))}
-                {renderButton("Nonaktifkan Akun", () => navigation.navigate("DeactivateAccountScreen"))}
-                {renderButton("Hapus Akun", () => navigation.navigate("DeleteAccountScreen"), {
-                    color: "#2a0e0e",
-                    glowColor: "#FF4C4C",
-                })}
+                <Animated.View style={[styles.glowWrapper, { transform: [{ scale: scaleAnim }] }]}>
+                    <TouchableOpacity
+                        onPressIn={handlePressIn}
+                        onPressOut={handlePressOut}
+                        onPress={() => navigation.navigate("DeleteAccountScreen")}
+                        activeOpacity={0.85}
+                        style={styles.deleteButton}
+                    >
+                        <Text style={styles.deleteText}>Hapus Akun</Text>
+                    </TouchableOpacity>
+                </Animated.View>
             </ScrollView>
         </Animated.View>
     );
@@ -115,42 +93,58 @@ export default ManageAccountScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#0d0c1d",
+        position: "relative",
     },
-    scrollContent: {
-        padding: 20,
+    header: {
+        flexDirection: "row",
         alignItems: "center",
+        paddingTop: 50,
+        paddingHorizontal: 20,
+        paddingBottom: 10,
+    },
+    backButton: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    backText: {
+        color: "#1c1c1e",
+        fontSize: 16,
+        marginLeft: 4,
+        fontWeight: "500",
+    },
+    scroll: {
+        flexGrow: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 24,
     },
     title: {
-        fontSize: 28,
-        fontWeight: "bold",
-        color: "#fff",
-        marginBottom: 30,
-        textAlign: "center",
-        textShadowColor: "#00FFE0",
-        textShadowOffset: { width: 0, height: 0 },
-        textShadowRadius: 12,
-        letterSpacing: 1.5,
+        fontSize: 26,
+        fontWeight: "700",
+        color: "#1c1c1e",
+        marginBottom: 40,
     },
-    glowButton: {
+    glowWrapper: {
         width: "100%",
-        marginVertical: 12,
-        borderRadius: 16,
-        shadowOpacity: 0.9,
-        shadowOffset: { width: 0, height: 0 },
-        shadowRadius: 25,
-        elevation: 12,
+        borderRadius: 12,
+        shadowColor: "#FF3B30",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.25,
+        shadowRadius: 10,
+        elevation: 8,
+        backgroundColor: "#ffe5e5",
     },
-    button: {
-        paddingVertical: 16,
-        paddingHorizontal: 24,
-        borderRadius: 16,
+    deleteButton: {
+        paddingVertical: 18,
+        borderRadius: 12,
         alignItems: "center",
+        backgroundColor: "#FF3B30",
     },
-    buttonText: {
+    deleteText: {
+        color: "#fff",
         fontSize: 16,
         fontWeight: "600",
+        letterSpacing: 1,
         textTransform: "uppercase",
-        letterSpacing: 1.3,
     },
 });

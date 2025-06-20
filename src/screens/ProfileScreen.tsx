@@ -46,7 +46,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
         <Text style={styles.profileEmail}>{user.email}</Text>
 
         <TouchableOpacity style={styles.editProfileButton} onPress={() => navigation.navigate("EditProfileScreen")}>
-          <Text style={styles.editProfileText}>Edit Foto</Text>
+          <Text style={styles.editProfileText}>Edit Profile</Text>
         </TouchableOpacity>
       </View>
 
