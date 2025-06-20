@@ -30,11 +30,11 @@ const VerifyDataScreen = () => {
   const [activity, setActivity] = useState<string | null>(null);
   const [healthHistory, setHealthHistory] = useState<string | null>(null);
   const [birthdate, setBirthdate] = useState<string | null>(null);
+  const [birthdateError, setBirthdateError] = useState("");
   const [photoOption, setPhotoOption] = useState<AvatarType | null>(null);
 
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [showHealthHistoryModal, setShowHealthHistoryModal] = useState(false);
-  const [showDateModal, setShowDateModal] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [showPregnancyModal, setShowPregnancyModal] = useState(false);
 
@@ -44,8 +44,23 @@ const VerifyDataScreen = () => {
 
   const [tempActivity, setTempActivity] = useState<string | null>(null);
   const [tempHealthHistory, setTempHealthHistory] = useState<string | null>(null);
-  const [tempBirthdate, setTempBirthdate] = useState<string | null>(null);
   const [tempPhotoOption, setTempPhotoOption] = useState<string | null>(null);
+
+  const isValidDate = (dateStr: string) => {
+    const regex = /^([0-2][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+    return regex.test(dateStr);
+  };
+
+  const formatDateInput = (input: string) => {
+    const cleaned = input.replace(/\D/g, "");
+    const parts = [];
+
+    if (cleaned.length > 0) parts.push(cleaned.substring(0, 2));
+    if (cleaned.length > 2) parts.push(cleaned.substring(2, 4));
+    if (cleaned.length > 4) parts.push(cleaned.substring(4, 8));
+
+    return parts.join("/");
+  };
 
   const handleSelectAvatar = (avatar: AvatarType) => {
     setSelectedAvatar(avatar);
@@ -79,9 +94,15 @@ const VerifyDataScreen = () => {
       !pregnancyDay ||
       !activity ||
       !healthHistory ||
-      !birthdate
+      !birthdate ||
+      !photoOption
     ) {
       Alert.alert("Error", "Mohon lengkapi semua data terlebih dahulu");
+      return;
+    }
+
+    if (!isValidDate(birthdate)) {
+      Alert.alert("Error", "Format tanggal lahir tidak valid. Gunakan DD/MM/YYYY");
       return;
     }
 
@@ -97,15 +118,17 @@ const VerifyDataScreen = () => {
         return;
       }
 
+      const gestational_age =
+        parseInt(pregnancyMonth) * 4 + parseInt(pregnancyDay) / 7;
+
       const profileData = {
         height: parseFloat(height),
         weight: parseFloat(weight),
-        pregnancyMonth: parseInt(pregnancyMonth),
-        pregnancyDay: parseInt(pregnancyDay),
-        activity,
-        healthHistory,
+        gestational_age,
+        activity: activity,
         birthdate,
         photoOption: photoOption?.id || null,
+        medical_history: healthHistory === "Tidak ada" ? [] : [healthHistory],
       };
 
       await dispatch(completeUserProfile(profileData) as any);
@@ -122,6 +145,7 @@ const VerifyDataScreen = () => {
       Alert.alert("Gagal", "Gagal menyimpan data. Silakan coba lagi.");
     }
   };
+
 
   const isButtonDisabled =
     !height ||
@@ -172,10 +196,26 @@ const VerifyDataScreen = () => {
         />
       </View>
 
-      <TouchableOpacity style={styles.select} onPress={() => setShowDateModal(true)}>
-        <Text style={styles.selectText}>{birthdate || "Usia*"}</Text>
-        <Ionicons name="chevron-forward" size={20} color="#777" />
-      </TouchableOpacity>
+      <TextInput
+        placeholder="Tanggal Lahir (DD/MM/YYYY) *"
+        style={styles.inputFull}
+        keyboardType="numeric"
+        maxLength={10}
+        value={birthdate || ""}
+        onChangeText={(text) => {
+          const formatted = formatDateInput(text);
+          setBirthdate(formatted);
+          setBirthdateError("");
+        }}
+        onBlur={() => {
+          if (birthdate && !isValidDate(birthdate)) {
+            setBirthdateError("Format tanggal tidak valid (contoh: 31/12/2000)");
+          }
+        }}
+      />
+      {birthdateError ? (
+        <Text style={{ color: "red", marginBottom: 12 }}>{birthdateError}</Text>
+      ) : null}
 
       <TouchableOpacity style={styles.select} onPress={() => setShowActivityModal(true)}>
         <Text style={styles.selectText}>{activity || "Aktivitas*"}</Text>
@@ -207,7 +247,6 @@ const VerifyDataScreen = () => {
         <Text style={styles.buttonText}>Lanjut</Text>
       </TouchableOpacity>
 
-      {/* Avatar Modal */}
       <AvatarModal
         visible={modalVisible}
         selectedAvatar={selectedAvatar}
@@ -218,7 +257,6 @@ const VerifyDataScreen = () => {
         currentAvatar={currentAvatar}
       />
 
-      {/* Bottom Sheets */}
       <BottomSheet
         visible={showPhotoModal}
         title="Foto profile"
@@ -236,21 +274,6 @@ const VerifyDataScreen = () => {
         onContinue={() => {
           if (tempPhotoOption) handleSelectPhotoOption(tempPhotoOption);
           setShowPhotoModal(false);
-        }}
-      />
-
-      <BottomSheet
-        visible={showDateModal}
-        title="Usia"
-        options={[]}
-        selectedOption={tempBirthdate || birthdate}
-        onSelect={setTempBirthdate}
-        onClose={() => setShowDateModal(false)}
-        type="date"
-        showContinueButton={true}
-        onContinue={() => {
-          if (tempBirthdate) setBirthdate(tempBirthdate);
-          setShowDateModal(false);
         }}
       />
 
@@ -365,6 +388,15 @@ const styles = StyleSheet.create({
   },
   inputHalf: {
     width: "48%",
+    borderWidth: 1,
+    borderColor: "#F3F3F3",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+    backgroundColor: "#FAFAFA",
+  },
+  inputFull: {
+    width: "100%",
     borderWidth: 1,
     borderColor: "#F3F3F3",
     borderRadius: 12,
