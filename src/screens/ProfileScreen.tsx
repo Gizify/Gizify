@@ -13,6 +13,7 @@ type RootStackParamList = {
   DetailProfileScreen: undefined;
   AccountSettingsScreen: undefined;
   PrivacySettingsScreen: undefined;
+  ManageAccountScreen: undefined;
 };
 
 type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, "Profile">;
@@ -45,7 +46,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
         <Text style={styles.profileEmail}>{user.email}</Text>
 
         <TouchableOpacity style={styles.editProfileButton} onPress={() => navigation.navigate("EditProfileScreen")}>
-          <Text style={styles.editProfileText}>Edit Foto</Text>
+          <Text style={styles.editProfileText}>Edit Profile</Text>
         </TouchableOpacity>
       </View>
 
@@ -62,6 +63,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
 
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("PrivacySettingsScreen")}>
           <Text style={styles.sectionItemText}>Pengaturan Privasi</Text>
+        </TouchableOpacity>
+        <View style={styles.sectionDivider} />
+
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("ManageAccountScreen")}>
+          <Text style={styles.sectionItemText}>Kelola Akun</Text>
         </TouchableOpacity>
       </View>
 
