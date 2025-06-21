@@ -18,7 +18,9 @@ import { AvatarType } from "../utils/avatars";
 import { avatarList } from "../utils/avatars";
 import AvatarModal from "../components/modals/AvatarModal";
 
-const VerifyDataScreen = () => {
+interface VerifyDataScreenProps { }
+
+const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { token } = useSelector((state: any) => state.auth);
@@ -54,11 +56,9 @@ const VerifyDataScreen = () => {
   const formatDateInput = (input: string) => {
     const cleaned = input.replace(/\D/g, "");
     const parts = [];
-
     if (cleaned.length > 0) parts.push(cleaned.substring(0, 2));
     if (cleaned.length > 2) parts.push(cleaned.substring(2, 4));
     if (cleaned.length > 4) parts.push(cleaned.substring(4, 8));
-
     return parts.join("/");
   };
 
@@ -102,7 +102,10 @@ const VerifyDataScreen = () => {
     }
 
     if (!isValidDate(birthdate)) {
-      Alert.alert("Error", "Format tanggal lahir tidak valid. Gunakan DD/MM/YYYY");
+      Alert.alert(
+        "Error",
+        "Format tanggal lahir tidak valid. Gunakan DD/MM/YYYY"
+      );
       return;
     }
 
@@ -118,17 +121,23 @@ const VerifyDataScreen = () => {
         return;
       }
 
-      const gestational_age =
-        parseInt(pregnancyMonth) * 4 + parseInt(pregnancyDay) / 7;
+      const parseBirthdateToISO = (dateStr: string) => {
+        const [day, month, year] = dateStr.split("/");
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      };
 
       const profileData = {
         height: parseFloat(height),
         weight: parseFloat(weight),
-        gestational_age,
-        activity: activity,
-        birthdate,
-        photoOption: photoOption?.id || null,
-        medical_history: healthHistory === "Tidak ada" ? [] : [healthHistory],
+        gestational_age: {
+          months: parseInt(pregnancyMonth),
+          days: parseInt(pregnancyDay),
+        },
+        activity: activity!,
+        birthdate: parseBirthdateToISO(birthdate),
+        photoOption: photoOption.id || null,
+        medical_history:
+          healthHistory === "Tidak ada" ? [] : [healthHistory!],
       };
 
       await dispatch(completeUserProfile(profileData) as any);
@@ -140,12 +149,11 @@ const VerifyDataScreen = () => {
           routes: [{ name: "MainTabs" }],
         })
       );
-    } catch (error) {
-      console.error("Error submit profile:", error);
+    } catch (err) {
+      console.error("Error submit profile:", err);
       Alert.alert("Gagal", "Gagal menyimpan data. Silakan coba lagi.");
     }
   };
-
 
   const isButtonDisabled =
     !height ||
