@@ -10,8 +10,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { avatarList } from "../utils/avatars";
-import { AvatarType } from "../utils/avatars";
+import { avatarList, AvatarType } from "../utils/avatars";
 
 const DetailProfileScreen = () => {
   const navigation = useNavigation();
@@ -20,6 +19,12 @@ const DetailProfileScreen = () => {
   const avatar: AvatarType | undefined = avatarList.find(
     (item) => item.id === userProfile?.photoOption
   );
+
+  const formatBirthdate = (isoDate: string) => {
+    const birthYear = new Date(isoDate).getFullYear();
+    const currentYear = new Date().getFullYear();
+    return `${currentYear - birthYear} tahun`;
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -48,7 +53,7 @@ const DetailProfileScreen = () => {
       <InfoItem label="Email" value={userProfile?.email} />
       <InfoItem
         label="Usia"
-        value={userProfile?.birthdate ? `${userProfile.birthdate} tahun` : "-"}
+        value={userProfile?.birthdate ? formatBirthdate(userProfile.birthdate) : "-"}
       />
       <InfoItem
         label="Berat badan"
@@ -61,15 +66,23 @@ const DetailProfileScreen = () => {
       <InfoItem
         label="Usia Kehamilan"
         value={
-          userProfile?.pregnancyMonth !== undefined &&
-            userProfile?.pregnancyDay !== undefined
-            ? `${userProfile.pregnancyMonth} Bulan ${userProfile.pregnancyDay} Hari`
+          userProfile?.gestational_age?.months !== undefined &&
+            userProfile?.gestational_age?.days !== undefined
+            ? `${userProfile.gestational_age.months} Bulan ${userProfile.gestational_age.days} Hari`
             : "-"
         }
       />
       <InfoItem
+        label="Aktivitas"
+        value={userProfile?.activity || "-"}
+      />
+      <InfoItem
         label="Riwayat Kesehatan"
-        value={userProfile?.healthHistory}
+        value={
+          userProfile?.medical_history?.length > 0
+            ? userProfile.medical_history.join(", ")
+            : "Tidak ada"
+        }
       />
     </ScrollView>
   );
@@ -77,7 +90,6 @@ const DetailProfileScreen = () => {
 
 export default DetailProfileScreen;
 
-// Reusable Info Row Component
 const InfoItem = ({ label, value }: { label: string; value?: string }) => (
   <View style={styles.infoItem}>
     <Text style={styles.label} numberOfLines={1}>
