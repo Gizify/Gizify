@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
-import Button from "../components/form/Button";
-import PopupModal from "../components/modals/PopupModal";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useDispatch, useSelector } from "react-redux";
+import Button from "../components/form/Button";
+import PopupModal from "../components/modals/PopupModal";
 import { logoutUser } from "../redux/actions/authAction";
-
+import { getAvatarSource } from "../utils/avatars";
 
 type RootStackParamList = {
   Profile: undefined;
@@ -27,9 +27,12 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state.auth.user);
 
-  const handleLogout = () => {
-    setLogoutVisible(true);
-  };
+
+  const avatarSource = getAvatarSource(user?.photoOption);
+
+
+  const handleLogout = () => setLogoutVisible(true);
+
 
   const confirmLogout = () => {
     setLogoutVisible(false);
@@ -41,11 +44,14 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
       <Text style={styles.title}>Profile</Text>
 
       <View style={styles.profileHeader}>
-        <Image source={require("../../assets/avatar/avatar1.png")} style={styles.avatar} />
+        <Image source={avatarSource} style={styles.avatar} />
         <Text style={styles.profileName}>{user.name}</Text>
         <Text style={styles.profileEmail}>{user.email}</Text>
 
-        <TouchableOpacity style={styles.editProfileButton} onPress={() => navigation.navigate("EditProfileScreen")}>
+        <TouchableOpacity
+          style={styles.editProfileButton}
+          onPress={() => navigation.navigate("EditProfileScreen")}
+        >
           <Text style={styles.editProfileText}>Edit Profile</Text>
         </TouchableOpacity>
       </View>
@@ -77,7 +83,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* popup modal */}
+      {/* Modal konfirmasi logout */}
       <PopupModal
         visible={isLogoutVisible}
         onClose={() => setLogoutVisible(false)}

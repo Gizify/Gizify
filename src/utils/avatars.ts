@@ -13,3 +13,7 @@ export const avatarList: AvatarType[] = [
     { id: "avatar5", source: require("../../assets/avatar/avatar5.png") },
     { id: "avatar6", source: require("../../assets/avatar/avatar6.png") },
 ];
+
+export const getAvatarSource = (id?: string): ImageSourcePropType => {
+    return avatarList.find((a) => a.id === id)?.source || require("../../assets/avatar/default-avatar.png");
+};
