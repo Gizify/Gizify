@@ -4,11 +4,12 @@ import dayjs from "dayjs";
 const initialUserState = {
   name: null,
   email: null,
-  birthDate: null,
-  gestational_age: null,
+  birthdate: null, // fix from birthDate
+  gestational_age: { months: 0, days: 0 }, // default structured
   height: null,
   weight: null,
-  activity_level: null,
+  activity: null, // fix from activity_level
+  medical_history: [], // default as array
   daily_nutrition_target: {
     calories: 0,
     protein: 0,

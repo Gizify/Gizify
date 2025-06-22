@@ -14,16 +14,30 @@ import { avatarList, AvatarType } from "../utils/avatars";
 
 const DetailProfileScreen = () => {
   const navigation = useNavigation();
-  const userProfile = useSelector((state: any) => state.auth.userProfile);
+  const userProfile = useSelector((state: any) => state.auth.user);
 
   const avatar: AvatarType | undefined = avatarList.find(
     (item) => item.id === userProfile?.photoOption
   );
 
-  const formatBirthdate = (isoDate: string) => {
-    const birthYear = new Date(isoDate).getFullYear();
-    const currentYear = new Date().getFullYear();
-    return `${currentYear - birthYear} tahun`;
+  const formatAge = (birthdate: string) => {
+    try {
+      const birth = new Date(birthdate);
+      const today = new Date();
+      let age = today.getFullYear() - birth.getFullYear();
+      const m = today.getMonth() - birth.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+        age--;
+      }
+      return `${age} tahun`;
+    } catch {
+      return "-";
+    }
+  };
+
+  const formatHealthHistory = (history: string[] | null | undefined) => {
+    if (!history || history.length === 0) return "Tidak ada";
+    return history.join(", ");
   };
 
   return (
@@ -31,7 +45,7 @@ const DetailProfileScreen = () => {
       {/* Header */}
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.header}>Detail Profile</Text>
       </View>
@@ -48,42 +62,40 @@ const DetailProfileScreen = () => {
         />
       </View>
 
-      {/* Info Items */}
-      <InfoItem label="Nama" value={userProfile?.name} />
-      <InfoItem label="Email" value={userProfile?.email} />
-      <InfoItem
-        label="Usia"
-        value={userProfile?.birthdate ? formatBirthdate(userProfile.birthdate) : "-"}
-      />
-      <InfoItem
-        label="Berat badan"
-        value={userProfile?.weight ? `${userProfile.weight} kg` : "-"}
-      />
-      <InfoItem
-        label="Tinggi badan"
-        value={userProfile?.height ? `${userProfile.height} cm` : "-"}
-      />
-      <InfoItem
-        label="Usia Kehamilan"
-        value={
-          userProfile?.gestational_age?.months !== undefined &&
-            userProfile?.gestational_age?.days !== undefined
-            ? `${userProfile.gestational_age.months} Bulan ${userProfile.gestational_age.days} Hari`
-            : "-"
-        }
-      />
-      <InfoItem
-        label="Aktivitas"
-        value={userProfile?.activity || "-"}
-      />
-      <InfoItem
-        label="Riwayat Kesehatan"
-        value={
-          userProfile?.medical_history?.length > 0
-            ? userProfile.medical_history.join(", ")
-            : "Tidak ada"
-        }
-      />
+      {/* Info Section */}
+      <View style={styles.infoSection}>
+        <InfoItem label="Nama" value={userProfile?.name} />
+        <InfoItem label="Email" value={userProfile?.email} />
+        <InfoItem
+          label="Usia"
+          value={userProfile?.birthdate ? formatAge(userProfile.birthdate) : "-"}
+        />
+        <InfoItem
+          label="Berat Badan"
+          value={userProfile?.weight ? `${userProfile.weight}kg` : "-"}
+        />
+        <InfoItem
+          label="Tinggi Badan"
+          value={userProfile?.height ? `${userProfile.height}cm` : "-"}
+        />
+        <InfoItem
+          label="Usia Kehamilan"
+          value={
+            userProfile?.gestational_age?.months != null &&
+              userProfile?.gestational_age?.days != null
+              ? `${userProfile.gestational_age.months} Bulan ${userProfile.gestational_age.days} Hari`
+              : "-"
+          }
+        />
+        <InfoItem
+          label="Aktivitas"
+          value={userProfile?.activity || "-"}
+        />
+        <InfoItem
+          label="Riwayat Kesehatan"
+          value={formatHealthHistory(userProfile?.medical_history)}
+        />
+      </View>
     </ScrollView>
   );
 };
@@ -92,20 +104,19 @@ export default DetailProfileScreen;
 
 const InfoItem = ({ label, value }: { label: string; value?: string }) => (
   <View style={styles.infoItem}>
-    <Text style={styles.label} numberOfLines={1}>
-      {label}
-    </Text>
-    <Text style={styles.value} numberOfLines={1}>
-      {value || "-"}
-    </Text>
+    <Text style={styles.label}>{label} :</Text>
+    <View style={styles.valueBox}>
+      <Text style={styles.value}>{value || "-"}</Text>
+    </View>
   </View>
 );
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
-    padding: 24,
-    paddingBottom: 80,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 100,
   },
   headerContainer: {
     flexDirection: "row",
@@ -113,35 +124,45 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginLeft: 16,
+    fontSize: 20,
+    fontWeight: "600",
+    marginLeft: 12,
+    color: "#222",
   },
   avatarContainer: {
     alignItems: "center",
     marginBottom: 32,
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "#F3F3F3",
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "#f1f1f1",
+  },
+  infoSection: {
+    gap: 16,
   },
   infoItem: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F3F3F3",
+    alignItems: "center",
   },
   label: {
-    fontWeight: "bold",
-    color: "#555",
+    width: 130,
+    fontSize: 15,
+    color: "#333",
+    fontWeight: "500",
+  },
+  valueBox: {
     flex: 1,
+    backgroundColor: "#F9F9F9",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
   },
   value: {
-    color: "#333",
-    flex: 1,
-    textAlign: "right",
+    fontSize: 15,
+    color: "#222",
   },
 });
