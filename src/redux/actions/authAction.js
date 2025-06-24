@@ -54,8 +54,8 @@ export const completeUserProfile = (profileData) => async (dispatch, getState) =
       photoOption: updatedUser.photoOption ?? oldUserData.photoOption,
       gestational_age: updatedUser.gestational_age ?? oldUserData.gestational_age,
       medical_history: updatedUser.medical_history ?? oldUserData.medical_history,
-      birthdate: updatedUser.birthdate ?? oldUserData.birthdate, // make sure birthdate is merged
-      activity: updatedUser.activity ?? oldUserData.activity, // match naming
+      birthdate: updatedUser.birthdate ?? oldUserData.birthdate,
+      activity_level: updatedUser.activity_level ?? oldUserData.activity_level,
     };
 
     dispatch({
