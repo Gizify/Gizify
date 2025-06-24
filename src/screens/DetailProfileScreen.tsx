@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { avatarList, AvatarType } from "../utils/avatars";
 
+
 const DetailProfileScreen = () => {
   const navigation = useNavigation();
   const userProfile = useSelector((state: any) => state.auth.user);
@@ -20,22 +21,28 @@ const DetailProfileScreen = () => {
     (item) => item.id === userProfile?.photoOption
   );
 
+  const defaultAvatar = require("../../assets/avatar/default-avatar.png");
+
   const formatAge = (birthdate: string) => {
-    try {
-      const birth = new Date(birthdate);
-      const today = new Date();
-      let age = today.getFullYear() - birth.getFullYear();
-      const m = today.getMonth() - birth.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-        age--;
-      }
-      return `${age} tahun`;
-    } catch {
-      return "-";
+    if (!birthdate || isNaN(Date.parse(birthdate))) return "-";
+    const birth = new Date(birthdate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
+      age--;
     }
+
+    return `${age} tahun`;
   };
 
-  const formatHealthHistory = (history: string[] | null | undefined) => {
+  const formatHealthHistory = (
+    history: string[] | null | undefined
+  ): string => {
     if (!history || history.length === 0) return "Tidak ada";
     return history.join(", ");
   };
@@ -53,16 +60,12 @@ const DetailProfileScreen = () => {
       {/* Avatar */}
       <View style={styles.avatarContainer}>
         <Image
-          source={
-            avatar?.source
-              ? avatar.source
-              : require("../../assets/avatar/default-avatar.png")
-          }
+          source={avatar?.source || defaultAvatar}
           style={styles.avatar}
         />
       </View>
 
-      {/* Info Section */}
+      {/* Profile Info */}
       <View style={styles.infoSection}>
         <InfoItem label="Nama" value={userProfile?.name} />
         <InfoItem label="Email" value={userProfile?.email} />
@@ -72,11 +75,11 @@ const DetailProfileScreen = () => {
         />
         <InfoItem
           label="Berat Badan"
-          value={userProfile?.weight ? `${userProfile.weight}kg` : "-"}
+          value={userProfile?.weight ? `${userProfile.weight} kg` : "-"}
         />
         <InfoItem
           label="Tinggi Badan"
-          value={userProfile?.height ? `${userProfile.height}cm` : "-"}
+          value={userProfile?.height ? `${userProfile.height} cm` : "-"}
         />
         <InfoItem
           label="Usia Kehamilan"
@@ -102,6 +105,7 @@ const DetailProfileScreen = () => {
 
 export default DetailProfileScreen;
 
+// Reusable info item
 const InfoItem = ({ label, value }: { label: string; value?: string }) => (
   <View style={styles.infoItem}>
     <Text style={styles.label}>{label} :</Text>
@@ -111,12 +115,13 @@ const InfoItem = ({ label, value }: { label: string; value?: string }) => (
   </View>
 );
 
+// Styles
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     paddingHorizontal: 24,
     paddingTop: 24,
-    paddingBottom: 100,
+    paddingBottom: 70,
   },
   headerContainer: {
     flexDirection: "row",
@@ -131,13 +136,13 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     alignItems: "center",
-    marginBottom: 32,
+    marginBottom: 24,
   },
   avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: "#f1f1f1",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
   },
   infoSection: {
     gap: 16,

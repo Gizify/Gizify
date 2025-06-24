@@ -59,7 +59,7 @@ const authReducer = (state = initialState, action) => {
     // Auth success (login & register)
     case "REGISTER_SUCCESS":
     case "LOGIN_SUCCESS":
-      const expiredAt = Date.now() + 6 * 24 * 60 * 60 * 1000; // 6 hari
+      const expiredAt = Date.now() + 6 * 24 * 60 * 60 * 1000;
       return {
         ...state,
         token: action.payload.token,
@@ -131,7 +131,7 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        user: { ...initialUserState }, // reset user state
+        user: { ...initialUserState },
         token: null,
         expiredAt: null,
         error: null,
