@@ -24,6 +24,7 @@ export type RecipeStackParamList = {
   RecipeDetail: { recipe: Recipe };
   CreateResepAi: undefined;
   ResultResepAi: any;
+  UploadResep: any;
 };
 
 // Profile Stack

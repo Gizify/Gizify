@@ -92,7 +92,7 @@ const authReducer = (state = initialState, action) => {
       if (existingLogIndex !== -1) {
         updatedMealLogs[existingLogIndex] = {
           date: todayDate,
-          meals: [...updatedMealLogs[existingLogIndex].meals, ...todayMeals],
+          meals: todayMeals,
         };
       } else {
         updatedMealLogs.push({

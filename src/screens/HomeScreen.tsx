@@ -5,6 +5,8 @@ import colors from "../styles/colors";
 import globalStyles from "../styles/globalStyles";
 import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
+import Button from "../components/form/Button";
+import { useNavigation } from "@react-navigation/native";
 
 type NutritionBarProps = {
   label: string;
@@ -33,6 +35,7 @@ const NutritionBar: React.FC<NutritionBarProps> = ({ label, value, color, limit 
 const HomeScreen = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const user = useSelector((state: any) => state.auth.user);
+  const navigation = useNavigation() as any;
 
   // Helper function untuk handle toFixed dengan aman
   const safeToFixed = (value: number | undefined | null, digits = 0) => {
@@ -114,7 +117,7 @@ const HomeScreen = () => {
       <View style={styles.nutritionContainer}>
         <View style={styles.barGroup}>
           {renderNutritionBar("Karbohidrat", "carbs", "#FF6666", "carbs")}
-          {renderNutritionBar("Lemak", "fat", "#FFD700", "protein")}
+          {renderNutritionBar("Lemak", "fat", "#FFD700", "fat")}
           {renderNutritionBar("Protein", "protein", "#66CCFF", "protein")}
         </View>
         <View style={styles.barGroup}>
@@ -133,12 +136,12 @@ const HomeScreen = () => {
 
         <View style={styles.barGroup}>
           {renderNutritionBar("Asam Folat", "folic_acid", "#9ACD32", "folic_acid")}
-          {renderNutritionBar("Kalsium", "calsium", "#4682B4", "kalsium")}
+          {renderNutritionBar("Kalsium", "kalsium", "#4682B4", "kalsium")}
           {renderNutritionBar("Yodium", "iodium", "#8A2BE2", "iodium")}
         </View>
 
         <View style={styles.barGroup}>
-          {renderNutritionBar("Vitamin B6", "vitamin_b16", "#00CED1", "vitamin_b16")}
+          {renderNutritionBar("Vitamin B6", "vitamin_b6", "#00CED1", "vitamin_b6")}
           {renderNutritionBar("Vitamin B12", "vitamin_b12", "#9370DB", "vitamin_b12")}
           {renderNutritionBar("Vitamin C", "vitamin_c", "#FF8C00", "vitamin_c")}
         </View>
@@ -152,6 +155,10 @@ const HomeScreen = () => {
           </TouchableOpacity>
           <Text>{selectedDate.toLocaleDateString("id-ID", { weekday: "long" })}</Text>
         </View>
+
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("History")}>
+          <Text style={styles.buttonText}>Riwayat</Text>
+        </TouchableOpacity>
         <View style={styles.dateSelector}>
           <Text>
             {selectedDate.toLocaleDateString("id-ID", {
@@ -254,6 +261,16 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     justifyContent: "space-between",
+  },
+  button: {
+    backgroundColor: colors.primary,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
 

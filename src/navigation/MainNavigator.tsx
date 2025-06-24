@@ -12,6 +12,7 @@ import RecipeStackNavigator from "./RecipeStackNavigator";
 import ProfileStackNavigator from "./ProfileStackNavigator";
 import ExampleScreen from "../screens/Example";
 import VerifyDataScreen from "../screens/VerifyDataScreen";
+import HomeStackNavigator from "./HomeStackNavigator";
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -33,7 +34,7 @@ export default function MainTabNavigator() {
     >
       <Tab.Screen
         name="Beranda"
-        component={HomeScreen}
+        component={HomeStackNavigator}
         options={{
           tabBarIcon: ({ color, size }: { color: string; size: number }) => <AntDesign name="home" size={size} color={color} />,
         }}

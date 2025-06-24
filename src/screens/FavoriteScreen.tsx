@@ -37,7 +37,7 @@ const FavoriteScreen: React.FC = () => {
 
   return (
     <View style={globalStyles.container}>
-      <ScreenHeader title="Favorite" />
+      {/* <ScreenHeader title="Favorite" />
       <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={[styles.button, { backgroundColor: active === "resep" ? colors.primary : colors.white }]} onPress={() => setActive("resep")}>
@@ -48,12 +48,34 @@ const FavoriteScreen: React.FC = () => {
           <Text style={{ color: active === "ai" ? colors.white : "black" }}>Buatan AI</Text>
         </TouchableOpacity>
       </View>
-      <FlatList data={filteredRecipes} renderItem={renderRecipeItem} keyExtractor={(item) => item._id} contentContainerStyle={styles.listContainer} showsVerticalScrollIndicator={false} />
+      <FlatList data={filteredRecipes} renderItem={renderRecipeItem} keyExtractor={(item) => item._id} contentContainerStyle={styles.listContainer} showsVerticalScrollIndicator={false} /> */}
+
+      <View style={styles.comingSoonContainer}>
+        <View style={styles.comingSoonBox}>
+          <Text style={styles.comingSoonText}>Coming Soon!</Text>
+        </View>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  comingSoonContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  comingSoonBox: {
+    backgroundColor: "white",
+    padding: 30,
+    borderRadius: 10,
+    elevation: 5,
+  },
+  comingSoonText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.primary,
+  },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "center",

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, Text, ActivityIndicator } from "react-native";
+import { View, StyleSheet, FlatList, Text, ActivityIndicator, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -13,6 +13,7 @@ import globalStyles from "../styles/globalStyles";
 import Button from "../components/form/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRecipes } from "../redux/actions/recipeAction";
+import colors from "../styles/colors";
 
 const RecipeScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RecipeStackParamList>>();
@@ -30,6 +31,10 @@ const RecipeScreen: React.FC = () => {
     navigation.navigate("CreateResepAi");
   };
 
+  const uploadResep = () => {
+    navigation.navigate("UploadResep");
+  };
+
   const toggleFavorite = (id: string) => {
     // Logic toggle favorite
   };
@@ -40,15 +45,6 @@ const RecipeScreen: React.FC = () => {
   const handleRetry = () => {
     dispatch(fetchRecipes() as any);
   };
-
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color="#5271FF" />
-        <Text style={styles.loadingText}>Sedang memuat resep...</Text>
-      </View>
-    );
-  }
 
   if (error) {
     return (
@@ -78,14 +74,30 @@ const RecipeScreen: React.FC = () => {
         numColumns={2}
         contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => <RecipeCard recipe={item} onToggleFavorite={toggleFavorite} />}
-        ListEmptyComponent={<Text style={{ textAlign: "center" }}>Tidak ada resep yang ditemukan.</Text>}
+        ListEmptyComponent={!loading ? <Text style={{ textAlign: "center" }}>Tidak ada resep yang ditemukan.</Text> : null}
+        ListFooterComponent={
+          loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#5271FF" />
+              <Text style={styles.loadingText}>Sedang memuat resep...</Text>
+            </View>
+          ) : null
+        }
       />
-      <View style={styles.floatingButton}>
-        <Button title="Buat Dengan Ai" onPress={buatDenganAi} />
+
+      <View style={styles.floatingButtonsContainer}>
+        <TouchableOpacity style={[styles.floatingButton, styles.uploadButton]} onPress={uploadResep} activeOpacity={0.7}>
+          <Text style={styles.floatingButtonText}>Upload Resep</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.floatingButton, styles.aiButton]} onPress={buatDenganAi} activeOpacity={0.7}>
+          <Text style={styles.floatingButtonText}>Buat Dengan AI</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   center: {
     flex: 1,
@@ -93,6 +105,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
     backgroundColor: "#F9F9F9",
+  },
+  loadingContainer: {
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
   loadingText: {
     marginTop: 16,
@@ -106,15 +123,38 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   listContainer: {
-    paddingBottom: 16,
+    paddingBottom: 40,
   },
-  floatingButton: {
+  floatingButtonsContainer: {
     position: "absolute",
     bottom: 20,
-    left: 20,
     right: 20,
+    left: 20,
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  floatingButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  aiButton: {
+    backgroundColor: colors.primary,
+  },
+  uploadButton: {
+    backgroundColor: colors.primary,
+  },
+  floatingButtonText: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
 

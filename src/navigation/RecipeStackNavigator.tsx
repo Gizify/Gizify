@@ -6,6 +6,7 @@ import { RecipeStackParamList } from "../types/navigation";
 import RecipeDetailScreen from "../screens/RecipeDetailScreen";
 import CreateResepAiScreen from "../screens/CreateResepAiScreen";
 import ResultResepAiScreen from "../screens/ResultResepAiScreen";
+import UploadRecipeScreen from "../screens/UploadRecipeScreen";
 
 const Stack = createStackNavigator<RecipeStackParamList>();
 
@@ -20,6 +21,7 @@ const RecipeStackNavigator = () => {
       <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
       <Stack.Screen name="CreateResepAi" component={CreateResepAiScreen} />
       <Stack.Screen name="ResultResepAi" component={ResultResepAiScreen} />
+      <Stack.Screen name="UploadResep" component={UploadRecipeScreen} />
     </Stack.Navigator>
   );
 };
