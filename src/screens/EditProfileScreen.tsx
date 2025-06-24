@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
     View,
     Text,
@@ -13,7 +13,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { AvatarType, avatarList } from "../utils/avatars";
-import BottomSheet from "../components/modals/BottomSheet";
 import AvatarModal from "../components/modals/AvatarModal";
 import { updateUserProfile } from "../redux/actions/authAction";
 
@@ -28,10 +27,13 @@ const EditProfileScreen = () => {
     const [height, setHeight] = useState(user?.height?.toString() || "");
     const [weight, setWeight] = useState(user?.weight?.toString() || "");
     const [birthdate, setBirthdate] = useState(user?.birthdate || "");
-    const [activity, setActivity] = useState(user?.activity || "");
-    const [healthHistory, setHealthHistory] = useState(user?.healthHistory || "");
-    const [pregnancyMonth, setPregnancyMonth] = useState(user?.pregnancyMonth?.toString() || "");
-    const [pregnancyDay, setPregnancyDay] = useState(user?.pregnancyDay?.toString() || "");
+    const [activityLevel, setActivityLevel] = useState(user?.activity_level || "");
+    const [medicalHistory, setMedicalHistory] = useState(
+        Array.isArray(user?.medical_history) ? user.medical_history.join(", ") : ""
+    );
+    const [pregnancyMonth, setPregnancyMonth] = useState(user?.gestational_age?.months?.toString() || "");
+    const [pregnancyDay, setPregnancyDay] = useState(user?.gestational_age?.days?.toString() || "");
+
     const [photoOption, setPhotoOption] = useState<AvatarType | null>(
         avatarList.find((a) => a.id === user?.photoOption) || null
     );
@@ -47,7 +49,17 @@ const EditProfileScreen = () => {
     };
 
     const handleSubmit = async () => {
-        if (!name || !email || !height || !weight || !birthdate || !activity || !healthHistory || !pregnancyMonth || !pregnancyDay) {
+        if (
+            !name ||
+            !email ||
+            !height ||
+            !weight ||
+            !birthdate ||
+            !activityLevel ||
+            !medicalHistory ||
+            !pregnancyMonth ||
+            !pregnancyDay
+        ) {
             Alert.alert("Error", "Mohon lengkapi semua data terlebih dahulu");
             return;
         }
@@ -59,10 +71,12 @@ const EditProfileScreen = () => {
             height: parseFloat(height),
             weight: parseFloat(weight),
             birthdate,
-            activity,
-            healthHistory,
-            pregnancyMonth: parseInt(pregnancyMonth),
-            pregnancyDay: parseInt(pregnancyDay),
+            activity_level: activityLevel,
+            medical_history: medicalHistory.split(",").map((item: string) => item.trim()),
+            gestational_age: {
+                months: parseInt(pregnancyMonth),
+                days: parseInt(pregnancyDay),
+            },
             photoOption: photoOption?.id || null,
         };
 
@@ -87,7 +101,10 @@ const EditProfileScreen = () => {
 
             <View style={styles.profileImage}>
                 <Image
-                    source={photoOption?.source || require("../../assets/avatar/default-avatar.png")}
+                    source={
+                        photoOption?.source ||
+                        require("../../assets/avatar/default-avatar.png")
+                    }
                     style={styles.image}
                 />
                 <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -95,25 +112,80 @@ const EditProfileScreen = () => {
                 </TouchableOpacity>
             </View>
 
-            <TextInput style={styles.input} placeholder="Nama" value={name} onChangeText={setName} />
-            <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
-            <TextInput style={styles.input} placeholder="Password baru" value={password} onChangeText={setPassword} secureTextEntry />
+            <TextInput
+                style={styles.input}
+                placeholder="Nama"
+                value={name}
+                onChangeText={setName}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Password baru"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+            />
 
             <View style={styles.row}>
-                <TextInput style={styles.inputHalf} placeholder="Tinggi Badan (cm)" value={height} onChangeText={setHeight} keyboardType="numeric" />
-                <TextInput style={styles.inputHalf} placeholder="Berat Badan (kg)" value={weight} onChangeText={setWeight} keyboardType="numeric" />
+                <TextInput
+                    style={styles.inputHalf}
+                    placeholder="Tinggi Badan (cm)"
+                    value={height}
+                    onChangeText={setHeight}
+                    keyboardType="numeric"
+                />
+                <TextInput
+                    style={styles.inputHalf}
+                    placeholder="Berat Badan (kg)"
+                    value={weight}
+                    onChangeText={setWeight}
+                    keyboardType="numeric"
+                />
             </View>
 
-            <TextInput style={styles.input} placeholder="Tanggal Lahir" value={birthdate} onChangeText={setBirthdate} />
-            <TextInput style={styles.input} placeholder="Aktivitas" value={activity} onChangeText={setActivity} />
+            <TextInput
+                style={styles.input}
+                placeholder="Tanggal Lahir (YYYY-MM-DD)"
+                value={birthdate}
+                onChangeText={setBirthdate}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Aktivitas"
+                value={activityLevel}
+                onChangeText={setActivityLevel}
+            />
 
             <View style={styles.row}>
-                <TextInput style={styles.inputHalf} placeholder="Bulan Kehamilan" value={pregnancyMonth} onChangeText={setPregnancyMonth} keyboardType="numeric" />
-                <TextInput style={styles.inputHalf} placeholder="Hari Kehamilan" value={pregnancyDay} onChangeText={setPregnancyDay} keyboardType="numeric" />
+                <TextInput
+                    style={styles.inputHalf}
+                    placeholder="Bulan Kehamilan"
+                    value={pregnancyMonth}
+                    onChangeText={setPregnancyMonth}
+                    keyboardType="numeric"
+                />
+                <TextInput
+                    style={styles.inputHalf}
+                    placeholder="Hari Kehamilan"
+                    value={pregnancyDay}
+                    onChangeText={setPregnancyDay}
+                    keyboardType="numeric"
+                />
             </View>
 
-            <TextInput style={styles.input} placeholder="Riwayat Kesehatan" value={healthHistory} onChangeText={setHealthHistory} />
-
+            <TextInput
+                style={styles.input}
+                placeholder="Riwayat Kesehatan (pisahkan dengan koma)"
+                value={medicalHistory}
+                onChangeText={setMedicalHistory}
+            />
 
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Simpan</Text>
@@ -154,10 +226,10 @@ const styles = StyleSheet.create({
         marginBottom: 24,
     },
     image: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        backgroundColor: "#F3F3F3",
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginBottom: 10,
     },
     imageText: {
         marginTop: 8,

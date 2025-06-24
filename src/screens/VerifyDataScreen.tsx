@@ -122,6 +122,8 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
       }
 
       const parseBirthdateToISO = (dateStr: string) => {
+        const regex = /^([0-2][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+        if (!regex.test(dateStr)) return null;
         const [day, month, year] = dateStr.split("/");
         return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
       };

@@ -46,12 +46,16 @@ export const completeUserProfile = (profileData) => async (dispatch, getState) =
     dispatch({ type: "PROFILE_UPDATE_REQUEST" });
 
     const { token, user: oldUserData } = getState().auth;
-    const { user, message } = await authApi.completeProfile(profileData, token);
+    const { user: updatedUser, message } = await authApi.completeProfile(profileData, token);
 
     const mergedUser = {
       ...oldUserData,
-      ...user,
-      photoOption: user.photoOption ?? oldUserData.photoOption,
+      ...updatedUser,
+      photoOption: updatedUser.photoOption ?? oldUserData.photoOption,
+      gestational_age: updatedUser.gestational_age ?? oldUserData.gestational_age,
+      medical_history: updatedUser.medical_history ?? oldUserData.medical_history,
+      birthdate: updatedUser.birthdate ?? oldUserData.birthdate,
+      activity_level: updatedUser.activity_level ?? oldUserData.activity_level,
     };
 
     dispatch({
@@ -72,18 +76,22 @@ export const logoutUser = () => async (dispatch) => {
   dispatch({ type: "LOGOUT" });
 };
 
-// Update profil user
+// Update profil user (misalnya edit setelah registrasi)
 export const updateUserProfile = (updatedData) => async (dispatch, getState) => {
   try {
     dispatch({ type: "PROFILE_UPDATE_REQUEST" });
 
     const { token, user: oldUserData } = getState().auth;
-    const { user, message } = await authApi.updateProfile(updatedData, token);
+    const { user: updatedUser, message } = await authApi.updateProfile(updatedData, token);
 
     const mergedUser = {
       ...oldUserData,
-      ...user,
-      photoOption: user.photoOption ?? oldUserData.photoOption,
+      ...updatedUser,
+      photoOption: updatedUser.photoOption ?? oldUserData.photoOption,
+      gestational_age: updatedUser.gestational_age ?? oldUserData.gestational_age,
+      medical_history: updatedUser.medical_history ?? oldUserData.medical_history,
+      birthdate: updatedUser.birthdate ?? oldUserData.birthdate,
+      activity_level: updatedUser.activity_level ?? oldUserData.activity_level,
     };
 
     dispatch({
