@@ -34,70 +34,61 @@ const AvatarModal: React.FC<AvatarModalProps> = ({
     const [canConfirm, setCanConfirm] = useState(false);
 
     useEffect(() => {
-        setCanConfirm(selectedAvatar !== null && selectedAvatar !== currentAvatar);
+        setCanConfirm(
+            selectedAvatar !== null &&
+            selectedAvatar.id !== currentAvatar?.id
+        );
     }, [selectedAvatar, currentAvatar]);
 
     return (
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.overlay}>
                 <View style={styles.modalContainer}>
-
                     {/* Header */}
                     <View style={styles.header}>
                         <Text style={styles.title}>Pilih Avatar</Text>
-                        <Pressable onPress={onClose} style={styles.closeButton}>
-                            <Ionicons
-                                name="close"
-                                size={20}
-                                color="#333"
-                                style={styles.icon}
-                            />
-                            <Text style={[styles.closeText, styles.iconText]}>Kembali</Text>
+                        <Pressable
+                            onPress={onClose}
+                            style={({ pressed }) => [
+                                styles.closeButton,
+                                pressed && styles.closeButtonPressed,
+                            ]}
+                        >
+                            <Ionicons name="close" size={20} color="#333" style={styles.icon} />
+                            <Text style={styles.closeText}>Kembali</Text>
                         </Pressable>
                     </View>
 
-                    {/* Separator Line */}
+                    {/* Garis pemisah */}
                     <View style={styles.separator} />
 
-                    {/* Avatar List */}
+                    {/* Daftar avatar */}
                     <FlatList
                         data={avatarList}
                         numColumns={3}
-                        keyExtractor={(_, index) => index.toString()}
+                        keyExtractor={(item) => item.id}
                         contentContainerStyle={styles.avatarGrid}
+                        columnWrapperStyle={{ justifyContent: "space-between" }}
                         renderItem={({ item }) => (
-                            <TouchableOpacity
-                                style={styles.avatarWrapper}
+                            <AvatarOption
+                                image={item.source}
+                                selected={selectedAvatar?.id === item.id}
                                 onPress={() => onSelect(item)}
-                                activeOpacity={0.8}
-                            >
-                                <AvatarOption
-                                    image={item}
-                                    selected={selectedAvatar === item}
-                                    onPress={() => onSelect(item)}
-                                />
-                                {selectedAvatar === item && (
-                                    <View style={styles.checkmarkOverlay}>
-                                        <Ionicons
-                                            name="checkmark-circle"
-                                            size={36}
-                                            color="#2C7A7B"
-                                        />
-                                    </View>
-                                )}
-                            </TouchableOpacity>
+                            />
                         )}
                     />
 
-                    {/* Button Pilih */}
+                    {/* Tombol konfirmasi */}
                     <TouchableOpacity
-                        style={[styles.selectButton, !canConfirm && styles.selectButtonDisabled]}
+                        style={[
+                            styles.selectButton,
+                            !canConfirm && styles.selectButtonDisabled,
+                        ]}
                         onPress={onConfirm}
                         disabled={!canConfirm}
                     >
                         <Text style={styles.selectButtonText}>Pilih</Text>
                     </TouchableOpacity>
-
                 </View>
             </View>
         </Modal>
@@ -139,14 +130,14 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         justifyContent: "center",
     },
+    closeButtonPressed: {
+        borderColor: "green",
+        backgroundColor: "#e6f5ea",
+    },
     icon: {
         marginRight: 4,
     },
     closeText: {
-        fontSize: 16,
-        color: "#666",
-    },
-    iconText: {
         fontSize: 16,
         color: "#666",
     },
@@ -156,19 +147,9 @@ const styles = StyleSheet.create({
         marginVertical: 5,
     },
     avatarGrid: {
-        alignItems: "center",
-        paddingBottom: 24,
-    },
-    avatarWrapper: {
-        position: "relative",
-        margin: 8,
-    },
-    checkmarkOverlay: {
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: [{ translateX: -18 }, { translateY: -18 }],
-        zIndex: 1,
+        justifyContent: "center",
+        paddingVertical: 8,
+        paddingBottom: 16,
     },
     selectButton: {
         backgroundColor: "#2C7A7B",

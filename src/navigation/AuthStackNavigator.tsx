@@ -8,9 +8,9 @@ import StartScreen from "../screens/StartScreen";
 
 export type AuthStackParamList = {
   LoginRegisterScreen: undefined;
-  HomeScreen: undefined;
   VerifyDataScreen: undefined;
   StartScreen: undefined;
+  HomeScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
@@ -21,9 +21,9 @@ const AuthStackNavigator = ({ route }: { route: RouteProp<any, any> }) => {
   return (
     <Stack.Navigator initialRouteName={initialScreen} screenOptions={{ headerShown: false }}>
       <Stack.Screen name="LoginRegisterScreen" component={LoginRegisterScreen} />
+      <Stack.Screen name="VerifyDataScreen" component={VerifyDataScreen} />
       <Stack.Screen name="StartScreen" component={StartScreen} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen name="VerifyDataScreen" component={VerifyDataScreen} />
     </Stack.Navigator>
   );
 };
