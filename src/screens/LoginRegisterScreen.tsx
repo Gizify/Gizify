@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { Image, View, Text, TextInput, TouchableOpacity, StyleSheet, Pressable, Alert, ActivityIndicator, Linking } from "react-native";
+import {
+  Image,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Pressable,
+  Alert,
+  ActivityIndicator,
+  Linking,
+} from "react-native";
 import Animated, { FadeInDown, FadeOutUp, Layout, Easing } from "react-native-reanimated";
 import Checkbox from "expo-checkbox";
 import { useNavigation } from "@react-navigation/native";
@@ -8,30 +19,36 @@ import { AuthStackParamList } from "../navigation/AuthStackNavigator";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, registerUser } from "../redux/actions/authAction";
 
+// Type untuk navigasi menggunakan Native Stack
 type NavigationProps = NativeStackNavigationProp<AuthStackParamList>;
 
 const LoginRegisterScreen = () => {
   const navigation = useNavigation<NavigationProps>();
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state: any) => state.auth);
+  const { loading, error } = useSelector((state: any) => state.auth); // Ambil state auth dari Redux
 
-  const [isLogin, setIsLogin] = useState(true);
-  const [agree, setAgree] = useState(false);
+  // State input dan tampilan
+  const [isLogin, setIsLogin] = useState(true); // Toggle antara login/daftar
+  const [agree, setAgree] = useState(false); // Checkbox untuk setuju syarat & ketentuan
 
+  // State untuk input form
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // Fungsi untuk membuka link kebijakan privasi
   const handleLinkPress = () => {
     Linking.openURL("https://kebijakan-privasi-gizify.vercel.app/");
   };
 
+  // Fungsi untuk submit form login atau daftar
   const handleSubmit = async () => {
     if (!email || !password) {
       return Alert.alert("Error", "Email dan password harus diisi");
     }
 
+    // Validasi tambahan untuk mode daftar
     if (!isLogin) {
       if (!agree) {
         return Alert.alert("Error", "Anda harus menyetujui syarat dan ketentuan");
@@ -49,10 +66,14 @@ const LoginRegisterScreen = () => {
 
     try {
       if (isLogin) {
+        // Dispatch login action
         await dispatch(loginUser(email, password) as any);
       } else {
+        // Dispatch register action dan redirect ke halaman awal
         await dispatch(registerUser(email, password, name) as any);
         navigation.replace("StartScreen");
+
+        // Reset form
         setName("");
         setEmail("");
         setPassword("");
@@ -65,44 +86,119 @@ const LoginRegisterScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Logo & Switch */}
+      {/* Bagian Logo dan Switch Login/Daftar */}
       <View style={styles.logoContainer}>
-        <Image source={require("../../assets/logo/Logo.png")} style={styles.logo} resizeMode="contain" />
+        <Image
+          source={require("../../assets/logo/Logo.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+
+        {/* Tombol switch antara login dan daftar */}
         <View style={styles.switchContainer}>
-          <TouchableOpacity style={[styles.switchBtn, isLogin && styles.activeBtn]} onPress={() => setIsLogin(true)} disabled={loading}>
+          <TouchableOpacity
+            style={[styles.switchBtn, isLogin && styles.activeBtn]}
+            onPress={() => setIsLogin(true)}
+            disabled={loading}
+          >
             <Text style={[styles.switchText, isLogin && styles.activeText]}>Masuk</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.switchBtn, !isLogin && styles.activeBtn]} onPress={() => setIsLogin(false)} disabled={loading}>
+          <TouchableOpacity
+            style={[styles.switchBtn, !isLogin && styles.activeBtn]}
+            onPress={() => setIsLogin(false)}
+            disabled={loading}
+          >
             <Text style={[styles.switchText, !isLogin && styles.activeText]}>Daftar</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Animated Form */}
-      <Animated.View layout={Layout.duration(500).easing(Easing.out(Easing.exp))} entering={FadeInDown.duration(400)} exiting={FadeOutUp.duration(300)} style={styles.form}>
-        {!isLogin && <TextInput placeholder="Nama Lengkap" style={styles.input} value={name} onChangeText={setName} editable={!loading} />}
-        <TextInput placeholder="Masukkan Email" style={styles.input} value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" editable={!loading} />
-        <TextInput placeholder="Masukkan Password" secureTextEntry style={styles.input} value={password} onChangeText={setPassword} editable={!loading} />
-        {!isLogin && <TextInput placeholder="Konfirmasi Password" secureTextEntry style={styles.input} value={confirmPassword} onChangeText={setConfirmPassword} editable={!loading} />}
+      {/* Form Login/Daftar dengan animasi */}
+      <Animated.View
+        layout={Layout.duration(500).easing(Easing.out(Easing.exp))}
+        entering={FadeInDown.duration(400)}
+        exiting={FadeOutUp.duration(300)}
+        style={styles.form}
+      >
+        {/* Input hanya ditampilkan jika mode daftar */}
+        {!isLogin && (
+          <TextInput
+            placeholder="Nama Lengkap"
+            style={styles.input}
+            value={name}
+            onChangeText={setName}
+            editable={!loading}
+          />
+        )}
 
+        {/* Input Email & Password */}
+        <TextInput
+          placeholder="Masukkan Email"
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          editable={!loading}
+        />
+        <TextInput
+          placeholder="Masukkan Password"
+          secureTextEntry
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+          editable={!loading}
+        />
+
+        {/* Input konfirmasi password hanya di mode daftar */}
+        {!isLogin && (
+          <TextInput
+            placeholder="Konfirmasi Password"
+            secureTextEntry
+            style={styles.input}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            editable={!loading}
+          />
+        )}
+
+        {/* Checkbox syarat & ketentuan hanya di mode daftar */}
         {!isLogin && (
           <View style={styles.checkboxContainer}>
-            <Checkbox value={agree} onValueChange={setAgree} color="#00aaff" disabled={loading} />
+            <Checkbox
+              value={agree}
+              onValueChange={setAgree}
+              color="#00aaff"
+              disabled={loading}
+            />
             <Text style={styles.agreeText}>
               Saya telah membaca dan menyetujui
               <TouchableOpacity onPress={handleLinkPress}>
-                <Text style={styles.link}>syarat dan kebijakan privasi</Text>
+                <Text style={styles.link}> syarat dan kebijakan privasi</Text>
               </TouchableOpacity>
             </Text>
           </View>
         )}
 
-        {/* Submit Button */}
-        <Pressable style={[styles.submitBtn, loading && styles.disabledBtn]} onPress={handleSubmit} disabled={loading}>
-          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitText}>{isLogin ? "Masuk" : "Daftar"}</Text>}
+        {/* Tombol Submit */}
+        <Pressable
+          style={[styles.submitBtn, loading && styles.disabledBtn]}
+          onPress={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.submitText}>{isLogin ? "Masuk" : "Daftar"}</Text>
+          )}
         </Pressable>
 
-        {error && <Text style={styles.errorText}>{typeof error === "string" ? error : error?.message || "Terjadi kesalahan"}</Text>}
+        {/* Tampilkan error jika ada */}
+        {error && (
+          <Text style={styles.errorText}>
+            {typeof error === "string" ? error : error?.message || "Terjadi kesalahan"}
+          </Text>
+        )}
       </Animated.View>
     </View>
   );
@@ -110,6 +206,7 @@ const LoginRegisterScreen = () => {
 
 export default LoginRegisterScreen;
 
+// Style untuk tampilan halaman login/daftar
 const styles = StyleSheet.create({
   container: {
     flex: 1,

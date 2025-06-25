@@ -4,11 +4,12 @@ import dayjs from "dayjs";
 const initialUserState = {
   name: null,
   email: null,
-  birthDate: null,
-  gestational_age: null,
+  birthdate: null,
+  gestational_age: { months: 0, days: 0 },
   height: null,
   weight: null,
   activity_level: null,
+  medical_history: [],
   daily_nutrition_target: {
     calories: 0,
     protein: 0,
@@ -58,7 +59,7 @@ const authReducer = (state = initialState, action) => {
     // Auth success (login & register)
     case "REGISTER_SUCCESS":
     case "LOGIN_SUCCESS":
-      const expiredAt = Date.now() + 6 * 24 * 60 * 60 * 1000; // 6 hari
+      const expiredAt = Date.now() + 6 * 24 * 60 * 60 * 1000;
       return {
         ...state,
         token: action.payload.token,
@@ -130,7 +131,7 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        user: { ...initialUserState }, // reset user state
+        user: { ...initialUserState },
         token: null,
         expiredAt: null,
         error: null,
