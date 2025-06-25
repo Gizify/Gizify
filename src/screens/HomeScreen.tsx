@@ -5,7 +5,7 @@ import colors from "../styles/colors";
 import globalStyles from "../styles/globalStyles";
 import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
-import Button from "../components/form/Button";
+
 import { useNavigation } from "@react-navigation/native";
 
 type NutritionBarProps = {
@@ -17,6 +17,7 @@ type NutritionBarProps = {
 
 const NutritionBar: React.FC<NutritionBarProps> = ({ label, value, color, limit }) => {
   const percentage = (value / limit) * 100;
+
   return (
     <View>
       <View style={styles.barContainer}>
@@ -116,34 +117,35 @@ const HomeScreen = () => {
       {/* Nutrition Bars */}
       <View style={styles.nutritionContainer}>
         <View style={styles.barGroup}>
-          {renderNutritionBar("Karbohidrat", "carbs", "#FF6666", "carbs")}
-          {renderNutritionBar("Lemak", "fat", "#FFD700", "fat")}
-          {renderNutritionBar("Protein", "protein", "#66CCFF", "protein")}
+          {renderNutritionBar("Karbohidrat", "carbs", "#F4A261", "carbs")}
+          {renderNutritionBar("Lemak", "fat", "#E9C46A", "fat")}
+          {renderNutritionBar("Protein", "protein", "#2A9D8F", "protein")}
         </View>
+
         <View style={styles.barGroup}>
-          {renderNutritionBar("Serat", "fiber", "#FF6666", "fiber")}
-          {renderNutritionBar("Gula", "sugar", "#FFD700", "sugar")}
-          {renderNutritionBar("Garam", "sodium", "#66CCFF", "sodium")}
+          {renderNutritionBar("Serat", "fiber", "#8D8741", "fiber")}
+          {renderNutritionBar("Gula", "sugar", "#E76F51", "sugar")}
+          {renderNutritionBar("Garam", "sodium", "#A9A9A9", "sodium")}
         </View>
       </View>
 
       <View style={styles.nutritionContainer}>
         <View style={styles.barGroup}>
-          {renderNutritionBar("Vitamin D", "vitamin_d", "#FFA500", "vitamin_d")}
-          {renderNutritionBar("Air (ml)", "water", "#00BFFF", "water")}
+          {renderNutritionBar("Vitamin D", "vitamin_d", "#F4E04D", "vitamin_d")}
+          {renderNutritionBar("Air (ml)", "water", "#1E90FF", "water")}
           {renderNutritionBar("Zat Besi", "iron", "#B22222", "iron")}
         </View>
 
         <View style={styles.barGroup}>
           {renderNutritionBar("Asam Folat", "folic_acid", "#9ACD32", "folic_acid")}
-          {renderNutritionBar("Kalsium", "kalsium", "#4682B4", "kalsium")}
+          {renderNutritionBar("Kalsium", "kalsium", "#5F9EA0", "kalsium")}
           {renderNutritionBar("Yodium", "iodium", "#8A2BE2", "iodium")}
         </View>
 
         <View style={styles.barGroup}>
-          {renderNutritionBar("Vitamin B6", "vitamin_b6", "#00CED1", "vitamin_b6")}
-          {renderNutritionBar("Vitamin B12", "vitamin_b12", "#9370DB", "vitamin_b12")}
-          {renderNutritionBar("Vitamin C", "vitamin_c", "#FF8C00", "vitamin_c")}
+          {renderNutritionBar("Vitamin B6", "vitamin_b6", "#20B2AA", "vitamin_b6")}
+          {renderNutritionBar("Vitamin B12", "vitamin_b12", "#6A5ACD", "vitamin_b12")}
+          {renderNutritionBar("Vitamin C", "vitamin_c", "#FFA500", "vitamin_c")}
         </View>
       </View>
 
