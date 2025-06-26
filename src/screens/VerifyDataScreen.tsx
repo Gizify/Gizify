@@ -10,13 +10,13 @@ import {
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import BottomSheet from "../components/modals/BottomSheet";
-import { CommonActions, useNavigation } from "@react-navigation/native";
-import { completeUserProfile } from "../redux/actions/authAction";
+import { useNavigation, CommonActions } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { AvatarType } from "../utils/avatars";
-import { avatarList } from "../utils/avatars";
+
+import BottomSheet from "../components/modals/BottomSheet";
 import AvatarModal from "../components/modals/AvatarModal";
+import { completeUserProfile } from "../redux/actions/authAction";
+import { AvatarType, avatarList } from "../utils/avatars";
 
 interface VerifyDataScreenProps { }
 
@@ -25,6 +25,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
   const dispatch = useDispatch();
   const { token } = useSelector((state: any) => state.auth);
 
+  // Input states
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
   const [pregnancyMonth, setPregnancyMonth] = useState("");
@@ -33,26 +34,31 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
   const [healthHistory, setHealthHistory] = useState<string | null>(null);
   const [birthdate, setBirthdate] = useState<string | null>(null);
   const [birthdateError, setBirthdateError] = useState("");
-  const [photoOption, setPhotoOption] = useState<AvatarType | null>(null);
 
+  // Avatar/photo option
+  const [photoOption, setPhotoOption] = useState<AvatarType | null>(null);
+  const [selectedAvatar, setSelectedAvatar] = useState<AvatarType | null>(null);
+  const [currentAvatar, setCurrentAvatar] = useState<AvatarType | null>(null);
+
+  // Modal visibility states
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [showHealthHistoryModal, setShowHealthHistoryModal] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [showPregnancyModal, setShowPregnancyModal] = useState(false);
-
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedAvatar, setSelectedAvatar] = useState<AvatarType | null>(null);
-  const [currentAvatar, setCurrentAvatar] = useState<AvatarType | null>(null);
 
+  // Temporary selections for modals
   const [tempActivity, setTempActivity] = useState<string | null>(null);
   const [tempHealthHistory, setTempHealthHistory] = useState<string | null>(null);
   const [tempPhotoOption, setTempPhotoOption] = useState<string | null>(null);
 
+  // Validasi format tanggal (DD/MM/YYYY)
   const isValidDate = (dateStr: string) => {
     const regex = /^([0-2][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
     return regex.test(dateStr);
   };
 
+  // Format otomatis input tanggal ke DD/MM/YYYY
   const formatDateInput = (input: string) => {
     const cleaned = input.replace(/\D/g, "");
     const parts = [];
@@ -62,6 +68,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
     return parts.join("/");
   };
 
+  // Fungsi untuk memilih avatar
   const handleSelectAvatar = (avatar: AvatarType) => {
     setSelectedAvatar(avatar);
   };
@@ -76,6 +83,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
     setModalVisible(false);
   };
 
+  // Menangani aksi dari opsi gambar profil
   const handleSelectPhotoOption = (value: string) => {
     if (value === "avatar") {
       setModalVisible(true);
@@ -86,26 +94,15 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
     }
   };
 
+  // Submit data ke backend
   const handleSubmit = async () => {
-    if (
-      !height ||
-      !weight ||
-      !pregnancyMonth ||
-      !pregnancyDay ||
-      !activity ||
-      !healthHistory ||
-      !birthdate ||
-      !photoOption
-    ) {
+    if (!height || !weight || !pregnancyMonth || !pregnancyDay || !activity || !healthHistory || !birthdate || !photoOption) {
       Alert.alert("Error", "Mohon lengkapi semua data terlebih dahulu");
       return;
     }
 
     if (!isValidDate(birthdate)) {
-      Alert.alert(
-        "Error",
-        "Format tanggal lahir tidak valid. Gunakan DD/MM/YYYY"
-      );
+      Alert.alert("Error", "Format tanggal lahir tidak valid. Gunakan DD/MM/YYYY");
       return;
     }
 
@@ -113,17 +110,12 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
       if (!token) {
         Alert.alert("Error", "Autentikasi gagal. Silakan login ulang.");
         navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{ name: "LoginRegisterScreen" }],
-          })
+          CommonActions.reset({ index: 0, routes: [{ name: "LoginRegisterScreen" }] })
         );
         return;
       }
 
       const parseBirthdateToISO = (dateStr: string) => {
-        const regex = /^([0-2][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
-        if (!regex.test(dateStr)) return null;
         const [day, month, year] = dateStr.split("/");
         return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
       };
@@ -138,18 +130,14 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         activity: activity!,
         birthdate: parseBirthdateToISO(birthdate),
         photoOption: photoOption.id || null,
-        medical_history:
-          healthHistory === "Tidak ada" ? [] : [healthHistory!],
+        medical_history: healthHistory === "Tidak ada" ? [] : [healthHistory!],
       };
 
       await dispatch(completeUserProfile(profileData) as any);
 
       Alert.alert("Sukses", "Profil berhasil disimpan!");
       navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "MainTabs" }],
-        })
+        CommonActions.reset({ index: 0, routes: [{ name: "MainTabs" }] })
       );
     } catch (err) {
       console.error("Error submit profile:", err);
@@ -157,18 +145,12 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
     }
   };
 
-  const isButtonDisabled =
-    !height ||
-    !weight ||
-    !pregnancyMonth ||
-    !pregnancyDay ||
-    !activity ||
-    !healthHistory ||
-    !birthdate ||
-    !photoOption;
+  // Tombol lanjut dinonaktifkan jika belum lengkap
+  const isButtonDisabled = !height || !weight || !pregnancyMonth || !pregnancyDay || !activity || !healthHistory || !birthdate || !photoOption;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* Header */}
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="black" />
@@ -176,12 +158,10 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         <Text style={styles.header}>Isi Data Diri</Text>
       </View>
 
+      {/* Foto profil */}
       <View style={styles.profileImage}>
         <Image
-          source={
-            photoOption?.source ||
-            require("../../assets/avatar/default-avatar.png")
-          }
+          source={photoOption?.source || require("../../assets/avatar/default-avatar.png")}
           style={styles.image}
         />
         <TouchableOpacity onPress={() => setShowPhotoModal(true)}>
@@ -189,6 +169,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         </TouchableOpacity>
       </View>
 
+      {/* Input tinggi dan berat */}
       <View style={styles.row}>
         <TextInput
           placeholder="Tinggi Badan (cm) *"
@@ -206,6 +187,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         />
       </View>
 
+      {/* Input tanggal lahir */}
       <TextInput
         placeholder="Tanggal Lahir (DD/MM/YYYY) *"
         style={styles.inputFull}
@@ -227,28 +209,29 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         <Text style={{ color: "red", marginBottom: 12 }}>{birthdateError}</Text>
       ) : null}
 
+      {/* Modal untuk input lain */}
       <TouchableOpacity style={styles.select} onPress={() => setShowActivityModal(true)}>
-        <Text style={styles.selectText}>{activity || "Aktivitas*"}</Text>
-        <Ionicons name="chevron-forward" size={20} color="#777" />
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.select} onPress={() => setShowPregnancyModal(true)}>
-        <Text style={styles.selectText}>
-          {pregnancyMonth && pregnancyDay
-            ? `${pregnancyMonth} Bulan ${pregnancyDay} Hari`
-            : "Usia Kehamilan*"}
+        <Text style={[styles.selectText, { color: activity ? "#333" : "#777" }]}>
+          {activity || "Aktivitas*"}
         </Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.select}
-        onPress={() => setShowHealthHistoryModal(true)}
-      >
-        <Text style={styles.selectText}>{healthHistory || "Riwayat Kesehatan*"}</Text>
+      <TouchableOpacity style={styles.select} onPress={() => setShowPregnancyModal(true)}>
+        <Text style={[styles.selectText, { color: pregnancyMonth && pregnancyDay ? "#333" : "#777" }]}>
+          {pregnancyMonth && pregnancyDay ? `${pregnancyMonth} Bulan ${pregnancyDay} Hari` : "Usia Kehamilan*"}
+        </Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
+      <TouchableOpacity style={styles.select} onPress={() => setShowHealthHistoryModal(true)}>
+        <Text style={[styles.selectText, { color: healthHistory ? "#333" : "#777" }]}>
+          {healthHistory || "Riwayat Kesehatan*"}
+        </Text>
+        <Ionicons name="chevron-forward" size={20} color="#777" />
+      </TouchableOpacity>
+
+      {/* Tombol submit */}
       <TouchableOpacity
         style={[styles.button, { opacity: isButtonDisabled ? 0.5 : 1 }]}
         onPress={handleSubmit}
@@ -257,6 +240,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         <Text style={styles.buttonText}>Lanjut</Text>
       </TouchableOpacity>
 
+      {/* Modal Avatar */}
       <AvatarModal
         visible={modalVisible}
         selectedAvatar={selectedAvatar}
@@ -267,6 +251,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         currentAvatar={currentAvatar}
       />
 
+      {/* BottomSheet: Foto profil */}
       <BottomSheet
         visible={showPhotoModal}
         title="Foto profile"
@@ -280,13 +265,14 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         onSelect={setTempPhotoOption}
         onClose={() => setShowPhotoModal(false)}
         type="option"
-        showContinueButton={true}
+        showContinueButton
         onContinue={() => {
           if (tempPhotoOption) handleSelectPhotoOption(tempPhotoOption);
           setShowPhotoModal(false);
         }}
       />
 
+      {/* BottomSheet: Aktivitas */}
       <BottomSheet
         visible={showActivityModal}
         title="Aktivitas"
@@ -299,13 +285,14 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         onSelect={setTempActivity}
         onClose={() => setShowActivityModal(false)}
         type="option"
-        showContinueButton={true}
+        showContinueButton
         onContinue={() => {
           if (tempActivity) setActivity(tempActivity);
           setShowActivityModal(false);
         }}
       />
 
+      {/* BottomSheet: Usia Kehamilan */}
       <BottomSheet
         visible={showPregnancyModal}
         title="Usia Kehamilan"
@@ -314,7 +301,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         selectedOption={null}
         onSelect={() => { }}
         onClose={() => setShowPregnancyModal(false)}
-        showContinueButton={true}
+        showContinueButton
         onContinue={() => setShowPregnancyModal(false)}
       >
         <View style={{ paddingHorizontal: 24 }}>
@@ -337,6 +324,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         </View>
       </BottomSheet>
 
+      {/* BottomSheet: Riwayat Kesehatan */}
       <BottomSheet
         visible={showHealthHistoryModal}
         title="Riwayat Kesehatan"
@@ -351,7 +339,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         onSelect={setTempHealthHistory}
         onClose={() => setShowHealthHistoryModal(false)}
         type="option"
-        showContinueButton={true}
+        showContinueButton
         onContinue={() => {
           if (tempHealthHistory) setHealthHistory(tempHealthHistory);
           setShowHealthHistoryModal(false);
