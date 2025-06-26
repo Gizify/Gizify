@@ -1,10 +1,13 @@
 const initialState = {
-  loading: false,
   recipes: [],
-  aiRecipe: null,
+  loading: false,
   error: null,
+  aiRecipe: null,
   aiLoading: false,
   aiError: null,
+  upLoading: false,
+  upRecipe: null,
+  upError: null,
 };
 
 export const recipeReducer = (state = initialState, action) => {
@@ -43,6 +46,24 @@ export const recipeReducer = (state = initialState, action) => {
         ...state,
         aiLoading: false,
         aiError: action.payload,
+      };
+    case "FETCH_NUTRITION_REQUEST":
+      return {
+        ...state,
+        upLoading: true,
+        upError: null,
+      };
+    case "FETCH_NUTRITION_SUCCESS":
+      return {
+        ...state,
+        upLoading: false,
+        upRecipe: action.payload,
+      };
+    case "FETCH_NUTRITION_FAILURE":
+      return {
+        ...state,
+        upLoading: false,
+        upError: action.payload,
       };
     default:
       return state;

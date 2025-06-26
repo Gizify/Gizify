@@ -10,17 +10,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import colors from "../styles/colors";
 import { Picker } from "@react-native-picker/picker";
+import { fetchNutrition } from "../redux/actions/recipeAction";
 
 const UploadRecipeScrenn: React.FC = () => {
   const navigation = useNavigation<any>();
-
+  const token = useSelector((state: any) => state.auth.token);
   const units = ["gr", "ml", "sdm", "sdt", "piring", "gelas", "potong", "butir"];
 
-  const { aiLoading } = useSelector((state: any) => state.recipes);
+  const { upRecipe, upLoading, upError } = useSelector((state: any) => state.recipes);
 
   const dispatch = useDispatch();
-
-  let uploadLodaing = false;
 
   const [title, setTitle] = useState("");
   const [ingredient, setIngredient] = useState("");
@@ -46,8 +45,18 @@ const UploadRecipeScrenn: React.FC = () => {
     setIngredientList(updatedList);
   };
 
-  const handleSubmit = () => {
-    return "np";
+  const handleSubmit = async () => {
+    if (!title || ingredientList.length === 0) {
+      Alert.alert("Data tidak lengkap", "Judul dan bahan harus diisi.");
+      return;
+    }
+
+    try {
+      await dispatch(fetchNutrition({ title, ingredients: ingredientList }, token) as any);
+      navigation.navigate("ResultRecipe");
+    } catch (err) {
+      Alert.alert("Gagal", "Gagal upload resep");
+    }
   };
 
   return (
@@ -108,7 +117,7 @@ const UploadRecipeScrenn: React.FC = () => {
           borderColor: "#ccc",
         }}
       >
-        {uploadLodaing ? <ActivityIndicator size="large" color={colors.primary} /> : <Button title="Analisis Resep" onPress={handleSubmit} />}
+        {upLoading ? <ActivityIndicator size="large" color={colors.primary} /> : <Button title="Analisis Resep" onPress={handleSubmit} />}
       </View>
     </View>
   );
