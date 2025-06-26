@@ -53,7 +53,7 @@ const UploadRecipeScrenn: React.FC = () => {
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
-        <ScreenHeader title="Hasil Resep AI" showBack onBackPress={() => navigation.goBack()} style={{ marginBottom: 12 }} />
+        <ScreenHeader title="Upload Resep" showBack onBackPress={() => navigation.goBack()} style={{ marginBottom: 12 }} />
 
         {/* Semua input dan FlatList di dalam ScrollView */}
         <Text style={styles.label}>Judul Makanan</Text>
