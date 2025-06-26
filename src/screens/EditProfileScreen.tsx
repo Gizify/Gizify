@@ -112,12 +112,15 @@ const EditProfileScreen = () => {
                 </TouchableOpacity>
             </View>
 
+            <Text style={styles.label}>Nama</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Nama"
                 value={name}
                 onChangeText={setName}
             />
+
+            <Text style={styles.label}>Email</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Email"
@@ -125,6 +128,8 @@ const EditProfileScreen = () => {
                 onChangeText={setEmail}
                 keyboardType="email-address"
             />
+
+            <Text style={styles.label}>Password Baru</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Password baru"
@@ -133,6 +138,7 @@ const EditProfileScreen = () => {
                 secureTextEntry
             />
 
+            <Text style={styles.label}>Tinggi dan Berat Badan</Text>
             <View style={styles.row}>
                 <TextInput
                     style={styles.inputHalf}
@@ -150,12 +156,15 @@ const EditProfileScreen = () => {
                 />
             </View>
 
+            <Text style={styles.label}>Tanggal Lahir</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Tanggal Lahir (YYYY-MM-DD)"
+                placeholder="YYYY-MM-DD"
                 value={birthdate}
                 onChangeText={setBirthdate}
             />
+
+            <Text style={styles.label}>Tingkat Aktivitas</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Aktivitas"
@@ -163,6 +172,7 @@ const EditProfileScreen = () => {
                 onChangeText={setActivityLevel}
             />
 
+            <Text style={styles.label}>Usia Kehamilan</Text>
             <View style={styles.row}>
                 <TextInput
                     style={styles.inputHalf}
@@ -180,9 +190,10 @@ const EditProfileScreen = () => {
                 />
             </View>
 
+            <Text style={styles.label}>Riwayat Kesehatan</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Riwayat Kesehatan (pisahkan dengan koma)"
+                placeholder="Pisahkan dengan koma"
                 value={medicalHistory}
                 onChangeText={setMedicalHistory}
             />
@@ -234,6 +245,13 @@ const styles = StyleSheet.create({
     imageText: {
         marginTop: 8,
         color: "#777",
+    },
+    label: {
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#333",
+        marginBottom: 4,
+        marginTop: 8,
     },
     input: {
         borderWidth: 1,
