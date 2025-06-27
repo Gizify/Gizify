@@ -39,3 +39,21 @@ export const generateRecipe = (recipeData, token) => async (dispatch) => {
     throw error;
   }
 };
+
+export const fetchNutrition = (payload, token) => async (dispatch) => {
+  try {
+    dispatch({ type: "FETCH_NUTRITION_REQUEST" });
+
+    const data = await recipeApi.fetchNutritionService(payload, token);
+
+    dispatch({
+      type: "FETCH_NUTRITION_SUCCESS",
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: "FETCH_NUTRITION_FAILURE",
+      payload: error.response?.data?.error || "Terjadi kesalahan saat mengambil data nutrisi",
+    });
+  }
+};

@@ -15,4 +15,13 @@ export const recipeApi = {
     });
     return response.data;
   },
+
+  async fetchNutritionService(payload, token) {
+    const res = await axios.post(`${API_URL}/user/analyst`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  },
 };
