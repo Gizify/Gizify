@@ -15,6 +15,15 @@ type NutritionBarProps = {
   limit: number;
 };
 
+function calculateTrimester(gestationalAge: any) {
+  const totalDays = gestationalAge.months * 30 + gestationalAge.days;
+  const weeks = totalDays / 7;
+
+  if (weeks < 14) return 1;
+  else if (weeks < 28) return 2;
+  else return 3;
+}
+
 const NutritionBar: React.FC<NutritionBarProps> = ({ label, value, color, limit }) => {
   const percentage = (value / limit) * 100;
 
@@ -37,6 +46,7 @@ const HomeScreen = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const user = useSelector((state: any) => state.auth.user);
   const navigation = useNavigation() as any;
+  const trimester = calculateTrimester(user.gestational_age);
 
   // Helper function untuk handle toFixed dengan aman
   const safeToFixed = (value: number | undefined | null, digits = 0) => {
@@ -93,7 +103,7 @@ const HomeScreen = () => {
     <View style={globalStyles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Harian</Text>
+        <Text style={styles.headerTitle}>Trimester ke {trimester}</Text>
         <View style={styles.profileContainer}>
           <Text style={styles.sectionTitle}>{user?.name || "User"}</Text>
           <Image

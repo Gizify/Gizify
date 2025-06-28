@@ -5,19 +5,12 @@ interface ProductInfoProps {
   productData: {
     name: string;
     brand: string;
-    nutrition: {
-      calories: number;
-      carbs: number;
-      protein: number;
-      fat: number;
-      sugar: number;
-      sodium: number;
-      fiber: number;
-    };
+    nutrition: any;
     ingredients: string[];
     packageSize: string;
     servingSize: string;
     image: string;
+    source: string;
   };
 }
 
@@ -41,8 +34,23 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ productData }) => (
         { label: "Protein", value: productData.nutrition.protein, unit: "g" },
         { label: "Lemak", value: productData.nutrition.fat, unit: "g" },
         { label: "Gula", value: productData.nutrition.sugar, unit: "g" },
-        { label: "Sodium", value: productData.nutrition.sodium, unit: "g" },
+        { label: "Gula Tambahan", value: productData.nutrition.added_sugar, unit: "g" },
         { label: "Serat", value: productData.nutrition.fiber, unit: "g" },
+        { label: "Sodium", value: productData.nutrition.sodium, unit: "mg" },
+        { label: "Asam Folat", value: productData.nutrition.folic_acid, unit: "µg" },
+        { label: "Kalsium", value: productData.nutrition.kalsium, unit: "mg" },
+        { label: "Vitamin D", value: productData.nutrition.vitamin_d, unit: "µg" },
+        { label: "Vitamin B12", value: productData.nutrition.vitamin_b12, unit: "µg" },
+        { label: "Vitamin B6", value: productData.nutrition.vitamin_b6, unit: "mg" },
+        { label: "Vitamin C", value: productData.nutrition.vitamin_c, unit: "mg" },
+        { label: "Vitamin A", value: productData.nutrition.vitamin_a, unit: "µg" },
+        { label: "Vitamin E", value: productData.nutrition.vitamin_e, unit: "mg" },
+        { label: "Zinc", value: productData.nutrition.zinc, unit: "mg" },
+        { label: "Iodium", value: productData.nutrition.iodium, unit: "µg" },
+        { label: "Air", value: productData.nutrition.water, unit: "g" },
+        { label: "Zat Besi", value: productData.nutrition.iron, unit: "mg" },
+        { label: "Magnesium", value: productData.nutrition.magnesium, unit: "mg" },
+        { label: "Selenium", value: productData.nutrition.selenium, unit: "µg" },
       ].map((nutrition, index) => (
         <View key={index} style={styles.nutritionRow}>
           <Text style={styles.nutritionLabel}>{nutrition.label}</Text>
@@ -52,9 +60,10 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ productData }) => (
     </View>
 
     {/* Bahan produk */}
-    <Text style={styles.productDetails}>Bahan: {Array.isArray(productData.ingredients) && productData.ingredients.length > 0 ? productData.ingredients.join(", ") : "Tidak tersedia"}</Text>
+    <Text style={styles.productDetails}>Bahan: {productData.ingredients}</Text>
 
     {/* Ukuran kemasan dan porsi */}
+    <Text style={styles.productDetails}>Sumber Data: {productData.source}</Text>
     <Text style={styles.productDetails}>Ukuran Kemasan: {productData.packageSize}g</Text>
     <Text style={styles.productDetails}>Ukuran Porsi: {productData.servingSize}g</Text>
   </ScrollView>

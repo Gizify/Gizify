@@ -23,8 +23,9 @@ const AccordionItem = ({ title, title2 = "", nutrients = [] }) => {
   return (
     <View style={styles.accordionContainer}>
       <TouchableOpacity onPress={toggleExpand} style={styles.accordionHeader} activeOpacity={0.7}>
-        <Text style={styles.accordionTitle}>{title}</Text>
-        <Text style={styles.accordionTitle}>{title2}</Text>
+        <Text style={styles.accordionTitle}>
+          {title} / {title2}
+        </Text>
         <Ionicons name={expanded ? "chevron-up" : "chevron-down"} size={20} color="#555" />
       </TouchableOpacity>
       {expanded && (
@@ -73,7 +74,7 @@ const UploadResultScreen: React.FC = () => {
 
   const handleAddToConsumption = async () => {
     try {
-      await dispatch(addConsumption("recipe", upRecipe.recipeId, 1, userTimeZone, token) as any);
+      await dispatch(addConsumption("upload", upRecipe.data._id, 1, userTimeZone, token) as any);
       navigation.reset({
         index: 0,
         routes: [{ name: "Beranda" }] as any,
@@ -142,7 +143,7 @@ const UploadResultScreen: React.FC = () => {
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Detail Nutrisi per Bahan</Text>
           {data.ingredients.map((ing, idx) => (
-            <AccordionItem key={idx} title={ing.name} title2={ing.en_name} nutrients={ing.nutrients} />
+            <AccordionItem key={idx} title={ing.name} title2={ing.name_en} nutrients={ing.nutrients} />
           ))}
         </View>
 
