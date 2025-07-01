@@ -4,11 +4,11 @@
     "slug": "Gizify",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo/Ikon.png",
+    "icon": "./assets/logo/Logo_Gizify.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/logo/Logo.png",
+      "image": "./assets/logo/Logo_Gizify.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,21 +18,22 @@
         {
           "cameraPermission": "Izinkan aplikasi ini mengakses kamera"
         }
-      ]
+      ],
+      "expo-mail-composer"
     ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo/Ikon.png",
+        "foregroundImage": "./assets/logo/Logo_Gizify.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO", "android.permission.INTERNET"],
       "package": "com.farach.Gizify"
     },
     "web": {
-      "favicon": "./assets/logo/Ikon.png"
+      "favicon": "./assets/logo/Logo_Gizify.png"
     },
     "extra": {
       "eas": {
