@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  Alert,
-} from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Image, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +9,7 @@ import AvatarModal from "../components/modals/AvatarModal";
 import { completeUserProfile } from "../redux/actions/authAction";
 import { AvatarType, avatarList } from "../utils/avatars";
 
-interface VerifyDataScreenProps { }
+interface VerifyDataScreenProps {}
 
 const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
   const navigation = useNavigation();
@@ -96,7 +87,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
 
   // Submit data ke backend
   const handleSubmit = async () => {
-    if (!height || !weight || !pregnancyMonth || !pregnancyDay || !activity || !healthHistory || !birthdate || !photoOption) {
+    if (!height || !weight || !pregnancyMonth || !pregnancyDay || !activity || !healthHistory || !birthdate) {
       Alert.alert("Error", "Mohon lengkapi semua data terlebih dahulu");
       return;
     }
@@ -109,9 +100,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
     try {
       if (!token) {
         Alert.alert("Error", "Autentikasi gagal. Silakan login ulang.");
-        navigation.dispatch(
-          CommonActions.reset({ index: 0, routes: [{ name: "LoginRegisterScreen" }] })
-        );
+        navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: "LoginRegisterScreen" }] }));
         return;
       }
 
@@ -129,16 +118,13 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         },
         activity: activity!,
         birthdate: parseBirthdateToISO(birthdate),
-        photoOption: photoOption.id || null,
         medical_history: healthHistory === "Tidak ada" ? [] : [healthHistory!],
       };
 
       await dispatch(completeUserProfile(profileData) as any);
 
       Alert.alert("Sukses", "Profil berhasil disimpan!");
-      navigation.dispatch(
-        CommonActions.reset({ index: 0, routes: [{ name: "MainTabs" }] })
-      );
+      navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: "MainTabs" }] }));
     } catch (err) {
       console.error("Error submit profile:", err);
       Alert.alert("Gagal", "Gagal menyimpan data. Silakan coba lagi.");
@@ -146,7 +132,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
   };
 
   // Tombol lanjut dinonaktifkan jika belum lengkap
-  const isButtonDisabled = !height || !weight || !pregnancyMonth || !pregnancyDay || !activity || !healthHistory || !birthdate || !photoOption;
+  const isButtonDisabled = !height || !weight || !pregnancyMonth || !pregnancyDay || !activity || !healthHistory || !birthdate;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -160,10 +146,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
 
       {/* Foto profil */}
       <View style={styles.profileImage}>
-        <Image
-          source={photoOption?.source || require("../../assets/avatar/default-avatar.png")}
-          style={styles.image}
-        />
+        <Image source={photoOption?.source || require("../../assets/avatar/default-avatar.png")} style={styles.image} />
         <TouchableOpacity onPress={() => setShowPhotoModal(true)}>
           <Text style={styles.imageText}>Tambahkan foto profile</Text>
         </TouchableOpacity>
@@ -171,20 +154,8 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
 
       {/* Input tinggi dan berat */}
       <View style={styles.row}>
-        <TextInput
-          placeholder="Tinggi Badan (cm) *"
-          style={styles.inputHalf}
-          keyboardType="numeric"
-          value={height}
-          onChangeText={setHeight}
-        />
-        <TextInput
-          placeholder="Berat Badan (kg) *"
-          style={styles.inputHalf}
-          keyboardType="numeric"
-          value={weight}
-          onChangeText={setWeight}
-        />
+        <TextInput placeholder="Tinggi Badan (cm) *" style={styles.inputHalf} keyboardType="numeric" value={height} onChangeText={setHeight} />
+        <TextInput placeholder="Berat Badan (kg) *" style={styles.inputHalf} keyboardType="numeric" value={weight} onChangeText={setWeight} />
       </View>
 
       {/* Input tanggal lahir */}
@@ -205,51 +176,31 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
           }
         }}
       />
-      {birthdateError ? (
-        <Text style={{ color: "red", marginBottom: 12 }}>{birthdateError}</Text>
-      ) : null}
+      {birthdateError ? <Text style={{ color: "red", marginBottom: 12 }}>{birthdateError}</Text> : null}
 
       {/* Modal untuk input lain */}
       <TouchableOpacity style={styles.select} onPress={() => setShowActivityModal(true)}>
-        <Text style={[styles.selectText, { color: activity ? "#333" : "#777" }]}>
-          {activity || "Aktivitas*"}
-        </Text>
+        <Text style={[styles.selectText, { color: activity ? "#333" : "#777" }]}>{activity || "Aktivitas*"}</Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.select} onPress={() => setShowPregnancyModal(true)}>
-        <Text style={[styles.selectText, { color: pregnancyMonth && pregnancyDay ? "#333" : "#777" }]}>
-          {pregnancyMonth && pregnancyDay ? `${pregnancyMonth} Bulan ${pregnancyDay} Hari` : "Usia Kehamilan*"}
-        </Text>
+        <Text style={[styles.selectText, { color: pregnancyMonth && pregnancyDay ? "#333" : "#777" }]}>{pregnancyMonth && pregnancyDay ? `${pregnancyMonth} Bulan ${pregnancyDay} Hari` : "Usia Kehamilan*"}</Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.select} onPress={() => setShowHealthHistoryModal(true)}>
-        <Text style={[styles.selectText, { color: healthHistory ? "#333" : "#777" }]}>
-          {healthHistory || "Riwayat Kesehatan*"}
-        </Text>
+        <Text style={[styles.selectText, { color: healthHistory ? "#333" : "#777" }]}>{healthHistory || "Riwayat Kesehatan*"}</Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
       {/* Tombol submit */}
-      <TouchableOpacity
-        style={[styles.button, { opacity: isButtonDisabled ? 0.5 : 1 }]}
-        onPress={handleSubmit}
-        disabled={isButtonDisabled}
-      >
+      <TouchableOpacity style={[styles.button, { opacity: isButtonDisabled ? 0.5 : 1 }]} onPress={handleSubmit} disabled={isButtonDisabled}>
         <Text style={styles.buttonText}>Lanjut</Text>
       </TouchableOpacity>
 
       {/* Modal Avatar */}
-      <AvatarModal
-        visible={modalVisible}
-        selectedAvatar={selectedAvatar}
-        onSelect={handleSelectAvatar}
-        onClose={handleCloseModal}
-        onConfirm={handleConfirmAvatar}
-        avatarList={avatarList}
-        currentAvatar={currentAvatar}
-      />
+      <AvatarModal visible={modalVisible} selectedAvatar={selectedAvatar} onSelect={handleSelectAvatar} onClose={handleCloseModal} onConfirm={handleConfirmAvatar} avatarList={avatarList} currentAvatar={currentAvatar} />
 
       {/* BottomSheet: Foto profil */}
       <BottomSheet
@@ -299,28 +250,16 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         type="custom"
         options={[]}
         selectedOption={null}
-        onSelect={() => { }}
+        onSelect={() => {}}
         onClose={() => setShowPregnancyModal(false)}
         showContinueButton
         onContinue={() => setShowPregnancyModal(false)}
       >
         <View style={{ paddingHorizontal: 24 }}>
           <Text style={{ marginBottom: 8 }}>Masukkan Bulan</Text>
-          <TextInput
-            placeholder="Misalnya: 1 - 9"
-            keyboardType="numeric"
-            style={styles.inputHalf}
-            value={pregnancyMonth}
-            onChangeText={setPregnancyMonth}
-          />
+          <TextInput placeholder="Misalnya: 1 - 9" keyboardType="numeric" style={styles.inputHalf} value={pregnancyMonth} onChangeText={setPregnancyMonth} />
           <Text style={{ marginVertical: 8 }}>Masukkan Hari</Text>
-          <TextInput
-            placeholder="Misalnya: 1 - 30"
-            keyboardType="numeric"
-            style={styles.inputHalf}
-            value={pregnancyDay}
-            onChangeText={setPregnancyDay}
-          />
+          <TextInput placeholder="Misalnya: 1 - 30" keyboardType="numeric" style={styles.inputHalf} value={pregnancyDay} onChangeText={setPregnancyDay} />
         </View>
       </BottomSheet>
 
