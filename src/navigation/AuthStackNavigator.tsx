@@ -5,12 +5,14 @@ import LoginRegisterScreen from "../screens/LoginRegisterScreen";
 import HomeScreen from "../screens/HomeScreen";
 import VerifyDataScreen from "../screens/VerifyDataScreen";
 import StartScreen from "../screens/StartScreen";
+import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 
 export type AuthStackParamList = {
   LoginRegisterScreen: undefined;
   VerifyDataScreen: undefined;
   StartScreen: undefined;
   HomeScreen: undefined;
+  ForgotPasswordScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
@@ -24,6 +26,7 @@ const AuthStackNavigator = ({ route }: { route: RouteProp<any, any> }) => {
       <Stack.Screen name="VerifyDataScreen" component={VerifyDataScreen} />
       <Stack.Screen name="StartScreen" component={StartScreen} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
     </Stack.Navigator>
   );
 };
