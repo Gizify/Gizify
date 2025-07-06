@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addConsumption } from "../redux/actions/authAction";
 import ReportButton from "../components/layout/ReportButton";
 import colors from "../styles/colors";
+import NutritionPreviewModal from "../components/modals/NutritionPreviewModal";
 
 const AccordionItem = ({ title, title2 = "", nutrients = [] }) => {
   const [expanded, setExpanded] = useState(false);
@@ -63,6 +64,8 @@ const ResultResepAiScreen: React.FC = () => {
   const summary = nutrition_analysis.nutrition_summary;
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const token = useSelector((state: any) => state.auth.token);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [addedNutrition, setAddedNutrition] = useState({ carbs: 0, fat: 0, protein: 0 });
   if (!aiRecipe) {
     return (
       <View style={styles.errorContainer}>
@@ -74,11 +77,9 @@ const ResultResepAiScreen: React.FC = () => {
 
   const handleAddToConsumption = async () => {
     try {
-      await dispatch(addConsumption("recipe", aiRecipe.recipeId, 1, userTimeZone, token) as any);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "Beranda" }] as any,
-      });
+      const added = summary;
+      setAddedNutrition(added);
+      setModalVisible(true); // Tampilkan modal lebih dulu
     } catch (err) {
       Alert.alert("Gagal", "Gagal menambahkan konsumsi harian.");
     }
@@ -214,6 +215,7 @@ const ResultResepAiScreen: React.FC = () => {
           <Text style={styles.addButtonText}>Tambah ke konsumsi harian</Text>
         </TouchableOpacity>
       </View>
+      <NutritionPreviewModal visible={modalVisible} onClose={() => setModalVisible(false)} addedNutrition={addedNutrition} recipeId={aiRecipe.recipeId} type="recipe" />
     </View>
   );
 };

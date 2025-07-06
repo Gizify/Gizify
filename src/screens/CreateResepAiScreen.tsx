@@ -63,6 +63,27 @@ const CreateResepAiScreen: React.FC = () => {
   const dispatch = useDispatch();
 
   const handleSubmit = async () => {
+    // Validasi data yang kosong
+    if (!ingredients || ingredients.length === 0) {
+      Alert.alert("Peringatan", "Bahan-bahan tidak boleh kosong");
+      return;
+    }
+
+    if (!difficulty) {
+      Alert.alert("Peringatan", "Tingkat kesulitan harus dipilih");
+      return;
+    }
+
+    if (!cuisine) {
+      Alert.alert("Peringatan", "Jenis masakan harus dipilih");
+      return;
+    }
+
+    if (!nutritionData || Object.keys(nutritionData).length === 0) {
+      Alert.alert("Peringatan", "Data nutrisi tidak boleh kosong");
+      return;
+    }
+
     const recipeData = {
       ingredients: ingredients,
       difficulty: difficulty,
@@ -70,14 +91,15 @@ const CreateResepAiScreen: React.FC = () => {
       daily_nutrition_target: user.daily_nutrition_target,
       nutrition_stats: nutritionData,
     };
+
     try {
       await dispatch(generateRecipe(recipeData, token) as any);
       navigation.navigate("ResultResepAi");
     } catch (err) {
+      console.error("Error generating recipe:", err);
       Alert.alert("Gagal", "Gagal membuat resep");
     }
   };
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
