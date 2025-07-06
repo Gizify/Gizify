@@ -1,7 +1,15 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useDispatch, useSelector } from "react-redux";
+import { Ionicons } from "@expo/vector-icons";
 import Button from "../components/form/Button";
 import PopupModal from "../components/modals/PopupModal";
 import { logoutUser } from "../redux/actions/authAction";
@@ -13,10 +21,13 @@ type RootStackParamList = {
   DetailProfileScreen: undefined;
   AccountSettingsScreen: undefined;
   PrivacySettingsScreen: undefined;
-  ManageAccountScreen: undefined;
+  NotificationScreen: undefined;
 };
 
-type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, "Profile">;
+type ProfileScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Profile"
+>;
 
 interface ProfileScreenProps {
   navigation: ProfileScreenNavigationProp;
@@ -27,12 +38,9 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state.auth.user);
 
-
   const avatarSource = getAvatarSource(user?.photoOption);
 
-
   const handleLogout = () => setLogoutVisible(true);
-
 
   const confirmLogout = () => {
     setLogoutVisible(false);
@@ -57,24 +65,49 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
       </View>
 
       <View style={styles.section}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("DetailProfileScreen")}>
-          <Text style={styles.sectionItemText}>Detail Profile</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("DetailProfileScreen")}
+        >
+          <View style={styles.row}>
+            <Text style={styles.sectionItemText}>Detail Profile</Text>
+            <Ionicons name="chevron-forward" size={20} color="#A0A0A0" />
+          </View>
         </TouchableOpacity>
         <View style={styles.sectionDivider} />
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("AccountSettingsScreen")}>
-          <Text style={styles.sectionItemText}>Pengaturan Akun</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("AccountSettingsScreen")}
+        >
+          <View style={styles.row}>
+            <Text style={styles.sectionItemText}>Pengaturan Akun</Text>
+            <Ionicons name="chevron-forward" size={20} color="#A0A0A0" />
+          </View>
         </TouchableOpacity>
         <View style={styles.sectionDivider} />
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("PrivacySettingsScreen")}>
-          <Text style={styles.sectionItemText}>Pengaturan Privasi</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("PrivacySettingsScreen")}
+        >
+          <View style={styles.row}>
+            <Text style={styles.sectionItemText}>Pengaturan Privasi</Text>
+            <Ionicons name="chevron-forward" size={20} color="#A0A0A0" />
+          </View>
         </TouchableOpacity>
         <View style={styles.sectionDivider} />
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("ManageAccountScreen")}>
-          <Text style={styles.sectionItemText}>Kelola Akun</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("NotificationScreen")}
+        >
+          <View style={styles.row}>
+            <Text style={styles.sectionItemText}>Notifikasi</Text>
+            <Ionicons name="chevron-forward" size={20} color="#A0A0A0" />
+          </View>
         </TouchableOpacity>
+        <View style={styles.sectionDivider} />
       </View>
 
       <View style={styles.logoutContainer}>
@@ -174,6 +207,11 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
 

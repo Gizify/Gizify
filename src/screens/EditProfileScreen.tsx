@@ -26,7 +26,6 @@ const EditProfileScreen = () => {
 
     const [name, setName] = useState(user?.name || "");
     const [email, setEmail] = useState(user?.email || "");
-    const [password, setPassword] = useState("");
     const [height, setHeight] = useState(user?.height?.toString() || "");
     const [weight, setWeight] = useState(user?.weight?.toString() || "");
     const [birthdate, setBirthdate] = useState(
@@ -105,7 +104,6 @@ const EditProfileScreen = () => {
         const updatedData = {
             name,
             email,
-            ...(password && { password }),
             height: parseFloat(height),
             weight: parseFloat(weight),
             birthdate: parseBirthdateToISO(birthdate),
@@ -129,7 +127,6 @@ const EditProfileScreen = () => {
     }, [
         name,
         email,
-        password,
         height,
         weight,
         birthdate,
@@ -177,15 +174,6 @@ const EditProfileScreen = () => {
                     value={email}
                     onChangeText={setEmail}
                     keyboardType="email-address"
-                />
-
-                <Text style={styles.label}>Password Baru</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Password baru"
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
                 />
 
                 <Text style={styles.label}>Tinggi dan Berat Badan</Text>
@@ -401,7 +389,7 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 16,
-        backgroundColor: "#297872",
+        backgroundColor: "#297B77",
         paddingVertical: 16,
         borderRadius: 16,
         alignItems: "center",

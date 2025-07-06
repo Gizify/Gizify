@@ -19,61 +19,42 @@ import { AuthStackParamList } from "../navigation/AuthStackNavigator";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, registerUser } from "../redux/actions/authAction";
 
-// Type untuk navigasi menggunakan Native Stack
 type NavigationProps = NativeStackNavigationProp<AuthStackParamList>;
 
 const LoginRegisterScreen = () => {
   const navigation = useNavigation<NavigationProps>();
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state: any) => state.auth); // Ambil state auth dari Redux
+  const { loading, error } = useSelector((state: any) => state.auth);
 
-  // State input dan tampilan
-  const [isLogin, setIsLogin] = useState(true); // Toggle antara login/daftar
-  const [agree, setAgree] = useState(false); // Checkbox untuk setuju syarat & ketentuan
-
-  // State untuk input form
+  const [isLogin, setIsLogin] = useState(true);
+  const [agree, setAgree] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Fungsi untuk membuka link kebijakan privasi
   const handleLinkPress = () => {
     Linking.openURL("https://kebijakan-privasi-gizify.vercel.app/");
   };
 
-  // Fungsi untuk submit form login atau daftar
   const handleSubmit = async () => {
     if (!email || !password) {
       return Alert.alert("Error", "Email dan password harus diisi");
     }
 
-    // Validasi tambahan untuk mode daftar
     if (!isLogin) {
-      if (!agree) {
-        return Alert.alert("Error", "Anda harus menyetujui syarat dan ketentuan");
-      }
-      if (!name) {
-        return Alert.alert("Error", "Nama lengkap harus diisi");
-      }
-      if (password !== confirmPassword) {
-        return Alert.alert("Error", "Password tidak cocok");
-      }
-      if (password.length < 6) {
-        return Alert.alert("Error", "Password minimal 6 karakter");
-      }
+      if (!agree) return Alert.alert("Error", "Anda harus menyetujui syarat dan ketentuan");
+      if (!name) return Alert.alert("Error", "Nama lengkap harus diisi");
+      if (password !== confirmPassword) return Alert.alert("Error", "Password tidak cocok");
+      if (password.length < 6) return Alert.alert("Error", "Password minimal 6 karakter");
     }
 
     try {
       if (isLogin) {
-        // Dispatch login action
         await dispatch(loginUser(email, password) as any);
       } else {
-        // Dispatch register action dan redirect ke halaman awal
         await dispatch(registerUser(email, password, name) as any);
         navigation.replace("StartScreen");
-
-        // Reset form
         setName("");
         setEmail("");
         setPassword("");
@@ -86,7 +67,6 @@ const LoginRegisterScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Bagian Logo dan Switch Login/Daftar */}
       <View style={styles.logoContainer}>
         <Image
           source={require("../../assets/logo/Logo.png")}
@@ -94,7 +74,6 @@ const LoginRegisterScreen = () => {
           resizeMode="contain"
         />
 
-        {/* Tombol switch antara login dan daftar */}
         <View style={styles.switchContainer}>
           <TouchableOpacity
             style={[styles.switchBtn, isLogin && styles.activeBtn]}
@@ -113,17 +92,16 @@ const LoginRegisterScreen = () => {
         </View>
       </View>
 
-      {/* Form Login/Daftar dengan animasi */}
       <Animated.View
         layout={Layout.duration(500).easing(Easing.out(Easing.exp))}
         entering={FadeInDown.duration(400)}
         exiting={FadeOutUp.duration(300)}
         style={styles.form}
       >
-        {/* Input hanya ditampilkan jika mode daftar */}
         {!isLogin && (
           <TextInput
             placeholder="Nama Lengkap"
+            placeholderTextColor="#888"
             style={styles.input}
             value={name}
             onChangeText={setName}
@@ -131,9 +109,9 @@ const LoginRegisterScreen = () => {
           />
         )}
 
-        {/* Input Email & Password */}
         <TextInput
           placeholder="Masukkan Email"
+          placeholderTextColor="#888"
           style={styles.input}
           value={email}
           onChangeText={setEmail}
@@ -143,6 +121,7 @@ const LoginRegisterScreen = () => {
         />
         <TextInput
           placeholder="Masukkan Password"
+          placeholderTextColor="#888"
           secureTextEntry
           style={styles.input}
           value={password}
@@ -150,10 +129,17 @@ const LoginRegisterScreen = () => {
           editable={!loading}
         />
 
-        {/* Input konfirmasi password hanya di mode daftar */}
+        {/* “Lupa Password?” hanya di mode login */}
+        {isLogin && (
+          <TouchableOpacity onPress={() => navigation.navigate("ForgotPasswordScreen")}>
+            <Text style={styles.forgotText}>Lupa Password?</Text>
+          </TouchableOpacity>
+        )}
+
         {!isLogin && (
           <TextInput
             placeholder="Konfirmasi Password"
+            placeholderTextColor="#888"
             secureTextEntry
             style={styles.input}
             value={confirmPassword}
@@ -162,7 +148,6 @@ const LoginRegisterScreen = () => {
           />
         )}
 
-        {/* Checkbox syarat & ketentuan hanya di mode daftar */}
         {!isLogin && (
           <View style={styles.checkboxContainer}>
             <Checkbox
@@ -180,7 +165,6 @@ const LoginRegisterScreen = () => {
           </View>
         )}
 
-        {/* Tombol Submit */}
         <Pressable
           style={[styles.submitBtn, loading && styles.disabledBtn]}
           onPress={handleSubmit}
@@ -193,7 +177,6 @@ const LoginRegisterScreen = () => {
           )}
         </Pressable>
 
-        {/* Tampilkan error jika ada */}
         {error && (
           <Text style={styles.errorText}>
             {typeof error === "string" ? error : error?.message || "Terjadi kesalahan"}
@@ -206,7 +189,6 @@ const LoginRegisterScreen = () => {
 
 export default LoginRegisterScreen;
 
-// Style untuk tampilan halaman login/daftar
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -244,7 +226,7 @@ const styles = StyleSheet.create({
     color: "#226655",
   },
   activeBtn: {
-    backgroundColor: "#226655",
+    backgroundColor: "#297B77",
   },
   activeText: {
     color: "white",
@@ -263,11 +245,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 8,
     fontSize: 14,
+    color: "#000",
   },
   forgotText: {
     textAlign: "right",
-    color: "#444",
-    fontWeight: "bold",
+    color: "#666",
+    fontWeight: "500",
     fontSize: 13,
     marginBottom: 16,
   },
@@ -284,14 +267,12 @@ const styles = StyleSheet.create({
   },
   link: {
     color: "#007bff",
-    textDecorationLine: "underline",
   },
   submitBtn: {
-    backgroundColor: "#226655",
+    backgroundColor: "#297B77",
     paddingVertical: 14,
     borderRadius: 30,
     alignItems: "center",
-    shadowColor: "#00ffaa",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 10,
