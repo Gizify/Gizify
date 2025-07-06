@@ -15,7 +15,7 @@ import { fetchNutrition } from "../redux/actions/recipeAction";
 const UploadRecipeScrenn: React.FC = () => {
   const navigation = useNavigation<any>();
   const token = useSelector((state: any) => state.auth.token);
-  const units = ["gr", "ml", "sdm", "sdt", "piring", "gelas", "potong", "butir"];
+  const units = ["gr", "ml", "sdm", "sdt", "piring", "gelas", "potong", "butir", "buah"];
 
   const { upRecipe, upLoading, upError } = useSelector((state: any) => state.recipes);
 

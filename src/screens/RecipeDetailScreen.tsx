@@ -10,6 +10,7 @@ import colors from "../styles/colors";
 import Button from "../components/form/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { addConsumption } from "../redux/actions/authAction";
+import NutritionPreviewModal from "../components/modals/NutritionPreviewModal";
 
 interface RecipeDetailScreenProps {
   route: RouteProp<RecipeStackParamList, "RecipeDetail">;
@@ -63,11 +64,44 @@ const RecipeDetailScreen: React.FC<RecipeDetailScreenProps> = ({ route }) => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState<"recipe" | "nutrition">("recipe");
   const dispatch = useDispatch();
+  const user = useSelector((state: any) => state.auth.user);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [addedNutrition, setAddedNutrition] = useState({ carbs: 0, fat: 0, protein: 0 });
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const summary = recipe.nutrition_info;
 
   const imageSource = recipe.image ? { uri: recipe.image } : require("../../assets/image/default_recipe.jpg");
   const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const formatDate = (date: any) => {
+    if (!date) return "";
+
+    try {
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return "";
+
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "";
+    }
+  };
+
+  const findNutritionByDate = (date: Date) => {
+    if (!date) return null;
+
+    const targetDate = formatDate(date);
+    if (!targetDate) return null;
+
+    return user.nutrition_stats.find((item: any) => formatDate(item.date) === targetDate) || null;
+  };
+
+  const nutritionData = findNutritionByDate(selectedDate);
 
   const token = useSelector((state: any) => state.auth.token);
 
@@ -206,19 +240,34 @@ const RecipeDetailScreen: React.FC<RecipeDetailScreenProps> = ({ route }) => {
           </View>
         )}
       </ScrollView>
+
       <Button
         title="Tambah Ke Konsumsi Harian"
         onPress={async () => {
           try {
-            await dispatch(addConsumption("recipe", recipe._id, 1, userTimeZone, token) as any);
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "Beranda" }] as any,
-            });
+            const added = {
+              carbs: summary.carbs || 0,
+              fat: summary.fat || 0,
+              protein: summary.protein || 0,
+            };
+            setAddedNutrition(added);
+            setModalVisible(true); // Tampilkan modal lebih dulu
           } catch (err) {
             Alert.alert("Gagal", "Gagal menambahkan konsumsi harian.");
           }
         }}
+      />
+
+      <NutritionPreviewModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        addedNutrition={addedNutrition}
+        current={nutritionData}
+        target={user?.daily_nutrition_target}
+        recipeId={recipe._id}
+        userTimeZone={userTimeZone}
+        token={token}
+        type="recipe"
       />
     </View>
   );

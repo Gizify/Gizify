@@ -26,7 +26,6 @@ function calculateTrimester(gestationalAge: any) {
 
 const NutritionBar: React.FC<NutritionBarProps> = ({ label, value, color, limit }) => {
   const percentage = (value / limit) * 100;
-
   return (
     <View>
       <View style={styles.barContainer}>
@@ -103,15 +102,8 @@ const HomeScreen = () => {
     <View style={globalStyles.container}>
       {/* Header */}
       <View style={styles.header}>
+        <Text style={styles.headerTitle}>{user?.name}</Text>
         <Text style={styles.headerTitle}>Trimester ke {trimester}</Text>
-        <View style={styles.profileContainer}>
-          <Text style={styles.sectionTitle}>{user?.name || "User"}</Text>
-          <Image
-            style={styles.selectedItemImage}
-            source={{ uri: "https://static.vecteezy.com/system/resources/previews/019/896/008/non_2x/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" }}
-            onError={() => console.log("Error loading image")}
-          />
-        </View>
       </View>
 
       {/* Rounded Rectangle */}
@@ -140,10 +132,11 @@ const HomeScreen = () => {
       </View>
 
       <View style={styles.nutritionContainer}>
+        {/* Vitamins and Minerals */}
         <View style={styles.barGroup}>
           {renderNutritionBar("Vitamin D", "vitamin_d", "#F4E04D", "vitamin_d")}
-          {renderNutritionBar("Air (ml)", "water", "#1E90FF", "water")}
           {renderNutritionBar("Zat Besi", "iron", "#B22222", "iron")}
+          {renderNutritionBar("Vitamin A", "vitamin_a", "#FF8C00", "vitamin_a")}
         </View>
 
         <View style={styles.barGroup}>
@@ -157,6 +150,15 @@ const HomeScreen = () => {
           {renderNutritionBar("Vitamin B12", "vitamin_b12", "#6A5ACD", "vitamin_b12")}
           {renderNutritionBar("Vitamin C", "vitamin_c", "#FFA500", "vitamin_c")}
         </View>
+
+        <View style={styles.barGroup}>
+          {renderNutritionBar("Magnesium", "magnesium", "#32CD32", "magnesium")}
+          {renderNutritionBar("Selenium", "selenium", "#4682B4", "selenium")}
+          {renderNutritionBar("Vitamin E", "vitamin_e", "#DAA520", "vitamin_e")}
+        </View>
+
+        {/* Water */}
+        <View style={styles.waterCon}>{renderNutritionBar("Air (ml)", "water", "#1E90FF", "water")}</View>
       </View>
 
       {/* Date Selector */}
@@ -233,13 +235,12 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: colors.background },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   headerTitle: { fontSize: 20, fontWeight: "bold" },
-  profileContainer: { flexDirection: "row", alignItems: "center", gap: 16, justifyContent: "center" },
-  profileImage: { width: 40, height: 40, borderRadius: 20, marginRight: 10 },
+
   picker: { height: 40, width: 120 },
   roundedContainer: { flexDirection: "row", alignItems: "center", marginVertical: 20 },
   rectangle: { width: "85%", height: 50, borderTopLeftRadius: 100, borderBottomLeftRadius: 100, backgroundColor: colors.primary, flex: 1, justifyContent: "center", alignItems: "center" },
   circle: { width: 60, height: 60, borderRadius: 30, marginLeft: -20, justifyContent: "center", alignItems: "center", backgroundColor: colors.background, borderWidth: 2 },
-  nutritionContainer: { marginVertical: 10, backgroundColor: colors.secondary, paddingVertical: 20, borderRadius: 15, display: "flex", flexDirection: "column" },
+  nutritionContainer: { marginVertical: 10, backgroundColor: colors.secondary, paddingVertical: 10, borderRadius: 15, display: "flex", flexDirection: "column" },
   label: {
     fontSize: 7,
     fontWeight: "bold",
@@ -257,6 +258,7 @@ const styles = StyleSheet.create({
   nutritionText: { flexDirection: "row", justifyContent: "space-between", width: 90 },
   sectionTitle: { fontWeight: "bold", fontSize: 16, marginBottom: 5 },
   barGroup: { flexDirection: "row", justifyContent: "space-around" },
+  waterCon: { justifyContent: "space-between", paddingHorizontal: 10 },
   image: { height: 10, aspectRatio: 1 },
   dateSelector: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: 10 },
   table: { marginTop: 20, borderWidth: 1, borderColor: "#ddd", padding: 10, backgroundColor: colors.background },
