@@ -20,6 +20,8 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
   const [pregnancyMonth, setPregnancyMonth] = useState("");
+  const [hpht, setHpht] = useState("");
+  const [hphtError, setHphtError] = useState("");
   const [pregnancyDay, setPregnancyDay] = useState("");
   const [activity, setActivity] = useState<string | null>(null);
   const [healthHistory, setHealthHistory] = useState<string | null>(null);
@@ -87,7 +89,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
 
   // Submit data ke backend
   const handleSubmit = async () => {
-    if (!height || !weight || !pregnancyMonth || !pregnancyDay || !activity || !healthHistory || !birthdate) {
+    if (!height || !weight || !hpht || !activity || !healthHistory || !birthdate) {
       Alert.alert("Error", "Mohon lengkapi semua data terlebih dahulu");
       return;
     }
@@ -112,10 +114,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
       const profileData = {
         height: parseFloat(height),
         weight: parseFloat(weight),
-        gestational_age: {
-          months: parseInt(pregnancyMonth),
-          days: parseInt(pregnancyDay),
-        },
+        last_menstrual_period: parseBirthdateToISO(hpht),
         activity: activity!,
         birthdate: parseBirthdateToISO(birthdate),
         medical_history: healthHistory === "Tidak ada" ? [] : [healthHistory!],
@@ -132,7 +131,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
   };
 
   // Tombol lanjut dinonaktifkan jika belum lengkap
-  const isButtonDisabled = !height || !weight || !pregnancyMonth || !pregnancyDay || !activity || !healthHistory || !birthdate;
+  const isButtonDisabled = !height || !weight || !hpht || !activity || !healthHistory || !birthdate;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -184,10 +183,25 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.select} onPress={() => setShowPregnancyModal(true)}>
-        <Text style={[styles.selectText, { color: pregnancyMonth && pregnancyDay ? "#333" : "#777" }]}>{pregnancyMonth && pregnancyDay ? `${pregnancyMonth} Bulan ${pregnancyDay} Hari` : "Usia Kehamilan*"}</Text>
-        <Ionicons name="chevron-forward" size={20} color="#777" />
-      </TouchableOpacity>
+      {/* Input Hari Pertama Haid Terakhir */}
+      <TextInput
+        placeholder="Hari Pertama Haid Terakhir (DD/MM/YYYY) *"
+        style={styles.inputFull}
+        keyboardType="numeric"
+        maxLength={10}
+        value={hpht || ""}
+        onChangeText={(text) => {
+          const formatted = formatDateInput(text);
+          setHpht(formatted);
+          setHphtError("");
+        }}
+        onBlur={() => {
+          if (hpht && !isValidDate(hpht)) {
+            setHphtError("Format tanggal tidak valid (contoh: 31/12/2000)");
+          }
+        }}
+      />
+      {hphtError ? <Text style={{ color: "red", marginBottom: 12 }}>{hphtError}</Text> : null}
 
       <TouchableOpacity style={styles.select} onPress={() => setShowHealthHistoryModal(true)}>
         <Text style={[styles.selectText, { color: healthHistory ? "#333" : "#777" }]}>{healthHistory || "Riwayat Kesehatan*"}</Text>
