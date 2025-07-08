@@ -74,7 +74,9 @@ const NutritionPreviewModal: React.FC<Props> = ({ visible, onClose, addedNutriti
 
   const nutritionData = findNutritionByDate(selectedDate);
   const getCombined = (key: keyof typeof addedNutrition) => {
-    return (nutritionData[key] || 0) + (addedNutrition[key] || 0);
+    const current = nutritionData?.[key] ?? 0;
+    const added = addedNutrition?.[key] ?? 0;
+    return current + added;
   };
 
   return (
