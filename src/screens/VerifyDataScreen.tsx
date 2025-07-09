@@ -29,7 +29,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
   const [birthdateError, setBirthdateError] = useState("");
 
   // Avatar/photo option
-  const [photoOption, setPhotoOption] = useState<AvatarType | null>(null);
+  const [photoOption, setPhotoOption] = useState<AvatarType | null>({ id: "avatar1", source: 29 });
   const [selectedAvatar, setSelectedAvatar] = useState<AvatarType | null>(null);
   const [currentAvatar, setCurrentAvatar] = useState<AvatarType | null>(null);
 
@@ -116,6 +116,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         weight: parseFloat(weight),
         last_menstrual_period: parseBirthdateToISO(hpht),
         activity: activity!,
+        photoOption: photoOption.id || null,
         birthdate: parseBirthdateToISO(birthdate),
         medical_history: healthHistory === "Tidak ada" ? [] : [healthHistory!],
       };
