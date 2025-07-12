@@ -6,17 +6,16 @@ import { useDispatch, useSelector } from "react-redux";
 
 import BottomSheet from "../components/modals/BottomSheet";
 import AvatarModal from "../components/modals/AvatarModal";
+import PopupModal from "../components/modals/PopupModal";
 import { completeUserProfile } from "../redux/actions/authAction";
 import { AvatarType, avatarList } from "../utils/avatars";
+import { Icons } from "../utils/icons";
 
-interface VerifyDataScreenProps {}
-
-const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
+const VerifyDataScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { token } = useSelector((state: any) => state.auth);
 
-  // Input states
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
   const [pregnancyMonth, setPregnancyMonth] = useState("");
@@ -27,31 +26,24 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
   const [healthHistory, setHealthHistory] = useState<string | null>(null);
   const [birthdate, setBirthdate] = useState<string | null>(null);
   const [birthdateError, setBirthdateError] = useState("");
-
-  // Avatar/photo option
   const [photoOption, setPhotoOption] = useState<AvatarType | null>({ id: "avatar1", source: 29 });
   const [selectedAvatar, setSelectedAvatar] = useState<AvatarType | null>(null);
   const [currentAvatar, setCurrentAvatar] = useState<AvatarType | null>(null);
-
-  // Modal visibility states
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [showHealthHistoryModal, setShowHealthHistoryModal] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [showPregnancyModal, setShowPregnancyModal] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
-  // Temporary selections for modals
   const [tempActivity, setTempActivity] = useState<string | null>(null);
   const [tempHealthHistory, setTempHealthHistory] = useState<string | null>(null);
   const [tempPhotoOption, setTempPhotoOption] = useState<string | null>(null);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
-  // Validasi format tanggal (DD/MM/YYYY)
   const isValidDate = (dateStr: string) => {
     const regex = /^([0-2][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
     return regex.test(dateStr);
   };
 
-  // Format otomatis input tanggal ke DD/MM/YYYY
   const formatDateInput = (input: string) => {
     const cleaned = input.replace(/\D/g, "");
     const parts = [];
@@ -61,13 +53,8 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
     return parts.join("/");
   };
 
-  // Fungsi untuk memilih avatar
-  const handleSelectAvatar = (avatar: AvatarType) => {
-    setSelectedAvatar(avatar);
-  };
-
+  const handleSelectAvatar = (avatar: AvatarType) => setSelectedAvatar(avatar);
   const handleCloseModal = () => setModalVisible(false);
-
   const handleConfirmAvatar = () => {
     if (selectedAvatar) {
       setCurrentAvatar(selectedAvatar);
@@ -76,7 +63,6 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
     setModalVisible(false);
   };
 
-  // Menangani aksi dari opsi gambar profil
   const handleSelectPhotoOption = (value: string) => {
     if (value === "avatar") {
       setModalVisible(true);
@@ -87,18 +73,7 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
     }
   };
 
-  // Submit data ke backend
   const handleSubmit = async () => {
-    if (!height || !weight || !hpht || !activity || !healthHistory || !birthdate) {
-      Alert.alert("Error", "Mohon lengkapi semua data terlebih dahulu");
-      return;
-    }
-
-    if (!isValidDate(birthdate)) {
-      Alert.alert("Error", "Format tanggal lahir tidak valid. Gunakan DD/MM/YYYY");
-      return;
-    }
-
     try {
       if (!token) {
         Alert.alert("Error", "Autentikasi gagal. Silakan login ulang.");
@@ -116,8 +91,8 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         weight: parseFloat(weight),
         last_menstrual_period: parseBirthdateToISO(hpht),
         activity: activity!,
-        photoOption: photoOption.id || null,
-        birthdate: parseBirthdateToISO(birthdate),
+        photoOption: photoOption?.id || null,
+        birthdate: parseBirthdateToISO(birthdate!),
         medical_history: healthHistory === "Tidak ada" ? [] : [healthHistory!],
       };
 
@@ -131,12 +106,10 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
     }
   };
 
-  // Tombol lanjut dinonaktifkan jika belum lengkap
   const isButtonDisabled = !height || !weight || !hpht || !activity || !healthHistory || !birthdate;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Header */}
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="black" />
@@ -144,7 +117,6 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         <Text style={styles.header}>Isi Data Diri</Text>
       </View>
 
-      {/* Foto profil */}
       <View style={styles.profileImage}>
         <Image source={photoOption?.source || require("../../assets/avatar/default-avatar.png")} style={styles.image} />
         <TouchableOpacity onPress={() => setShowPhotoModal(true)}>
@@ -152,13 +124,11 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Input tinggi dan berat */}
       <View style={styles.row}>
         <TextInput placeholder="Tinggi Badan (cm) *" style={styles.inputHalf} keyboardType="numeric" value={height} onChangeText={setHeight} />
         <TextInput placeholder="Berat Badan (kg) *" style={styles.inputHalf} keyboardType="numeric" value={weight} onChangeText={setWeight} />
       </View>
 
-      {/* Input tanggal lahir */}
       <TextInput
         placeholder="Tanggal Lahir (DD/MM/YYYY) *"
         style={styles.inputFull}
@@ -170,21 +140,14 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
           setBirthdate(formatted);
           setBirthdateError("");
         }}
-        onBlur={() => {
-          if (birthdate && !isValidDate(birthdate)) {
-            setBirthdateError("Format tanggal tidak valid (contoh: 31/12/2000)");
-          }
-        }}
       />
       {birthdateError ? <Text style={{ color: "red", marginBottom: 12 }}>{birthdateError}</Text> : null}
 
-      {/* Modal untuk input lain */}
       <TouchableOpacity style={styles.select} onPress={() => setShowActivityModal(true)}>
         <Text style={[styles.selectText, { color: activity ? "#333" : "#777" }]}>{activity || "Aktivitas*"}</Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
-      {/* Input Hari Pertama Haid Terakhir */}
       <TextInput
         placeholder="Hari Pertama Haid Terakhir (DD/MM/YYYY) *"
         style={styles.inputFull}
@@ -196,11 +159,6 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
           setHpht(formatted);
           setHphtError("");
         }}
-        onBlur={() => {
-          if (hpht && !isValidDate(hpht)) {
-            setHphtError("Format tanggal tidak valid (contoh: 31/12/2000)");
-          }
-        }}
       />
       {hphtError ? <Text style={{ color: "red", marginBottom: 12 }}>{hphtError}</Text> : null}
 
@@ -209,22 +167,47 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         <Ionicons name="chevron-forward" size={20} color="#777" />
       </TouchableOpacity>
 
-      {/* Tombol submit */}
-      <TouchableOpacity style={[styles.button, { opacity: isButtonDisabled ? 0.5 : 1 }]} onPress={handleSubmit} disabled={isButtonDisabled}>
+      <TouchableOpacity
+        style={[styles.button, { opacity: isButtonDisabled ? 0.5 : 1 }]}
+        onPress={() => {
+          if (!isValidDate(birthdate || "")) {
+            setBirthdateError("Format tanggal lahir tidak valid.");
+            return;
+          }
+          if (!isValidDate(hpht || "")) {
+            setHphtError("Format tanggal HPHT tidak valid.");
+            return;
+          }
+          setShowConfirmationModal(true);
+        }}
+        disabled={isButtonDisabled}
+      >
         <Text style={styles.buttonText}>Lanjut</Text>
       </TouchableOpacity>
 
-      {/* Modal Avatar */}
+      <PopupModal
+        visible={showConfirmationModal}
+        onClose={() => setShowConfirmationModal(false)}
+        onConfirm={() => {
+          setShowConfirmationModal(false);
+          handleSubmit();
+        }}
+        icon={Icons.warning}
+        title="Konfirmasi"
+        message="Apakah data yang Anda masukkan sudah benar?"
+        cancelText="Periksa lagi"
+        confirmText="Ya, benar"
+      />
+
       <AvatarModal visible={modalVisible} selectedAvatar={selectedAvatar} onSelect={handleSelectAvatar} onClose={handleCloseModal} onConfirm={handleConfirmAvatar} avatarList={avatarList} currentAvatar={currentAvatar} />
 
-      {/* BottomSheet: Foto profil */}
       <BottomSheet
         visible={showPhotoModal}
         title="Foto profile"
         options={[
           { id: "avatar", label: "Pilih dari avatar yang tersedia" },
-          { id: "gallery", label: "Pilih dari galeri" },
-          { id: "camera", label: "Ambil foto" },
+          // { id: "gallery", label: "Pilih dari galeri" },
+          // { id: "camera", label: "Ambil foto" },
           { id: "hapus", label: "Hapus gambar saat ini" },
         ]}
         selectedOption={tempPhotoOption}
@@ -238,7 +221,6 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         }}
       />
 
-      {/* BottomSheet: Aktivitas */}
       <BottomSheet
         visible={showActivityModal}
         title="Aktivitas"
@@ -258,14 +240,13 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         }}
       />
 
-      {/* BottomSheet: Usia Kehamilan */}
       <BottomSheet
         visible={showPregnancyModal}
         title="Usia Kehamilan"
         type="custom"
         options={[]}
         selectedOption={null}
-        onSelect={() => {}}
+        onSelect={() => { }}
         onClose={() => setShowPregnancyModal(false)}
         showContinueButton
         onContinue={() => setShowPregnancyModal(false)}
@@ -278,7 +259,6 @@ const VerifyDataScreen: React.FC<VerifyDataScreenProps> = () => {
         </View>
       </BottomSheet>
 
-      {/* BottomSheet: Riwayat Kesehatan */}
       <BottomSheet
         visible={showHealthHistoryModal}
         title="Riwayat Kesehatan"
@@ -307,8 +287,11 @@ export default VerifyDataScreen;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 24,
-    backgroundColor: "#fff",
+    flexGrow: 1,
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
   },
   headerContainer: {
     flexDirection: "row",
@@ -316,71 +299,81 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   header: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 22,
+    fontWeight: "700",
     marginLeft: 16,
+    color: "#333333",
   },
   profileImage: {
     alignItems: "center",
     marginBottom: 24,
   },
   image: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     backgroundColor: "#F3F3F3",
   },
   imageText: {
     marginTop: 8,
-    color: "#777",
+    fontSize: 13,
+    color: "#777777",
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
+    gap: 12,
+    marginBottom: 16,
   },
   inputHalf: {
-    width: "48%",
-    borderWidth: 1,
-    borderColor: "#F3F3F3",
+    flex: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#F1F1F1",
     backgroundColor: "#FAFAFA",
+    fontSize: 14,
+    color: "#333333",
   },
   inputFull: {
     width: "100%",
-    borderWidth: 1,
-    borderColor: "#F3F3F3",
+    paddingHorizontal: 14,
+    paddingVertical: 14,
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#F1F1F1",
     backgroundColor: "#FAFAFA",
+    fontSize: 14,
+    color: "#333333",
+    marginBottom: 16,
   },
   select: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    borderColor: "#F3F3F3",
-    borderWidth: 1,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 18,
     borderRadius: 12,
-    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#F1F1F1",
     backgroundColor: "#FAFAFA",
+    marginBottom: 16,
   },
   selectText: {
-    color: "#777",
-    fontSize: 16,
+    fontSize: 14,
+    color: "#999999",
   },
   button: {
-    marginTop: 16,
     backgroundColor: "#297872",
-    paddingVertical: 16,
-    borderRadius: 16,
+    paddingVertical: 18,
+    borderRadius: 12,
     alignItems: "center",
+    marginTop: 12,
   },
   buttonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "700",
   },
 });
