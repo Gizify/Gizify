@@ -1,12 +1,13 @@
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import colors from "../styles/colors";
 import globalStyles from "../styles/globalStyles";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { useNavigation } from "@react-navigation/native";
+import { differenceInDays } from "date-fns";
 
 type NutritionBarProps = {
   label: string;
@@ -15,14 +16,15 @@ type NutritionBarProps = {
   limit: number;
 };
 
-function calculateTrimester(gestationalAge: any) {
-  const totalDays = gestationalAge.months * 30 + gestationalAge.days;
-  const weeks = totalDays / 7;
+const calculateTrimester = (lmp: string) => {
+  const startDate = new Date(lmp);
+  const daysSinceLMP = differenceInDays(new Date(), startDate);
+  const weeks = Math.floor(daysSinceLMP / 7);
 
-  if (weeks < 14) return 1;
-  else if (weeks < 28) return 2;
-  else return 3;
-}
+  if (weeks < 13) return 1;
+  if (weeks < 27) return 2;
+  return 3;
+};
 
 const NutritionBar: React.FC<NutritionBarProps> = ({ label, value, color, limit }) => {
   const percentage = (value / limit) * 100;
@@ -45,7 +47,15 @@ const HomeScreen = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const user = useSelector((state: any) => state.auth.user);
   const navigation = useNavigation() as any;
-  const trimester = calculateTrimester(user.gestational_age);
+  const dispatch = useDispatch();
+  const hasReminder = user?.last_menstrual_period ? user.trimester !== calculateTrimester(user.last_menstrual_period) : false;
+
+  useEffect(() => {
+    // Hanya dispatch kalau value hasReminder berubah dari yang sebelumnya
+    if (user?.hasReminder !== hasReminder) {
+      dispatch({ type: "SET_HAS_REMINDER", payload: hasReminder });
+    }
+  }, [user?.hasReminder, hasReminder, dispatch]);
 
   // Helper function untuk handle toFixed dengan aman
   const safeToFixed = (value: number | undefined | null, digits = 0) => {
@@ -92,6 +102,19 @@ const HomeScreen = () => {
       setSelectedDate(newDate);
     }
   };
+  const getPregnancyAge = (lmp: string) => {
+    if (!lmp) return null;
+    const lmpDate = new Date(lmp);
+    const today = new Date();
+
+    const diffInDays = Math.floor((today.getTime() - lmpDate.getTime()) / (1000 * 60 * 60 * 24));
+    const months = Math.floor(diffInDays / 30);
+    const days = diffInDays % 30;
+
+    return { months, days };
+  };
+
+  const pregnancyAge = getPregnancyAge(user?.last_menstrual_period);
 
   // Render nutrition bar dengan aman
   const renderNutritionBar = (label: string, valueKey: string, color: string, limitKey: string) => (
@@ -102,8 +125,20 @@ const HomeScreen = () => {
     <View style={globalStyles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>{user?.name}</Text>
-        <Text style={styles.headerTitle}>Trimester ke {trimester}</Text>
+        <View style={styles.headerLeft}>
+          <Text style={styles.nameText}>{user?.name}</Text>
+          {pregnancyAge && (
+            <Text style={styles.subText}>
+              Usia kehamilan {pregnancyAge.months} bulan {pregnancyAge.days} hari
+            </Text>
+          )}
+          <Text style={styles.subText}>Trimester ke-{user.trimester}</Text>
+        </View>
+
+        <TouchableOpacity onPress={() => navigation.navigate("Notif")} style={styles.notifButton}>
+          <Ionicons name="notifications-outline" size={24} color="#333" />
+          {hasReminder && <View style={styles.badge} />}
+        </TouchableOpacity>
       </View>
 
       {/* Rounded Rectangle */}
@@ -233,8 +268,38 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   container: { flex: 1, padding: 20, backgroundColor: colors.background },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  headerTitle: { fontSize: 20, fontWeight: "bold" },
+  header: {
+    padding: 16,
+    backgroundColor: "#f9f9f9",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  nameText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  subText: {
+    fontSize: 14,
+    color: "#555",
+    marginTop: 2,
+  },
+  notifButton: {
+    padding: 8,
+  },
+  badge: {
+    position: "absolute",
+    top: -2,
+    right: -2,
+    backgroundColor: "red",
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
 
   picker: { height: 40, width: 120 },
   roundedContainer: { flexDirection: "row", alignItems: "center", marginVertical: 20 },

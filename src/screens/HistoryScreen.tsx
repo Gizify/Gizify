@@ -23,11 +23,45 @@ export default function HistoryScreen() {
     const sorted = [...user.nutrition_stats].sort((a: any, b: any) => (new Date(a.date) as any) - (new Date(b.date) as any));
     return sorted.slice(-selectedDays);
   }, [user.nutrition_stats, selectedDays]);
-
   const navigation = useNavigation();
 
-  const nutrientData = recentStats.map((stat) => stat[selectedNutrient] || 0);
-  const target = user.daily_nutrition_target?.[selectedNutrient] || 0;
+  if (!user || !user.nutrition_stats || user.nutrition_stats.length === 0) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <MaterialIcons name="arrow-back" size={24} color="#333" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Riwayat Nutrisi</Text>
+        </View>
+        <Text style={styles.title}>Belum ada data nutrisi yang tersedia.</Text>
+      </View>
+    );
+  }
+
+  // Ensure all data points are finite numbers
+  const nutrientData = recentStats.map((stat) => {
+    const value = stat[selectedNutrient];
+    const numeric = parseFloat(value);
+    return isFinite(numeric) ? numeric : 0;
+  });
+
+  // Ensure target is a finite number
+  const target = isFinite(user.daily_nutrition_target?.[selectedNutrient]) ? user.daily_nutrition_target?.[selectedNutrient] : 0;
+
+  // Pastikan semua data valid untuk chart
+  const validChartData = useMemo(() => {
+    return recentStats.map((stat) => {
+      const value = parseFloat(stat[selectedNutrient]);
+      return isFinite(value) ? value : 0; // Ganti nilai invalid dengan 0
+    });
+  }, [recentStats, selectedNutrient]);
+
+  // Pastikan target valid
+  const validTarget = isFinite(user.daily_nutrition_target?.[selectedNutrient]) ? user.daily_nutrition_target[selectedNutrient] : 0;
+
+  // Buat data target dengan panjang yang sama dengan data utama
+  const targetData = Array(validChartData.length).fill(validTarget);
 
   const meals = useMemo(() => {
     return user.meal_logs
@@ -39,6 +73,20 @@ export default function HistoryScreen() {
       })
       .sort((a: any, b: any) => (new Date(b.date) as any) - (new Date(a.date) as any));
   }, [user.meal_logs, selectedDays]);
+
+  // Filter out any invalid dates for labels
+  const chartLabels = recentStats.map((s) => {
+    try {
+      const date = new Date(s.date);
+      if (isNaN(date.getTime())) return "";
+      return date.toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "short",
+      });
+    } catch {
+      return "";
+    }
+  });
 
   return (
     <ScrollView style={styles.container}>
@@ -67,20 +115,15 @@ export default function HistoryScreen() {
       <View style={styles.chartContainer}>
         <LineChart
           data={{
-            labels: recentStats.map((s) =>
-              new Date(s.date).toLocaleDateString("id-ID", {
-                day: "numeric",
-                month: "short",
-              })
-            ),
+            labels: chartLabels,
             datasets: [
               {
-                data: nutrientData,
+                data: validChartData,
                 color: () => "#5271FF",
                 strokeWidth: 2,
               },
               {
-                data: Array(recentStats.length).fill(target),
+                data: targetData,
                 color: () => "#FF66C4",
                 strokeWidth: 1,
               },
@@ -105,6 +148,7 @@ export default function HistoryScreen() {
           }}
           bezier
           style={{ borderRadius: 12 }}
+          fromZero // Tambahkan ini untuk memastikan chart dimulai dari 0
         />
       </View>
 

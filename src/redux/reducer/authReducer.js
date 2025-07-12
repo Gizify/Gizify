@@ -32,6 +32,7 @@ const initialUserState = {
   meal_logs: [],
   favorites: [],
   photoOption: null,
+  hasReminder: false,
 };
 
 // State awal reducer
@@ -83,14 +84,10 @@ const authReducer = (state = initialState, action) => {
       const { todayStats, todayMeals } = action.payload;
 
       const todayDate = dayjs().startOf("day").format("YYYY-MM-DD");
-      const statsDate = dayjs(todayStats?.date).isValid()
-        ? dayjs(todayStats.date).startOf("day").format("YYYY-MM-DD")
-        : todayDate;
+      const statsDate = dayjs(todayStats?.date).isValid() ? dayjs(todayStats.date).startOf("day").format("YYYY-MM-DD") : todayDate;
 
       // Filter stats agar tidak duplikat di hari yang sama
-      const updatedNutritionStats = state.user.nutrition_stats.filter(
-        (stat) => dayjs(stat.date).format("YYYY-MM-DD") !== todayDate
-      );
+      const updatedNutritionStats = state.user.nutrition_stats.filter((stat) => dayjs(stat.date).format("YYYY-MM-DD") !== todayDate);
 
       updatedNutritionStats.push({
         ...todayStats,
@@ -99,9 +96,7 @@ const authReducer = (state = initialState, action) => {
 
       // Update meal logs
       let updatedMealLogs = [...state.user.meal_logs];
-      const existingLogIndex = updatedMealLogs.findIndex(
-        (log) => dayjs(log.date).format("YYYY-MM-DD") === todayDate
-      );
+      const existingLogIndex = updatedMealLogs.findIndex((log) => dayjs(log.date).format("YYYY-MM-DD") === todayDate);
 
       if (existingLogIndex !== -1) {
         updatedMealLogs[existingLogIndex] = {
@@ -153,6 +148,15 @@ const authReducer = (state = initialState, action) => {
     case "LOGOUT":
       return {
         ...initialState,
+      };
+
+    case "SET_HAS_REMINDER":
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          hasReminder: action.payload,
+        },
       };
 
     default:

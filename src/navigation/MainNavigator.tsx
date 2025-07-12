@@ -16,6 +16,7 @@ import colors from "../styles/colors";
 
 // Tipe untuk navigator
 import { BottomTabParamList } from "../types/navigation";
+import HistoryScreen from "../screens/HistoryScreen";
 
 // Inisialisasi navigator tab bawah
 const Tab = createBottomTabNavigator<BottomTabParamList>();
@@ -41,9 +42,7 @@ export default function MainTabNavigator() {
         name="Beranda"
         component={HomeStackNavigator}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <AntDesign name="home" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <AntDesign name="home" size={size} color={color} />,
         }}
       />
 
@@ -52,9 +51,7 @@ export default function MainTabNavigator() {
         name="Resep"
         component={RecipeStackNavigator}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="restaurant-menu" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <MaterialIcons name="restaurant-menu" size={size} color={color} />,
         }}
       />
 
@@ -63,20 +60,16 @@ export default function MainTabNavigator() {
         name="Scan"
         component={ScanScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="camera" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <Feather name="camera" size={size} color={color} />,
         }}
       />
 
       {/* Tab Favorit */}
       <Tab.Screen
         name="Favorit"
-        component={FavoriteScreen}
+        component={HistoryScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <AntDesign name="hearto" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <MaterialIcons name="history" size={size} color={color} />,
         }}
       />
 
@@ -85,9 +78,7 @@ export default function MainTabNavigator() {
         name="Profile"
         component={ProfileStackNavigator}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <AntDesign name="user" size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <AntDesign name="user" size={size} color={color} />,
         }}
       />
     </Tab.Navigator>

@@ -73,9 +73,14 @@ const NutritionPreviewModal: React.FC<Props> = ({ visible, onClose, addedNutriti
   };
 
   const nutritionData = findNutritionByDate(selectedDate);
+  const parseNumber = (value: any) => {
+    const num = Number(value);
+    return isNaN(num) ? 0 : num;
+  };
+
   const getCombined = (key: keyof typeof addedNutrition) => {
-    const current = nutritionData?.[key] ?? 0;
-    const added = addedNutrition?.[key] ?? 0;
+    const current = parseNumber(nutritionData?.[key]);
+    const added = parseNumber(addedNutrition?.[key]);
     return current + added;
   };
 
