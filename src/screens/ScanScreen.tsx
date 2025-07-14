@@ -28,7 +28,6 @@ const ScanScreen: React.FC<Props> = ({ navigation }: Props) => {
   const [permission, requestPermission] = useCameraPermissions();
   const [modalVisible, setModalVisible] = useState(false);
   const [addedNutrition, setAddedNutrition] = useState({ carbs: 0, fat: 0, protein: 0 });
-  console.log(product);
 
   const handleStartScan = async () => {
     if (permission?.granted) {

@@ -125,12 +125,13 @@ const VerifyDataScreen: React.FC = () => {
       </View>
 
       <View style={styles.row}>
-        <TextInput placeholder="Tinggi Badan (cm) *" style={styles.inputHalf} keyboardType="numeric" value={height} onChangeText={setHeight} />
-        <TextInput placeholder="Berat Badan (kg) *" style={styles.inputHalf} keyboardType="numeric" value={weight} onChangeText={setWeight} />
+        <TextInput placeholderTextColor="#888" placeholder="Tinggi Badan (cm) *" style={styles.inputHalf} keyboardType="numeric" value={height} onChangeText={setHeight} />
+        <TextInput placeholderTextColor="#888" placeholder="Berat Badan (kg) *" style={styles.inputHalf} keyboardType="numeric" value={weight} onChangeText={setWeight} />
       </View>
 
       <TextInput
         placeholder="Tanggal Lahir (DD/MM/YYYY) *"
+        placeholderTextColor="#888"
         style={styles.inputFull}
         keyboardType="numeric"
         maxLength={10}
@@ -150,6 +151,7 @@ const VerifyDataScreen: React.FC = () => {
 
       <TextInput
         placeholder="Hari Pertama Haid Terakhir (DD/MM/YYYY) *"
+        placeholderTextColor="#888"
         style={styles.inputFull}
         keyboardType="numeric"
         maxLength={10}
@@ -246,7 +248,7 @@ const VerifyDataScreen: React.FC = () => {
         type="custom"
         options={[]}
         selectedOption={null}
-        onSelect={() => { }}
+        onSelect={() => {}}
         onClose={() => setShowPregnancyModal(false)}
         showContinueButton
         onContinue={() => setShowPregnancyModal(false)}
