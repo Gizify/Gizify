@@ -84,12 +84,43 @@ const NutritionPreviewModal: React.FC<Props> = ({ visible, onClose, addedNutriti
     return current + added;
   };
 
+  // Daftar nutrisi kritis dengan pesan peringatan khusus
+  const criticalNutrients = [
+    {
+      key: "vitamin_a",
+      name: "Vitamin A",
+      warning: "Vitamin A berlebih dapat menyebabkan cacat lahir",
+    },
+    {
+      key: "sodium",
+      name: "Garam",
+      warning: "Konsumsi garam berlebih dapat menyebabkan tekanan darah tinggi",
+    },
+    {
+      key: "sugar",
+      name: "Gula",
+      warning: "Gula berlebih meningkatkan risiko diabetes gestasional",
+    },
+    {
+      key: "caffeine",
+      name: "Kafein",
+      warning: "Kafein berlebih meningkatkan risiko keguguran",
+    },
+  ];
+
+  // Cek nutrisi yang melebihi batas
+  const exceededNutrients = criticalNutrients.filter((nutrient) => {
+    const currentValue = getCombined(nutrient.key as keyof typeof addedNutrition);
+    const limit = user.daily_nutrition_target[nutrient.key];
+    return currentValue > limit;
+  });
+
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
           <Text style={styles.title}>Penambahan Nutrisi</Text>
-          <ScrollView>
+          <ScrollView style={{ height: 300, marginBottom: 10 }}>
             <NutritionBar label="Kalori" value={getCombined("calories")} limit={user.daily_nutrition_target.calories} color={colors.primary} unit="g" />
             <NutritionBar label="Karbohidrat" value={getCombined("carbs")} limit={user.daily_nutrition_target.carbs} color="#F4A261" unit="g" />
             <NutritionBar label="Lemak" value={getCombined("fat")} limit={user.daily_nutrition_target.fat} color="#E9C46A" unit="g" />
@@ -113,6 +144,28 @@ const NutritionPreviewModal: React.FC<Props> = ({ visible, onClose, addedNutriti
 
             <NutritionBar label="Air" value={getCombined("water")} limit={user.daily_nutrition_target.water} color="#1E90FF" unit="ml" />
           </ScrollView>
+
+          {/* Tampilkan peringatan jika ada nutrisi yang melebihi batas */}
+          {exceededNutrients.length > 0 && (
+            <View style={styles.warningContainer}>
+              <Text style={styles.warningTitle}>⚠️ Peringatan Nutrisi</Text>
+              {exceededNutrients.map((nutrient, index) => {
+                const currentValue = getCombined(nutrient.key as keyof typeof addedNutrition);
+                const limit = user.daily_nutrition_target[nutrient.key];
+
+                return (
+                  <View key={index} style={styles.warningItem}>
+                    <Text style={styles.warningText}>
+                      <Text style={{ fontWeight: "bold" }}>{nutrient.name}:</Text> {nutrient.warning}
+                    </Text>
+                    <Text style={styles.warningDetail}>
+                      Konsumsi: {currentValue.toFixed(1)} (Batas: {limit})
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+          )}
           <Button
             title="Tambah Ke Konsumsi Harian"
             onPress={async () => {
@@ -184,5 +237,31 @@ const styles = StyleSheet.create({
   },
   closeText: {
     fontWeight: "bold",
+  },
+  warningContainer: {
+    backgroundColor: "#FFF3CD",
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 15,
+    borderLeftWidth: 5,
+    borderLeftColor: "#FFC107",
+  },
+  warningTitle: {
+    fontWeight: "bold",
+    color: "#856404",
+    marginBottom: 8,
+    fontSize: 16,
+  },
+  warningItem: {
+    marginBottom: 10,
+  },
+  warningText: {
+    color: "#856404",
+    marginBottom: 3,
+  },
+  warningDetail: {
+    color: "#D39E00",
+    fontSize: 12,
+    fontStyle: "italic",
   },
 });

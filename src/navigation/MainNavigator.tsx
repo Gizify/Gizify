@@ -66,7 +66,7 @@ export default function MainTabNavigator() {
 
       {/* Tab Favorit */}
       <Tab.Screen
-        name="Favorit"
+        name="Riwayat"
         component={HistoryScreen}
         options={{
           tabBarIcon: ({ color, size }) => <MaterialIcons name="history" size={size} color={color} />,
