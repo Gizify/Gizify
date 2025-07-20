@@ -88,7 +88,7 @@ const UploadResultScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <ScreenHeader title="Hasil Resep AI" showBack onBackPress={() => navigation.goBack()} style={{ marginBottom: 12 }} />
+        <ScreenHeader title="Hasil Analisis" showBack onBackPress={() => navigation.goBack()} style={{ marginBottom: 12 }} />
         {/* Title */}
         <Text style={styles.recipeTitle}>{data.title}</Text>
 
