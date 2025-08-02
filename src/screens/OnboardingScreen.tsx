@@ -11,6 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 
+// Define navigation types
 type RootStackParamList = {
     OnboardingScreen: undefined;
     LoginRegisterScreen: undefined;
@@ -20,6 +21,7 @@ type NavigationProp = StackNavigationProp<RootStackParamList, 'OnboardingScreen'
 
 const { width, height } = Dimensions.get('window');
 
+// Onboarding slides data
 const slides = [
     { id: '1', image: require('../../assets/onboarding/onboarding1.png') },
     { id: '2', image: require('../../assets/onboarding/onboarding2.png') },
@@ -28,10 +30,11 @@ const slides = [
 
 const OnboardingScreen = () => {
     const navigation = useNavigation<NavigationProp>();
-    const scrollX = useRef(new Animated.Value(0)).current;
-    const flatListRef = useRef<FlatList>(null);
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const scrollX = useRef(new Animated.Value(0)).current; // Track horizontal scroll position
+    const flatListRef = useRef<FlatList>(null); // Reference to FlatList
+    const [currentIndex, setCurrentIndex] = useState(0); // Track current slide index
 
+    // Handler for Next button
     const handleNext = () => {
         if (currentIndex < slides.length - 1) {
             flatListRef.current?.scrollToIndex({ index: currentIndex + 1 });
@@ -40,10 +43,12 @@ const OnboardingScreen = () => {
         }
     };
 
+    // Handler for Skip button
     const handleSkip = () => {
         navigation.replace('LoginRegisterScreen');
     };
 
+    // Update current index when viewable item changes
     const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
         if (viewableItems && viewableItems.length > 0) {
             setCurrentIndex(viewableItems[0].index);
@@ -52,6 +57,7 @@ const OnboardingScreen = () => {
 
     return (
         <View style={styles.container}>
+            {/* Animated FlatList for onboarding slides */}
             <Animated.FlatList
                 data={slides}
                 horizontal
@@ -66,12 +72,14 @@ const OnboardingScreen = () => {
                 onViewableItemsChanged={onViewableItemsChanged}
                 viewabilityConfig={{ viewAreaCoveragePercentThreshold: 50 }}
                 renderItem={({ item, index }) => {
+                    // Animation input range based on scroll position
                     const inputRange = [
                         (index - 1) * width,
                         index * width,
                         (index + 1) * width,
                     ];
 
+                    // Opacity interpolation for smooth fade effect
                     const opacity = scrollX.interpolate({
                         inputRange,
                         outputRange: [0, 1, 0],
@@ -90,11 +98,13 @@ const OnboardingScreen = () => {
                 }}
             />
 
+            {/* Footer with Skip, Dots, and Next */}
             <View style={styles.footer}>
                 <TouchableOpacity onPress={handleSkip}>
                     <Text style={styles.skip}>Skip</Text>
                 </TouchableOpacity>
 
+                {/* Indicator Dots */}
                 <View style={styles.indicatorContainer}>
                     {slides.map((_, index) => (
                         <View
@@ -117,6 +127,7 @@ const OnboardingScreen = () => {
 
 export default OnboardingScreen;
 
+// StyleSheet for layout and styling
 const styles = StyleSheet.create({
     container: {
         flex: 1,
