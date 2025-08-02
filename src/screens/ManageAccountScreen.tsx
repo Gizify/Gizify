@@ -12,23 +12,30 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
+// Define navigation stack types
 type ProfileStackParamList = {
     ManageAccountScreen: undefined;
     DeleteAccountScreen: undefined;
 };
 
+// Define navigation and route prop types for this screen
 type NavigationProp = StackNavigationProp<ProfileStackParamList, "ManageAccountScreen">;
 type RoutePropType = RouteProp<ProfileStackParamList, "ManageAccountScreen">;
 
+// Component props
 interface Props {
     navigation: NavigationProp;
     route: RoutePropType;
 }
 
 const ManageAccountScreen: React.FC<Props> = ({ navigation }) => {
+    // Animation value for fade-in effect
     const fadeAnim = useRef(new Animated.Value(0)).current;
+
+    // Animation value for button scaling
     const scaleAnim = useRef(new Animated.Value(1)).current;
 
+    // Trigger fade-in animation when the screen mounts
     useEffect(() => {
         Animated.timing(fadeAnim, {
             toValue: 1,
@@ -37,6 +44,7 @@ const ManageAccountScreen: React.FC<Props> = ({ navigation }) => {
         }).start();
     }, []);
 
+    // Scale down the button slightly on press in
     const handlePressIn = () => {
         Animated.spring(scaleAnim, {
             toValue: 0.97,
@@ -44,6 +52,7 @@ const ManageAccountScreen: React.FC<Props> = ({ navigation }) => {
         }).start();
     };
 
+    // Restore button scale on press out
     const handlePressOut = () => {
         Animated.spring(scaleAnim, {
             toValue: 1,
@@ -53,12 +62,15 @@ const ManageAccountScreen: React.FC<Props> = ({ navigation }) => {
 
     return (
         <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+            {/* Background gradient */}
             <LinearGradient
                 colors={["#ffffff", "#bfd6ff"]}
                 start={{ x: 0.5, y: 0 }}
                 end={{ x: 0.5, y: 1 }}
                 style={StyleSheet.absoluteFill}
             />
+
+            {/* Header with back button */}
             <View style={styles.header}>
                 <TouchableOpacity
                     onPress={() => navigation.goBack()}
@@ -69,9 +81,11 @@ const ManageAccountScreen: React.FC<Props> = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
 
+            {/* Scrollable content area */}
             <ScrollView contentContainerStyle={styles.scroll}>
                 <Text style={styles.title}>Kelola Akun</Text>
 
+                {/* Animated delete account button with glow effect */}
                 <Animated.View style={[styles.glowWrapper, { transform: [{ scale: scaleAnim }] }]}>
                     <TouchableOpacity
                         onPressIn={handlePressIn}
@@ -90,6 +104,7 @@ const ManageAccountScreen: React.FC<Props> = ({ navigation }) => {
 
 export default ManageAccountScreen;
 
+// Stylesheet for layout and design
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -98,7 +113,7 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: "row",
         alignItems: "center",
-        paddingTop: 50,
+        paddingTop: 50, // Adjust for safe area / status bar
         paddingHorizontal: 20,
         paddingBottom: 10,
     },
@@ -127,18 +142,18 @@ const styles = StyleSheet.create({
     glowWrapper: {
         width: "100%",
         borderRadius: 12,
-        shadowColor: "#FF3B30",
+        shadowColor: "#FF3B30", // iOS glow color
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.25,
         shadowRadius: 10,
-        elevation: 8,
-        backgroundColor: "#ffe5e5",
+        elevation: 8, // Android shadow
+        backgroundColor: "#ffe5e5", // subtle red background
     },
     deleteButton: {
         paddingVertical: 18,
         borderRadius: 12,
         alignItems: "center",
-        backgroundColor: "#FF3B30",
+        backgroundColor: "#FF3B30", // red button color
     },
     deleteText: {
         color: "#fff",
