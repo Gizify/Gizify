@@ -19,24 +19,28 @@ import { AuthStackParamList } from "../navigation/AuthStackNavigator";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, registerUser } from "../redux/actions/authAction";
 
+// Type definition for navigation
 type NavigationProps = NativeStackNavigationProp<AuthStackParamList>;
 
 const LoginRegisterScreen = () => {
   const navigation = useNavigation<NavigationProps>();
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state: any) => state.auth);
+  const { loading, error } = useSelector((state: any) => state.auth); // Get auth state from Redux
 
-  const [isLogin, setIsLogin] = useState(true);
-  const [agree, setAgree] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  // Local state for form input and view state
+  const [isLogin, setIsLogin] = useState(true); // Toggle between login and register
+  const [agree, setAgree] = useState(false); // Checkbox for terms
+  const [name, setName] = useState(""); // Name input for register
+  const [email, setEmail] = useState(""); // Email input
+  const [password, setPassword] = useState(""); // Password input
+  const [confirmPassword, setConfirmPassword] = useState(""); // Confirm password input
 
+  // Handle press on link to privacy policy
   const handleLinkPress = () => {
     Linking.openURL("https://kebijakan-privasi-gizify.vercel.app/");
   };
 
+  // Handle form submit for login/register
   const handleSubmit = async () => {
     if (!email || !password) {
       return Alert.alert("Error", "Email dan password harus diisi");
@@ -51,10 +55,13 @@ const LoginRegisterScreen = () => {
 
     try {
       if (isLogin) {
+        // Dispatch login action
         await dispatch(loginUser(email, password) as any);
       } else {
+        // Dispatch register action and navigate to StartScreen
         await dispatch(registerUser(email, password, name) as any);
         navigation.replace("StartScreen");
+        // Reset form fields
         setName("");
         setEmail("");
         setPassword("");
@@ -67,6 +74,7 @@ const LoginRegisterScreen = () => {
 
   return (
     <View style={styles.container}>
+      {/* App Logo and Auth Mode Switch (Login/Register) */}
       <View style={styles.logoContainer}>
         <Image
           source={require("../../assets/logo/Logo.png")}
@@ -75,6 +83,7 @@ const LoginRegisterScreen = () => {
         />
 
         <View style={styles.switchContainer}>
+          {/* Login Tab */}
           <TouchableOpacity
             style={[styles.switchBtn, isLogin && styles.activeBtn]}
             onPress={() => setIsLogin(true)}
@@ -82,6 +91,7 @@ const LoginRegisterScreen = () => {
           >
             <Text style={[styles.switchText, isLogin && styles.activeText]}>Masuk</Text>
           </TouchableOpacity>
+          {/* Register Tab */}
           <TouchableOpacity
             style={[styles.switchBtn, !isLogin && styles.activeBtn]}
             onPress={() => setIsLogin(false)}
@@ -92,12 +102,14 @@ const LoginRegisterScreen = () => {
         </View>
       </View>
 
+      {/* Animated Form Section */}
       <Animated.View
         layout={Layout.duration(500).easing(Easing.out(Easing.exp))}
         entering={FadeInDown.duration(400)}
         exiting={FadeOutUp.duration(300)}
         style={styles.form}
       >
+        {/* Full Name input (only in register mode) */}
         {!isLogin && (
           <TextInput
             placeholder="Nama Lengkap"
@@ -109,6 +121,7 @@ const LoginRegisterScreen = () => {
           />
         )}
 
+        {/* Email input */}
         <TextInput
           placeholder="Masukkan Email"
           placeholderTextColor="#888"
@@ -119,6 +132,8 @@ const LoginRegisterScreen = () => {
           autoCapitalize="none"
           editable={!loading}
         />
+
+        {/* Password input */}
         <TextInput
           placeholder="Masukkan Password"
           placeholderTextColor="#888"
@@ -129,13 +144,14 @@ const LoginRegisterScreen = () => {
           editable={!loading}
         />
 
-        {/* “Lupa Password?” hanya di mode login */}
+        {/* Forgot password link (only in login mode) */}
         {isLogin && (
           <TouchableOpacity onPress={() => navigation.navigate("ForgotPasswordScreen")}>
             <Text style={styles.forgotText}>Lupa Password?</Text>
           </TouchableOpacity>
         )}
 
+        {/* Confirm password input (only in register mode) */}
         {!isLogin && (
           <TextInput
             placeholder="Konfirmasi Password"
@@ -148,6 +164,7 @@ const LoginRegisterScreen = () => {
           />
         )}
 
+        {/* Agreement checkbox (only in register mode) */}
         {!isLogin && (
           <View style={styles.checkboxContainer}>
             <Checkbox
@@ -165,6 +182,7 @@ const LoginRegisterScreen = () => {
           </View>
         )}
 
+        {/* Submit button */}
         <Pressable
           style={[styles.submitBtn, loading && styles.disabledBtn]}
           onPress={handleSubmit}
@@ -177,6 +195,7 @@ const LoginRegisterScreen = () => {
           )}
         </Pressable>
 
+        {/* Error message from Redux */}
         {error && (
           <Text style={styles.errorText}>
             {typeof error === "string" ? error : error?.message || "Terjadi kesalahan"}
@@ -189,6 +208,7 @@ const LoginRegisterScreen = () => {
 
 export default LoginRegisterScreen;
 
+// Styles for login/register screen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
