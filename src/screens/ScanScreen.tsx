@@ -89,7 +89,7 @@ const ScanScreen: React.FC<Props> = ({ navigation }: Props) => {
               </TouchableOpacity>
               <Text style={styles.title}>Hasil Scan</Text>
             </View>
-            <View style={styles.productContainer}>{loading ? <Loading /> : error ? <Error message={error} /> : product ? <ProductInfo productData={product} /> : null}</View>
+            <View style={styles.productContainer}>{loading ? <Loading /> : error ? <Error message={error} /> : product && product.barcode && product.nutrition ? <ProductInfo productData={product} /> : null}</View>
             <View style={styles.intakeButton}>
               <Button
                 title="Tambah Ke Konsumsi Harian"
