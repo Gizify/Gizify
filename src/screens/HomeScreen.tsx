@@ -144,7 +144,7 @@ const HomeScreen = () => {
       {/* Rounded Rectangle */}
       <View style={styles.roundedContainer}>
         <View style={styles.rectangle}>
-          <Text style={{ color: colors.background }}>{safeToFixed(nutritionData?.calories)}</Text>
+          <Text style={{ color: colors.background }}>Kalori Hari ini : {safeToFixed(nutritionData?.calories)}</Text>
         </View>
         <View style={styles.circle}>
           <Text style={{ color: colors.text }}>{safeToFixed(user?.daily_nutrition_target?.calories)}</Text>
@@ -331,10 +331,13 @@ const styles = StyleSheet.create({
   totalEnergy: { fontWeight: "bold", fontSize: 16, textAlign: "center" },
   separator: { borderBottomWidth: 1, borderColor: "#ddd", marginVertical: 5 },
   tableRow: { flexDirection: "row", justifyContent: "space-between", width: "100%", gap: 16 },
-  tableHeader: { fontWeight: "bold", flex: 1, textAlign: "center" },
+  tableHeader: { fontWeight: "bold", flex: 1, textAlign: "center", minWidth: 50, maxWidth: 100 },
   tableCell: {
     flex: 1,
+    alignItems: "center",
     textAlign: "center",
+    minWidth: 50,
+    maxWidth: 100,
   },
   tableContent: {
     width: "100%",
