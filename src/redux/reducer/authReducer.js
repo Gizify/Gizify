@@ -8,7 +8,7 @@ const initialUserState = {
   gestational_age: { months: 0, days: 0 },
   height: null,
   weight: null,
-  activity_level: null,
+  // activity_level: null,
   medical_history: [],
   daily_nutrition_target: {
     calories: 0,

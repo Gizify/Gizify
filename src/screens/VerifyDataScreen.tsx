@@ -24,7 +24,7 @@ const VerifyDataScreen: React.FC = () => {
   const [hpht, setHpht] = useState("");
   const [hphtError, setHphtError] = useState("");
   const [pregnancyDay, setPregnancyDay] = useState("");
-  const [activity, setActivity] = useState<string | null>(null);
+  // const [activity, setActivity] = useState<string | null>(null);
   const [healthHistory, setHealthHistory] = useState<string | null>(null);
   const [birthdate, setBirthdate] = useState<string | null>(null);
   const [birthdateError, setBirthdateError] = useState("");
@@ -34,12 +34,12 @@ const VerifyDataScreen: React.FC = () => {
   const [selectedAvatar, setSelectedAvatar] = useState<AvatarType | null>(null);
   const [currentAvatar, setCurrentAvatar] = useState<AvatarType | null>(null);
 
-  const [showActivityModal, setShowActivityModal] = useState(false);
+  // const [showActivityModal, setShowActivityModal] = useState(false);
   const [showHealthHistoryModal, setShowHealthHistoryModal] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [showPregnancyModal, setShowPregnancyModal] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [tempActivity, setTempActivity] = useState<string | null>(null);
+  // const [tempActivity, setTempActivity] = useState<string | null>(null);
   const [tempHealthHistory, setTempHealthHistory] = useState<string | null>(null);
   const [tempPhotoOption, setTempPhotoOption] = useState<string | null>(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -102,7 +102,7 @@ const VerifyDataScreen: React.FC = () => {
         height: parseFloat(height),
         weight: parseFloat(weight),
         last_menstrual_period: parseBirthdateToISO(hpht),
-        activity: activity!,
+        // activity: activity!,
         photoOption: photoOption?.id || null,
         birthdate: parseBirthdateToISO(birthdate!),
         medical_history: healthHistory === "Tidak ada" ? [] : [healthHistory!],
@@ -119,7 +119,7 @@ const VerifyDataScreen: React.FC = () => {
   };
 
   // Determine if the form is valid before allowing submit
-  const isButtonDisabled = !height || !weight || !hpht || !activity || !healthHistory || !birthdate;
+  const isButtonDisabled = !height || !weight || !hpht || !healthHistory || !birthdate; // Delete !activity 
 
   return (
     // Full screen scrollable view for form inputs and modals
@@ -164,10 +164,10 @@ const VerifyDataScreen: React.FC = () => {
       {birthdateError ? <Text style={{ color: "red", marginBottom: 12 }}>{birthdateError}</Text> : null}
 
       {/* Activity selection */}
-      <TouchableOpacity style={styles.select} onPress={() => setShowActivityModal(true)}>
+      {/* <TouchableOpacity style={styles.select} onPress={() => setShowActivityModal(true)}>
         <Text style={[styles.selectText, { color: activity ? "#333" : "#777" }]}>{activity || "Aktivitas*"}</Text>
         <Ionicons name="chevron-forward" size={20} color="#777" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* Last menstrual period input */}
       <TextInput
@@ -248,7 +248,7 @@ const VerifyDataScreen: React.FC = () => {
       />
 
       {/* Activity selection modal */}
-      <BottomSheet
+      {/* <BottomSheet
         visible={showActivityModal}
         title="Aktivitas"
         options={[
@@ -265,7 +265,7 @@ const VerifyDataScreen: React.FC = () => {
           if (tempActivity) setActivity(tempActivity);
           setShowActivityModal(false);
         }}
-      />
+      /> */}
 
       {/* Pregnancy custom input modal */}
       <BottomSheet

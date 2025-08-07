@@ -55,7 +55,7 @@ export const completeUserProfile = (profileData) => async (dispatch, getState) =
       gestational_age: updatedUser.gestational_age ?? oldUserData.gestational_age,
       medical_history: updatedUser.medical_history ?? oldUserData.medical_history,
       birthdate: updatedUser.birthdate ?? oldUserData.birthdate,
-      activity_level: updatedUser.activity_level ?? oldUserData.activity_level,
+      // activity_level: updatedUser.activity_level ?? oldUserData.activity_level,
     };
 
     dispatch({
@@ -91,7 +91,7 @@ export const updateUserProfile = (updatedData) => async (dispatch, getState) => 
       gestational_age: updatedUser.gestational_age ?? oldUserData.gestational_age,
       medical_history: updatedUser.medical_history ?? oldUserData.medical_history,
       birthdate: updatedUser.birthdate ?? oldUserData.birthdate,
-      activity_level: updatedUser.activity_level ?? oldUserData.activity_level,
+      // activity_level: updatedUser.activity_level ?? oldUserData.activity_level,
     };
 
     dispatch({

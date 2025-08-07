@@ -90,10 +90,10 @@ const DetailProfileScreen = () => {
               : "-"
           }
         />
-        <InfoItem
+        {/* <InfoItem
           label="Aktivitas"
           value={userProfile?.activity_level || "-"}
-        />
+        /> */}
         <InfoItem
           label="Riwayat Kesehatan"
           value={formatHealthHistory(userProfile?.medical_history)}
