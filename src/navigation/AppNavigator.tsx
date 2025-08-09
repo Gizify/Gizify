@@ -16,7 +16,7 @@ export default function AppNavigator() {
   // State untuk mengontrol splash screen
   const [isLoading, setIsLoading] = useState(true);
 
-  const isUserComplete = !!(user?.daily_nutrition_target && user?.height && user?.weight && user?.activity_level);
+  const isUserComplete = !!(user?.daily_nutrition_target && user?.height && user?.weight);
 
   // Effect untuk splash screen timer
   useEffect(() => {

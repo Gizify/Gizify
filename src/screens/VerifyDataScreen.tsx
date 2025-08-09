@@ -119,12 +119,11 @@ const VerifyDataScreen: React.FC = () => {
   };
 
   // Determine if the form is valid before allowing submit
-  const isButtonDisabled = !height || !weight || !hpht || !healthHistory || !birthdate; // Delete !activity 
+  const isButtonDisabled = !height || !weight || !hpht || !healthHistory || !birthdate; // Delete !activity
 
   return (
     // Full screen scrollable view for form inputs and modals
     <ScrollView contentContainerStyle={styles.container}>
-
       {/* Header with back button */}
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -274,7 +273,7 @@ const VerifyDataScreen: React.FC = () => {
         type="custom"
         options={[]}
         selectedOption={null}
-        onSelect={() => { }}
+        onSelect={() => {}}
         onClose={() => setShowPregnancyModal(false)}
         showContinueButton
         onContinue={() => setShowPregnancyModal(false)}
@@ -292,10 +291,8 @@ const VerifyDataScreen: React.FC = () => {
         visible={showHealthHistoryModal}
         title="Riwayat Kesehatan"
         options={[
-          { id: "Anemia", label: "Anemia" },
           { id: "Diabetes", label: "Diabetes" },
           { id: "Hipertensi", label: "Hipertensi" },
-          { id: "TBC", label: "TBC" },
           { id: "Tidak ada", label: "Tidak ada" },
         ]}
         selectedOption={tempHealthHistory || healthHistory}
