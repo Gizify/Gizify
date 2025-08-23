@@ -79,11 +79,6 @@ const CreateResepAiScreen: React.FC = () => {
       return;
     }
 
-    if (!nutritionData || Object.keys(nutritionData).length === 0) {
-      Alert.alert("Peringatan", "Data nutrisi tidak boleh kosong");
-      return;
-    }
-
     const recipeData = {
       ingredients: ingredients,
       difficulty: difficulty,
